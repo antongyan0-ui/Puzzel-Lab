@@ -1,0 +1,5 @@
+.surgeignore
+CNAME
+deploy.js
+DEPLOY.md
+*.design

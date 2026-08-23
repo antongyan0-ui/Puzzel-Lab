@@ -1,0 +1,173 @@
+/* ============================================================
+   语料听力挖空训练 — Warm Eye-Care Brand Style
+   设计目标：最大程度减少用眼负担与视觉疲劳
+   - 暖米/羊皮纸底色，避免纯白刺眼
+   - 暖棕墨色文字，降低对比度但仍清晰可读
+   - 克制的单一暖色调强调色（陶土琥珀）
+   - 衬线字体用于语料阅读，营造纸感
+   ============================================================ */
+
+:root {
+  /* Brand primary — warm terracotta amber (used sparingly) */
+  --lc-color-primary: #B06A36;
+  --lc-color-primary-hover: #9C5B2C;
+  --lc-color-primary-active: #8A4F26;
+  --lc-color-primary-tint: #EBD9C5;
+  --lc-color-primary-tint-2: #F2E4D3;
+  --lc-color-primary-soft: #F6ECDF;
+
+  /* Neutral / surface — warm cream paper */
+  --lc-color-bg: #F5EFE3;
+  --lc-color-surface: #FCF8EF;
+  --lc-color-surface-2: #FFFBF4;
+  --lc-color-surface-sunken: #EFE7D6;
+
+  /* Ink — warm dark brown, not pure black (reduces strain) */
+  --lc-color-text: #4A4135;
+  --lc-color-text-secondary: #837868;
+  --lc-color-text-tertiary: #A89C88;
+  --lc-color-text-disabled: #C2B8A6;
+  --lc-color-text-inverse: #FCF8EF;
+
+  /* Border — warm hairlines */
+  --lc-color-border: #E4D9C5;
+  --lc-color-border-strong: #D2C4AA;
+  --lc-color-border-focus: #B06A36;
+
+  /* State colors — muted for eye comfort */
+  --lc-state-success: #6E8A5A;
+  --lc-state-success-bg: #E7EDDA;
+  --lc-state-warning: #BE8A45;
+  --lc-state-warning-bg: #F3E7D5;
+  --lc-state-error: #B05E3C;
+  --lc-state-error-bg: #F1DCD1;
+  --lc-state-info: #6F8390;
+  --lc-state-info-bg: #DCE3E8;
+
+  /* Radius — restrained */
+  --lc-radius-sm: 4px;
+  --lc-radius-md: 8px;
+  --lc-radius-lg: 12px;
+  --lc-radius-full: 9999px;
+
+  /* Shadow — minimal alpha, eye-care */
+  --lc-shadow-sm: 0 1px 2px rgba(74, 65, 53, 0.04);
+  --lc-shadow-md: 0 4px 14px rgba(74, 65, 53, 0.05);
+  --lc-shadow-lg: 0 10px 28px rgba(74, 65, 53, 0.05);
+  --lc-shadow-float: 0 12px 32px rgba(74, 65, 53, 0.14);
+
+  /* Typography stacks */
+  --lc-font-sans: 'Noto Sans SC', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  --lc-font-serif: 'Noto Serif SC', 'Source Serif 4', Georgia, 'Times New Roman', serif;
+  --lc-font-mono: 'JetBrains Mono', ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
+
+  /* Spacing scale */
+  --lc-space-1: 4px;
+  --lc-space-2: 8px;
+  --lc-space-3: 12px;
+  --lc-space-4: 16px;
+  --lc-space-5: 20px;
+  --lc-space-6: 24px;
+  --lc-space-8: 32px;
+  --lc-space-10: 40px;
+  --lc-space-12: 48px;
+
+  /* Semantic aliases — bridge warm eye-care tokens to the Tailwind v4 @theme inline
+     convention expected by fill-html-head.mjs (background/foreground/primary/border/...).
+     These map the script's semantic names to the --lc-color-* token set above. */
+  --lc-background: var(--lc-color-bg);
+  --lc-foreground: var(--lc-color-text);
+  --lc-card: var(--lc-color-surface);
+  --lc-card-foreground: var(--lc-color-text);
+  --lc-popover: var(--lc-color-surface-2);
+  --lc-popover-foreground: var(--lc-color-text);
+  --lc-primary: var(--lc-color-primary);
+  --lc-primary-foreground: var(--lc-color-text-inverse);
+  --lc-muted: var(--lc-color-surface-sunken);
+  --lc-muted-foreground: var(--lc-color-text-secondary);
+  --lc-destructive: var(--lc-state-error);
+  --lc-destructive-foreground: var(--lc-color-text-inverse);
+  --lc-border: var(--lc-color-border);
+  --lc-input: var(--lc-color-border);
+  --lc-ring: var(--lc-color-border-focus);
+}
+
+/* Dark / night-reading mode — warm deep brown, never pure black */
+.dark {
+  --lc-color-primary: #CC9263;
+  --lc-color-primary-hover: #D6A074;
+  --lc-color-primary-active: #E0AE85;
+  --lc-color-primary-tint: #4A3826;
+  --lc-color-primary-tint-2: #3E2F1F;
+  --lc-color-primary-soft: #382A1B;
+
+  --lc-color-bg: #221E18;
+  --lc-color-surface: #2C2720;
+  --lc-color-surface-2: #332D25;
+  --lc-color-surface-sunken: #1E1A14;
+
+  --lc-color-text: #E4DACB;
+  --lc-color-text-secondary: #B3A896;
+  --lc-color-text-tertiary: #8C8273;
+  --lc-color-text-disabled: #5F574B;
+  --lc-color-text-inverse: #221E18;
+
+  --lc-color-border: #3D362C;
+  --lc-color-border-strong: #4E463A;
+  --lc-color-border-focus: #CC9263;
+
+  --lc-state-success: #8FAE76;
+  --lc-state-success-bg: #2E3A26;
+  --lc-state-warning: #D6A067;
+  --lc-state-warning-bg: #3A2E1E;
+  --lc-state-error: #CC8060;
+  --lc-state-error-bg: #3A241B;
+  --lc-state-info: #8AA0AE;
+  --lc-state-info-bg: #243038;
+
+  --lc-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.2);
+  --lc-shadow-md: 0 4px 14px rgba(0, 0, 0, 0.25);
+  --lc-shadow-lg: 0 10px 28px rgba(0, 0, 0, 0.32);
+  --lc-shadow-float: 0 12px 32px rgba(0, 0, 0, 0.42);
+}
+
+/* ---------- Base ---------- */
+html, body {
+  background-color: var(--lc-color-bg);
+  color: var(--lc-color-text);
+  font-family: var(--lc-font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* ---------- Typography utilities ---------- */
+.lc-display { font-family: var(--lc-font-sans); font-size: 30px; line-height: 1.25; font-weight: 700; letter-spacing: -0.01em; color: var(--lc-color-text); }
+.lc-h1 { font-family: var(--lc-font-sans); font-size: 24px; line-height: 1.3; font-weight: 700; letter-spacing: -0.01em; color: var(--lc-color-text); }
+.lc-h2 { font-family: var(--lc-font-sans); font-size: 20px; line-height: 1.35; font-weight: 600; color: var(--lc-color-text); }
+.lc-h3 { font-family: var(--lc-font-sans); font-size: 17px; line-height: 1.4; font-weight: 600; color: var(--lc-color-text); }
+.lc-body { font-family: var(--lc-font-sans); font-size: 15px; line-height: 1.7; color: var(--lc-color-text); }
+.lc-body-lg { font-family: var(--lc-font-sans); font-size: 17px; line-height: 1.75; color: var(--lc-color-text); }
+.lc-small { font-family: var(--lc-font-sans); font-size: 13px; line-height: 1.6; color: var(--lc-color-text-secondary); }
+.lc-caption { font-family: var(--lc-font-sans); font-size: 12px; line-height: 1.5; color: var(--lc-color-text-tertiary); }
+
+/* Corpus reading text — serif, generous line-height, paper feel */
+.lc-corpus { font-family: var(--lc-font-serif); font-size: 17px; line-height: 2.05; color: var(--lc-color-text); letter-spacing: 0.01em; }
+.lc-corpus-sm { font-family: var(--lc-font-serif); font-size: 15px; line-height: 1.95; color: var(--lc-color-text-secondary); }
+
+/* Mono — line numbers, counters */
+.lc-mono { font-family: var(--lc-font-mono); font-size: 12px; line-height: 1.5; color: var(--lc-color-text-tertiary); font-variant-numeric: tabular-nums; }
+
+/* ---------- Surface helpers ---------- */
+.lc-surface { background-color: var(--lc-color-surface); border: 1px solid var(--lc-color-border); border-radius: var(--lc-radius-lg); }
+.lc-surface-2 { background-color: var(--lc-color-surface-2); border: 1px solid var(--lc-color-border); border-radius: var(--lc-radius-lg); }
+.lc-sunken { background-color: var(--lc-color-surface-sunken); border-radius: var(--lc-radius-md); }
+
+/* ---------- Color helpers ---------- */
+.lc-text-secondary { color: var(--lc-color-text-secondary); }
+.lc-text-tertiary { color: var(--lc-color-text-tertiary); }
+.lc-text-primary { color: var(--lc-color-primary); }
+.lc-bg-primary-soft { background-color: var(--lc-color-primary-soft); }
+
+/* ---------- Interactive base (Sub-Agents build full components with Tailwind + these vars) ---------- */
+.lc-focus-ring:focus-visible { outline: 2px solid var(--lc-color-border-focus); outline-offset: 2px; }

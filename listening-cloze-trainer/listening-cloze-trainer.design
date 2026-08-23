@@ -1,0 +1,71 @@
+{
+  "data": [
+    {
+      "id": "page-import",
+      "title": "导入文档",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1752374400000,
+      "canvasData": {
+        "x": 0,
+        "y": 0,
+        "group": 0
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/import.html",
+        "interactions": [
+          {
+            "domId": "cta-start",
+            "targetPageId": "page-workbench",
+            "transitionLabel": "进入训练台"
+          },
+          {
+            "domId": "nav-workbench",
+            "targetPageId": "page-workbench",
+            "hideEdge": true,
+            "transitionLabel": "训练台"
+          },
+          {
+            "domId": "nav-export",
+            "targetPageId": "page-export",
+            "hideEdge": true,
+            "transitionLabel": "导出"
+          }
+        ]
+      }
+    },
+    {
+      "id": "page-app",
+      "title": "听空 · 功能版",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1783926041000,
+      "canvasData": {
+        "x": 480,
+        "y": 0,
+        "group": 0,
+        "layoutSnapshot": {
+          "version": 1,
+          "contentHeight": 967,
+          "viewportWidth": 1440,
+          "sourceHash": "fnv1a-7d00d203",
+          "measuredAt": 1787280483814
+        }
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/app.html",
+        "interactions": []
+      }
+    }
+  ],
+  "config": {
+    "autoLayout": true,
+    "deviceType": "desktop",
+    "projectName": "语料听力挖空训练",
+    "designLibrary": null,
+    "windowSize": {
+      "width": 800,
+      "height": 600
+    }
+  }
+}

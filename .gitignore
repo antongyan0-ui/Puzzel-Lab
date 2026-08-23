@@ -1,0 +1,14 @@
+# Uploads and temporary files
+.uploads/
+.trae-html-share-packages/
+
+# Python scripts
+*.py
+__pycache__/
+
+# Node
+node_modules/
+
+# OS files
+.DS_Store
+Thumbs.db

@@ -1,0 +1,71 @@
+<!-- PROJECT SHELL: app-bar (do not edit per-page; leaves only set data-active on the current nav item) -->
+<!-- sharedRegions: 顶部应用栏(品牌+主导航+主题/设置), 页面背景与最大宽度容器 -->
+<!-- mutableSlots: activeNavItem — leaves set data-active="true" on the matching data-nav-key nav item (optionally aria-current="page"); do NOT duplicate, reorder, or rebuild the nav -->
+<style>
+  /* Active nav state — carried to every page that includes this shell.
+     Leaves only toggle data-active="true" on the current data-nav-key item. */
+  .lc-appbar-nav-item[data-active="true"] {
+    background-color: var(--lc-color-primary-soft);
+    color: var(--lc-color-primary);
+    font-weight: 600;
+  }
+  /* Iconography: single 1.5px stroke for all app-bar icons (Lucide default is 2) */
+  .lc-appbar svg { stroke-width: 1.5; }
+  /* Low-motion: downgrade hover transitions to near-zero */
+  @media (prefers-reduced-motion: reduce) {
+    .lc-appbar-nav-item,
+    .lc-appbar-icon-btn { transition-duration: 0.01ms !important; }
+  }
+</style>
+
+<header class="lc-appbar sticky top-0 z-30 w-full bg-[var(--lc-color-surface)] border-b border-[var(--lc-color-border)]">
+  <div class="mx-auto flex h-[60px] max-w-[1280px] items-center gap-6 px-6">
+
+    <!-- LEFT — Brand -->
+    <a href="workbench.html" class="lc-focus-ring flex shrink-0 items-center gap-3 rounded-[var(--lc-radius-md)]" aria-label="听空 ListenCloze 首页">
+      <span class="flex h-9 w-9 items-center justify-center rounded-[var(--lc-radius-md)] bg-[var(--lc-color-primary-tint)] text-[var(--lc-color-primary)]">
+        <i data-lucide="headphones" class="h-5 w-5"></i>
+      </span>
+      <span class="flex flex-col leading-none">
+        <span class="text-[17px] font-bold tracking-tight" style="color: var(--lc-color-text);">听空</span>
+        <span class="text-[11px]" style="color: var(--lc-color-text-tertiary);">ListenCloze</span>
+      </span>
+    </a>
+
+    <!-- CENTER/LEFT — Primary nav (pill-style) -->
+    <!-- SLOT: activeNavItem — leaf sets data-active="true" on the matching data-nav-key item; do NOT rebuild the nav -->
+    <nav class="flex items-center gap-1" aria-label="主导航">
+      <a href="import.html"
+         class="lc-appbar-nav-item lc-focus-ring inline-flex items-center justify-center whitespace-nowrap rounded-full px-4 py-2 text-sm transition-colors duration-150 text-[var(--lc-color-text-secondary)] hover:bg-[var(--lc-color-primary-soft)] hover:text-[var(--lc-color-text)]"
+         data-nav-key="import" data-dom-id="nav-import">导入</a>
+      <a href="workbench.html"
+         class="lc-appbar-nav-item lc-focus-ring inline-flex items-center justify-center whitespace-nowrap rounded-full px-4 py-2 text-sm transition-colors duration-150 text-[var(--lc-color-text-secondary)] hover:bg-[var(--lc-color-primary-soft)] hover:text-[var(--lc-color-text)]"
+         data-nav-key="workbench" data-dom-id="nav-workbench">训练台</a>
+      <a href="export.html"
+         class="lc-appbar-nav-item lc-focus-ring inline-flex items-center justify-center whitespace-nowrap rounded-full px-4 py-2 text-sm transition-colors duration-150 text-[var(--lc-color-text-secondary)] hover:bg-[var(--lc-color-primary-soft)] hover:text-[var(--lc-color-text)]"
+         data-nav-key="export" data-dom-id="nav-export">导出</a>
+    </nav>
+
+    <!-- RIGHT — Theme toggle + settings (decorative ghost icon buttons) -->
+    <div class="ml-auto flex items-center gap-2">
+      <button type="button"
+              class="lc-appbar-icon-btn lc-focus-ring inline-flex h-9 w-9 items-center justify-center rounded-[var(--lc-radius-md)] border border-[var(--lc-color-border)] bg-[var(--lc-color-surface)] text-[var(--lc-color-text-secondary)] transition-colors duration-150 hover:border-[var(--lc-color-border-strong)] hover:bg-[var(--lc-color-surface-2)] hover:text-[var(--lc-color-text)]"
+              data-dom-id="toggle-theme" aria-label="切换护眼/夜间主题">
+        <i data-lucide="sun" class="h-5 w-5"></i>
+      </button>
+      <button type="button"
+              class="lc-appbar-icon-btn lc-focus-ring inline-flex h-9 w-9 items-center justify-center rounded-[var(--lc-radius-md)] border border-[var(--lc-color-border)] bg-[var(--lc-color-surface)] text-[var(--lc-color-text-secondary)] transition-colors duration-150 hover:border-[var(--lc-color-border-strong)] hover:bg-[var(--lc-color-surface-2)] hover:text-[var(--lc-color-text)]"
+              aria-label="设置">
+        <i data-lucide="settings" class="h-5 w-5"></i>
+      </button>
+    </div>
+
+  </div>
+</header>
+
+<!-- Page background + max-width content wrapper (shared region).
+     Leaves replace the slot below with their <main> (owned via fill-html-head.mjs); preserve this wrapper. -->
+<div class="lc-appbar-content mx-auto w-full max-w-[1280px] px-6 py-8">
+  <!-- SLOT: pageMainContent — leaves replace this slot with <main>...</main>; do not remove the surrounding wrapper -->
+</div>
+<!-- END PROJECT SHELL: app-bar -->
