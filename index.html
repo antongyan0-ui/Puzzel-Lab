@@ -12,6 +12,22 @@
 .lc-testdaf-task-btn.active { background: var(--lc-color-primary); color: var(--lc-color-text-inverse); border-color: var(--lc-color-primary); font-weight: 600; }
 .lc-testdaf-info { background: var(--lc-color-primary-soft); border-radius: var(--lc-radius-md); padding: 12px; margin: 8px 0; font-size: 13px; line-height: 1.6; color: var(--lc-color-text); }
 .lc-testdaf-timer { display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; border-radius: var(--lc-radius-full); background: var(--lc-state-warning-bg); color: var(--lc-state-warning); font-size: 12px; font-weight: 600; }
+.lc-testdaf-timer-panel { background: var(--lc-color-surface-2); border: 1px solid var(--lc-color-border); border-radius: var(--lc-radius-lg); padding: 16px; margin: 12px 0; }
+.lc-testdaf-timer-row { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
+.lc-testdaf-timer-row:last-child { margin-bottom: 0; }
+.lc-testdaf-timer-label { font-size: 13px; color: var(--lc-color-text-secondary); min-width: 100px; }
+.lc-testdaf-timer-display { font-size: 24px; font-weight: 700; font-variant-numeric: tabular-nums; color: var(--lc-color-primary); min-width: 80px; text-align: center; }
+.lc-testdaf-timer-display.warning { color: var(--lc-state-warning); }
+.lc-testdaf-timer-display.danger { color: var(--lc-state-error); animation: lc-pulse 1s ease-in-out infinite; }
+.lc-testdaf-timer-btn { padding: 4px 12px; border: 1px solid var(--lc-color-border); border-radius: var(--lc-radius-full); background: var(--lc-color-surface); cursor: pointer; font-size: 12px; color: var(--lc-color-text-secondary); transition: all 0.15s; font-family: inherit; }
+.lc-testdaf-timer-btn:hover { border-color: var(--lc-color-primary); color: var(--lc-color-primary); }
+.lc-testdaf-timer-btn.active { background: var(--lc-color-primary); color: var(--lc-color-text-inverse); border-color: var(--lc-color-primary); }
+.lc-testdaf-answer-hint { background: var(--lc-color-primary-soft); border: 1px solid var(--lc-color-border); border-radius: var(--lc-radius-md); padding: 12px; margin: 8px 0; font-size: 13px; line-height: 1.6; color: var(--lc-color-text); display: none; }
+.lc-testdaf-answer-hint.visible { display: block; }
+.lc-testdaf-answer-hint h5 { font-size: 13px; font-weight: 700; color: var(--lc-color-primary); margin-bottom: 6px; }
+.lc-testdaf-answer-hint ul { margin: 0; padding-left: 16px; }
+.lc-testdaf-answer-hint li { margin-bottom: 4px; }
+@keyframes lc-pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.5; } }
 .lc-dict-popup { position: fixed; z-index: 10000; background: var(--lc-color-surface); border: 1px solid var(--lc-color-border); border-radius: var(--lc-radius-md); box-shadow: var(--lc-shadow-float); padding: 16px; min-width: 240px; max-width: 360px; font-size: 14px; }
 .lc-dict-popup-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; padding-bottom: 8px; border-bottom: 1px solid var(--lc-color-border); }
 .lc-dict-popup-word { font-weight: 700; font-size: 16px; color: var(--lc-color-primary); }
@@ -700,6 +716,22 @@ body { font-family: var(--lc-font-sans); background: var(--lc-color-bg); color: 
                     </select>
                     <div class="lc-testdaf-tasks" id="testdaf-tasks" style="display:flex;gap:4px;flex-wrap:wrap;margin-top:8px;"></div>
                 </div>
+                <div class="lc-testdaf-timer-panel" id="testdaf-timer-panel" style="display:none;">
+                    <div class="lc-testdaf-timer-row">
+                        <span class="lc-testdaf-timer-label">准备时间</span>
+                        <span class="lc-testdaf-timer-display" id="prep-timer-display">00:30</span>
+                        <button class="lc-testdaf-timer-btn" id="btn-start-prep">开始准备</button>
+                    </div>
+                    <div class="lc-testdaf-timer-row">
+                        <span class="lc-testdaf-timer-label">发言时间</span>
+                        <span class="lc-testdaf-timer-display" id="speak-timer-display">01:00</span>
+                        <button class="lc-testdaf-timer-btn" id="btn-start-speak">开始发言</button>
+                    </div>
+                </div>
+                <div class="lc-testdaf-answer-hint" id="testdaf-answer-hint">
+                    <h5>答题思路提示</h5>
+                    <div id="testdaf-hint-body"></div>
+                </div>
             </div><div class="lc-part-cards" id="part-cards">
                     <div class="lc-part-card" data-part="1"><i data-lucide="message-circle"></i><h4>Part 1</h4><p>个人问答</p></div>
                     <div class="lc-part-card active" data-part="2"><i data-lucide="clipboard-list"></i><h4>Part 2</h4><p>话题卡</p></div>
@@ -1261,9 +1293,13 @@ function renderOralParts() {
     if (!container) return;
     var config = getCurrentLangConfig();
     var testdafBar = document.getElementById('testdaf-bar');
+    var timerPanel = document.getElementById('testdaf-timer-panel');
+    var answerHint = document.getElementById('testdaf-answer-hint');
     if (State.lang === 'de') {
         // Show TestDaF mode for German
         if (testdafBar) testdafBar.style.display = 'block';
+        if (timerPanel) timerPanel.style.display = 'block';
+        if (answerHint) answerHint.classList.remove('visible');
         container.innerHTML = '';
         TESTDAF_TASK_TYPES.forEach(function(p) {
             var div = document.createElement('div');
@@ -1275,9 +1311,15 @@ function renderOralParts() {
         });
         refreshIcons();
         renderTestDaFTasks();
+        updateTestDaFTimerDisplay();
+        updateTestDaFAnswerHint();
         return;
     }
     if (testdafBar) testdafBar.style.display = 'none';
+    var tp = document.getElementById('testdaf-timer-panel');
+    if (tp) tp.style.display = 'none';
+    var ah = document.getElementById('testdaf-answer-hint');
+    if (ah) ah.classList.remove('visible');
     container.innerHTML = '';
     config.oralParts.forEach(function(p, idx) {
         var div = document.createElement('div');
@@ -2463,6 +2505,178 @@ function getTestDaFTask(testNum, taskNum) {
  */
 function getTestDaFTaskTypes() {
     return TESTDAF_TASK_TYPES;
+}
+
+// TestDaF timer state
+var testdafTimerInterval = null;
+var testdafPrepRemaining = 0;
+var testdafSpeakRemaining = 0;
+var testdafTimerMode = null; // 'prep' or 'speak'
+
+function updateTestDaFTimerDisplay() {
+    var task = getTestDaFTask(State.oral.testdafNum, State.oral.testdafTask);
+    if (!task) return;
+    var prepDisplay = document.getElementById('prep-timer-display');
+    var speakDisplay = document.getElementById('speak-timer-display');
+    if (prepDisplay) prepDisplay.textContent = formatTime(task.prepTime);
+    if (speakDisplay) speakDisplay.textContent = formatTime(task.speakTime);
+    testdafPrepRemaining = task.prepTime;
+    testdafSpeakRemaining = task.speakTime;
+}
+
+function formatTime(seconds) {
+    var m = Math.floor(seconds / 60);
+    var s = seconds % 60;
+    return (m < 10 ? '0' : '') + m + ':' + (s < 10 ? '0' : '') + s;
+}
+
+function startTestDaFTimer(mode) {
+    // Clear any existing timer
+    if (testdafTimerInterval) { clearInterval(testdafTimerInterval); testdafTimerInterval = null; }
+    testdafTimerMode = mode;
+
+    var displayId = mode === 'prep' ? 'prep-timer-display' : 'speak-timer-display';
+    var btnId = mode === 'prep' ? 'btn-start-prep' : 'btn-start-speak';
+    var remaining = mode === 'prep' ? testdafPrepRemaining : testdafSpeakRemaining;
+    if (remaining <= 0) {
+        var task = getTestDaFTask(State.oral.testdafNum, State.oral.testdafTask);
+        remaining = task ? (mode === 'prep' ? task.prepTime : task.speakTime) : 0;
+    }
+
+    var display = document.getElementById(displayId);
+    var btn = document.getElementById(btnId);
+
+    // Toggle: if already running this mode, stop
+    if (btn && btn.classList.contains('active')) {
+        btn.classList.remove('active');
+        btn.textContent = mode === 'prep' ? '继续准备' : '继续发言';
+        if (testdafTimerInterval) { clearInterval(testdafTimerInterval); testdafTimerInterval = null; }
+        return;
+    }
+
+    // Reset buttons
+    var allBtns = document.querySelectorAll('.lc-testdaf-timer-btn');
+    allBtns.forEach(function(b) { b.classList.remove('active'); b.textContent = b.id === 'btn-start-prep' ? '开始准备' : '开始发言'; });
+    if (btn) { btn.classList.add('active'); btn.textContent = '暂停'; }
+
+    if (mode === 'prep') testdafPrepRemaining = remaining;
+    else testdafSpeakRemaining = remaining;
+
+    testdafTimerInterval = setInterval(function() {
+        remaining--;
+        if (mode === 'prep') testdafPrepRemaining = remaining;
+        else testdafSpeakRemaining = remaining;
+
+        if (display) {
+            display.textContent = formatTime(Math.max(0, remaining));
+            display.classList.remove('warning', 'danger');
+            if (remaining <= 5 && remaining > 0) display.classList.add('danger');
+            else if (remaining <= 10) display.classList.add('warning');
+        }
+
+        if (remaining <= 0) {
+            clearInterval(testdafTimerInterval);
+            testdafTimerInterval = null;
+            if (btn) { btn.classList.remove('active'); btn.textContent = mode === 'prep' ? '重新准备' : '重新发言'; }
+            if (display) { display.classList.remove('warning', 'danger'); }
+            showToast(mode === 'prep' ? '准备时间结束！请开始发言。' : '发言时间结束！', 'warning');
+            // Auto-speak the question when prep ends
+            if (mode === 'prep') {
+                var q = getTestDaFQuestion();
+                if (q) { setTimeout(function() { speakText(q); }, 500); }
+            }
+        }
+    }, 1000);
+}
+
+function updateTestDaFAnswerHint() {
+    var task = getTestDaFTask(State.oral.testdafNum, State.oral.testdafTask);
+    if (!task) return;
+    var hintBody = document.getElementById('testdaf-hint-body');
+    var hintPanel = document.getElementById('testdaf-answer-hint');
+    if (!hintBody || !hintPanel) return;
+
+    // Generate answer tips based on task type
+    var tips = generateTestDaFAnswerTips(task);
+    hintBody.innerHTML = tips;
+    hintPanel.classList.add('visible');
+}
+
+function generateTestDaFAnswerTips(task) {
+    var tips = '';
+    var type = task.type;
+
+    if (type === 'Telefonieren') {
+        tips = '<ul>' +
+            '<li><b>开场白：</b>"Guten Tag, mein Name ist ..." (礼貌问候 + 自我介绍)</li>' +
+            '<li><b>来电目的：</b>"Ich rufe an, weil ..." / "Ich möchte mich erkundigen, ob ..."</li>' +
+            '<li><b>提问细节：</b>"Könnten Sie mir bitte sagen, ob ..." / "Ich hätte gerne gewusst, ..."</li>' +
+            '<li><b>结束语：</b>"Vielen Dank für Ihre Hilfe. Auf Wiederhören."</li>' +
+            '</ul>';
+    } else if (type === 'Informieren') {
+        tips = '<ul>' +
+            '<li><b>引入话题：</b>"Ich möchte dir erzählen, ..." / "Weißt du schon, dass ..."</li>' +
+            '<li><b>分点叙述：</b>使用 "Erstens ..., zweitens ..., drittens ..." 结构</li>' +
+            '<li><b>补充细节：</b>"Außerdem ..." / "Darüber hinaus ..."</li>' +
+            '<li><b>总结：</b>"Zusammenfassend kann man sagen, dass ..."</li>' +
+            '</ul>';
+    } else if (type === 'Grafikbeschreibung') {
+        tips = '<ul>' +
+            '<li><b>引言：</b>"Die Grafik zeigt/veranschaulicht/dstellt ... dar"</li>' +
+            '<li><b>数据描述：</b>"Der höchste/niedrigste Wert liegt bei ..." / "Im Jahr ... betrug ..."</li>' +
+            '<li><b>比较：</b>"Im Vergleich zu ..." / "Während ..., ..."</li>' +
+            '<li><b>趋势：</b>"Es ist ein Anstieg/Rückgang zu erkennen"</li>' +
+            '<li><b>总结：</b>"Zusammenfassend lässt sich festhalten, dass ..."</li>' +
+            '</ul>';
+    } else if (type === 'Argumentieren') {
+        tips = '<ul>' +
+            '<li><b>引入观点：</b>"Meiner Meinung nach ..." / "Ich bin der Ansicht, dass ..."</li>' +
+            '<li><b>论据支持：</b>"Einerseits ... / Andererseits ..." / "Ein wichtiges Argument ist ..."</li>' +
+            '<li><b>举例说明：</b>"Ein gutes Beispiel dafür ist ..."</li>' +
+            '<li><b>权衡利弊：</b>"Allerdings muss man auch berücksichtigen, dass ..."</li>' +
+            '<li><b>总结立场：</b>"Deshalb komme ich zu dem Schluss, dass ..."</li>' +
+            '</ul>';
+    } else if (type === 'Ratschlag geben') {
+        tips = '<ul>' +
+            '<li><b>表达理解：</b>"Ich verstehe dein Problem ..." / "Das ist wirklich schwierig ..."</li>' +
+            '<li><b>给建议：</b>"Ich würde dir raten, ..." / "An deiner Stelle würde ich ..."</li>' +
+            '<li><b>给出理由：</b>"Denn ..." / "Weil ..." / "Der Grund dafür ist ..."</li>' +
+            '<li><b>提供替代方案：</b>"Alternativ könntest du auch ..."</li>' +
+            '<li><b>结束语：</b>"Ich hoffe, das hilft dir weiter."</li>' +
+            '</ul>';
+    } else if (type === 'Vortrag halten') {
+        tips = '<ul>' +
+            '<li><b>开场白：</b>"Heute möchte ich über ... sprechen" / "Das Thema meines Vortrags ist ..."</li>' +
+            '<li><b>图表描述：</b>"Wie Sie auf dieser Grafik sehen können, ..."</li>' +
+            '<li><b>原因分析：</b>"Ein Grund dafür ist ..." / "Dies liegt daran, dass ..."</li>' +
+            '<li><b>展望未来：</b>"In der Zukunft wird voraussichtlich ..."</li>' +
+            '<li><b>结束语：</b>"Damit komme ich zum Schluss meines Vortrags."</li>' +
+            '</ul>';
+    } else if (type === 'Stellung nehmen') {
+        tips = '<ul>' +
+            '<li><b>表达观点：</b>"Ich glaube, dass ..." / "Meiner Meinung nach ..."</li>' +
+            '<li><b>给出建议：</b>"Ich würde dir empfehlen, ..." / "Du solltest ..."</li>' +
+            '<li><b>说明理由：</b>"Weil ..." / "Der Grund ist, dass ..."</li>' +
+            '<li><b>个人经验：</b>"In meiner eigenen Erfahrung ..."</li>' +
+            '</ul>';
+    } else {
+        tips = '<ul><li>认真阅读题目要求和情景描述</li><li>注意控制时间，先准备再发言</li><li>使用丰富的连接词和句型</li></ul>';
+    }
+
+    // Add task-specific info
+    tips = '<p style="margin-bottom:8px;"><b>任务类型：</b>' + task.type + ' (' + task.desc + ') | <b>等级：</b>' + task.level + ' | <b>准备：</b>' + task.prepTime + '秒 | <b>发言：</b>' + task.speakTime + '秒</p>' + tips;
+
+    return tips;
+}
+
+function toggleTestDaFHint() {
+    var hintPanel = document.getElementById('testdaf-answer-hint');
+    if (!hintPanel) return;
+    if (hintPanel.classList.contains('visible')) {
+        hintPanel.classList.remove('visible');
+    } else {
+        updateTestDaFAnswerHint();
+    }
 }
 
 
@@ -4847,7 +5061,106 @@ function getDeDict() {
         'mitunter obgleich obschon wenngleich gleichviel wohingegen indes ' +
         'dahingegen hingegen andernfalls allenfalls notgedrungen notgedrungen ' +
         'schlichtweg schlichtweg kurzerhand schier schlechthin geradezu ' +
-        'geradezu geradewegs geradeaus schlechthin schlechthin schlechthin'
+        'geradezu geradewegs geradeaus schlechthin schlechthin schlechthin ' +
+        'Arbeit arbeiten Arbeiter Arbeitsplatz Wohnung wohnen Miete mieten ' +
+        'Haus Hause Häuser Wohnung Wohnungen Mieter Mietvertrag Familie ' +
+        'Familien Eltern Mutter Vater Kind Kinder Kindheit Jugend Freund ' +
+        'Freundin Freunde Freundschaft Schule Schüler Schülerin Student ' +
+        'Studenten Studentin Studium studieren Universität Uni Hochschule ' +
+        'Lehrer Lehrerin lernen lernt gelernt Prüfung Klausur Note Noten ' +
+        'Test testen Semester Vorlesung Seminar Praktikum Übung Hausaufgabe ' +
+        'Aufgabe Aufgaben Sprache Sprachen sprechen Deutsch deutsche deutscher ' +
+        'deutsches Deutschland Englisch Fremdsprache Wortschatz Grammatik ' +
+        'Wörterbuch Wort Wörter Satz Sätze Text Texte Absatz Lesen lesen ' +
+        'liest gelesen Leser Schreiben schreiben schreibt geschrieben ' +
+        'Hören hören höre hört gehört Übersetzung übersetzen übersetzt ' +
+        'Kommunikation kommunizieren Information informieren Technology ' +
+        'Technologie technisch Technik Computer Internet digital Programm ' +
+        'programmieren Software Netzwerk Server Datenbank Daten Künstliche ' +
+        'Intelligenz Algorithmus Wirtschaft wirtschaftlich Markt Finanz ' +
+        'Bank Banken Geld Preis Preise kosten kostet gekostet bezahlen ' +
+        'Lohn Gehalt Einkommen verdienen Arbeitsplatz Firma Unternehmen ' +
+        'Büro Geschäft Produkt Produktion produzieren Kunde Kunden Dienst ' +
+        'Qualität Erfolg erfolgreich gewinnen gewinnt gewonnen verlieren ' +
+        'Wettbewerb Politik politisch Partei Regierung Parlament Demokratie ' +
+        'Wahl wählen Wähler Gesetz Recht Gerechtigkeit Verantwortung ' +
+        'Gesellschaft gesellschaftlich sozial Kultur kulturell Kunst Künstler ' +
+        'Musik musikalisch Literatur Roman Erzählung Geschichte philosophisch ' +
+        'Religion religiös Glaube glauben Kirche Umwelt Umweltschutz ' +
+        'Natur Naturschutz Klima Klimawandel Energie erneuerbar Sonnenenergie ' +
+        'Windenergie Wasserkraft Strom Gesundheit gesund Krankheit krank ' +
+        'medizinisch Medizin Medikament Arzt Ärzte Krankenhaus Klinik ' +
+        'Apotheke Rezept Therapie behandeln Behandlung Patient Pflege pflegen ' +
+        'Schmerzen Schmerz verletzen Wunde heilen Essen essen isst gegessen ' +
+        'Nahrung Lebensmittel Speise Getränk trinken trinkt getrunken Wasser ' +
+        'Kaffee Tee Saft Milch Brot Käse Wurst Fleisch Fisch Gemüse Obst ' +
+        'Frucht Früchte Apfel Banane Tomate Kartoffel Reis Nudeln Mehl ' +
+        'Zucker Salz Pfeffer Kochen kocht gekocht Küche Restaurant Hotel ' +
+        'Frühstück Mittagessen Abendessen Reisen reise Reise Tourist Urlaub ' +
+        'Flug Flugzeug Flughafen Unterkunft Reservierung buchen Gepäck Koffer ' +
+        'Stadt Städte Dorf Land Länder Straße Weg Platz Berg Berge Tal See ' +
+        'Meer Fluss Wald Baum Blume Gras Wetter Sonne sonnig Regen regnen ' +
+        'Wind windig Schnee Wolke bewölkt Temperatur warm kalt heiß kühl ' +
+        'Auto Fahrzeug Bus Bahn Zug Fahrrad Motorrad fahren Fahrer Fahrt ' +
+        'Parken Tanken groß klein lang kurz breit hoch niedrig tief dick ' +
+        'dünn rund Farbe Farben farbig rot blau grün gelb schwarz weiß ' +
+        'grau braun Zeit Minute Sekunde Stunde Tag Woche Monat Jahr ' +
+        'Frühling Sommer Herbst Winter heute morgen gestern Abend Morgen ' +
+        'Nacht aktuell früher später Zukunft Uhr Kalender Termin Treffen ' +
+        'Konferenz Meeting Seminar Workshop Präsentation Vortrag Diskussion ' +
+        'Frage fragen Antwort antworten Problem Lösung lösen Ziel Zweck ' +
+        'Grund Ursache Wirkung Ergebnis Folge Konsequenz Möglichkeit möglich ' +
+        'vielleicht wahrscheinlich sicher bestimmt Person Menschen Mann ' +
+        'Frau Kind Kinder Mutter Vater Großeltern Bruder Schwester Sohn ' +
+        'Tochter Nachbar Kollege Chef Mitarbeiter Team Gruppe Mitglied ' +
+        'Verein Organisation Verband Gemeinschaft Liebe lieben geliebt ' +
+        'glücklich Freude freuen traurig Trauer weinen Träne Angst wütend ' +
+        'Sorge sorgen Ruhe Frieden Streit streiten Konflikt Hoffnung hoffen ' +
+        'Erfolg scheitern Mut stolz sein bin bist ist sind seid war waren ' +
+        'gewesen haben habe hast hatte hatten gehabt werden wird wurden ' +
+        'worden können kann konnte gekonnt mögen mag mochte gemocht wollen ' +
+        'will wollte gewollt sollen soll sollte müssen muss musste dürfen ' +
+        'darf durfte wissen weiß wusste gewusst tun tut tat getan lassen ' +
+        'lässt ließ gelassen sehen sieht sah gesehen hören hört gehört ' +
+        'fühlen fühlt gefühlt denken denkt dachte gedacht glauben glaubt ' +
+        'geglaubt sagen sagt sagte gesagt machen macht machte gemacht ' +
+        'geben gibt gab gegeben nehmen nimmt nahm gekommen kommen kommt ' +
+        'kam gekommen gehen geht ging gegangen stehen steht stand gestanden ' +
+        'liegen liegt lag gelegen sitzen sitzt saß gesessen sprechen spricht ' +
+        'sprach gesprochen schreiben schreibt schrieb geschrieben lesen liest ' +
+        'las gelesen fahren fährt fuhr gefahren tragen trägt trug getragen ' +
+        'kaufen kauft kaufte gekauft verkaufen verkauft verkauft wohnen ' +
+        'wohnt gewohnt leben lebt lebte gelebt sterben stirbt starb gestorben ' +
+        'beginnen beginnt begann begonnen enden endet endete beenden beendet ' +
+        'öffnen öffnet öffnete geöffnet schließen schließt schloss geschlossen ' +
+        'suchen sucht suchte gesucht finden findet fand gefunden verlieren ' +
+        'verliert verlor verloren gewinnen gewinnt gewann gewonnen ändern ' +
+        'ändert änderte geändert brauchen braucht gebraucht versuchen versucht ' +
+        'versuchte entscheiden entscheidet entschied entschieden erklären ' +
+        'erklärt erklärte erklärt bedeuten bedeutet bedeutete Bedeutung ' +
+        'zeigen zeigt zeigte gezeigt schicken schickt schickte geschickt ' +
+        'erzählen erzählt erzählte erzählt glauben glaubt glaubte glaubten ' +
+        'gefragt fragen fragt fragte gefragt antworten antwortet antwortete ' +
+        'beachten beachtet beachtete beachtet beobachten beobachtet beobachtete ' +
+        'beobachtet beachten beachten beachtet beachtete beachtet beachten ' +
+        'erinnern erinnert erinnerte erinnert vergessen vergisst vergaß vergessen ' +
+        'erfahren erfährt erfuhr erfahren erleben erlebt erlebte erlebt ' +
+        'planen plant plante geplant vorbereiten vorbereitet vorbereitete ' +
+        'vorbereitet erstellen erstellt erstellte erstellt produzieren produziert ' +
+        'produzierte produziert entwerfen entwirft entwarf entworfen prüfen ' +
+        'prüft prüfte geprüft testen testet testierte getestet kontrollieren ' +
+        'kontrolliert kontrollierte kontrolliert sicherstellen sicherstellt ' +
+        'sicherstellte sicherstellt feststellen stellt fest stellte festgestellt ' +
+        'verstehen versteht verstand verstanden verständnis Verständnis ' +
+        'erkennen erkennt erkannte erkannt festlegen legt fest legte festgelegt ' +
+        'darstellen stellt dar stellte dar dargestellt zusammenfassen fasst ' +
+        'zusammen fasste zusammengefasst zusammengefasst zusammenfassen ' +
+        'verwenden verwendet verwendete verwendet benutzen benutzt benutzte ' +
+        'benutzt nutzen nutzt nutzte genutzt anwenden wendet an wandte an ' +
+        'angewandt betragen beträgt betrug betragen betragen betragen gehören ' +
+        'gehört gehörte gehört enthalten enthält enthielt enthalten erhalten ' +
+        'erhält erhielt erhalten besitzen besitzt besaß besessen bestehen ' +
+        'besteht bestand bestanden erhalten erhalten erhalten erhalten erhalten'
     );
     _DE_DICT = new Set(words.trim().split(/\s+/));
     return _DE_DICT;
@@ -4856,15 +5169,79 @@ function getDeDict() {
 /* ===========================================================================
  * 3. spellCheckGermanText — line-aware spell check (skips translations)
  * ========================================================================= */
+// Pre-split merged function words: scans each token for known function word
+// prefixes/suffixes that are glued to another word.
+function preSplitMergedFunctionWords(line, dict) {
+    if (!line) return line;
+    dict = dict || getDeDict();
+    var funcWords = ['der','die','das','den','dem','des','ein','eine','einem',
+        'einen','einer','eines','und','oder','aber','denn','sondern',
+        'in','an','auf','mit','bei','von','zu','nach','aus','vor','über',
+        'unter','durch','ohne','gegen','um','für','während','trotz',
+        'wegen','statt','neben','hinter','zwischen','innerhalb','außerhalb',
+        'is','sind','war','waren','hat','hatte','hatten','wird','werden',
+        'kann','kannst','könnte','soll','sollte','will','möchte','muss',
+        'nicht','auch','noch','schon','nur','sehr','mehr','immer','wieder',
+        'dies','diese','dieser','dieses','jede','jeder','welche','welcher',
+        'sich','mich','dich','uns','euch','ihm','ihr','es','er','sie',
+        'wenn','als','dass','daß','weil','ob','so','wie','was','wer',
+        'hier','da','dort','wo','wohin','woher','jetzt','dann','später',
+        'ja','nein','kein','keine','keinen','keinem','keiner','keines',
+        'mein','dein','sein','unser','euer','Ihr','diesem','diesen',
+        'solche','solcher','solches','jeden','jedem','jedes','alle','allen',
+        'alles','beide','beiden','beides','nichts','jemand','niemand',
+        'etwas','viel','viele','vielen','vieles','wenig','wenige','wenigen',
+        'deshalb','darum','trotzdem','dennoch','allerdings','jedoch',
+        'haben','habt','werden','wurde','wurden','können','könnten',
+        'müssen','musste','mussten','sollen','sollte','sollten',
+        'dürfen','durfte','durften','mögen','mochte','mochten',
+        'wollen','wollte','wollten','schon','erst','oft','selten'];
+    var funcSet = new Set(funcWords);
+
+    return line.replace(/[A-Za-zÄÖÜäöüß]{4,}/g, function(token) {
+        if (deInDict(token, dict)) return token;
+        for (var len = 3; len <= Math.min(12, token.length - 2); len++) {
+            var prefix = token.substring(0, len).toLowerCase();
+            if (funcSet.has(prefix)) {
+                var rest = token.substring(len);
+                if (rest.length >= 2) {
+                    if (deInDict(rest, dict) || deInDict(rest.toLowerCase(), dict) ||
+                        (rest[0] >= 'A' && rest[0] <= 'Z') ||
+                        rest[0] === 'Ä' || rest[0] === 'Ö' || rest[0] === 'Ü') {
+                        var checkedRest = spellCheckGermanWord(rest, dict);
+                        return prefix + ' ' + checkedRest;
+                    }
+                }
+            }
+        }
+        for (var len2 = 3; len2 <= Math.min(10, token.length - 2); len2++) {
+            var suffix = token.substring(token.length - len2).toLowerCase();
+            if (funcSet.has(suffix)) {
+                var front = token.substring(0, token.length - len2);
+                if (front.length >= 2 && (deInDict(front, dict) || deInDict(front.toLowerCase(), dict))) {
+                    return front + ' ' + suffix;
+                }
+            }
+        }
+        return token;
+    });
+}
+
 function spellCheckGermanText(text) {
     if (!text) return text;
     var dict = getDeDict();
 
     var lines = text.split('\n');
     var result = lines.map(function (line) {
-        if (isChineseLine(line)) return line; // Don't spell-check Chinese translations
+        if (isChineseLine(line)) return line;
 
-        // Tokenize German words (incl. umlauts / ß, apostrophes, hyphens).
+        // Step 1: Pre-split at lowercase→Uppercase boundaries (classic PDF artifact)
+        line = line.replace(/([a-zäöüß])([A-ZÄÖÜ])/g, '$1 $2');
+
+        // Step 2: Pre-split merged function words
+        line = preSplitMergedFunctionWords(line, dict);
+
+        // Step 3: Dictionary-based spell check on each remaining token
         return line.replace(/[A-Za-zÄÖÜäöüß][A-Za-zÄÖÜäöüß'\-]*/g, function (word) {
             return spellCheckGermanWord(word, dict);
         });
@@ -5021,15 +5398,20 @@ function scoreGermanSplit(parts) {
         } else {
             score += 8;                        // other lower-case content word
         }
-        // Mild length reward (prefers balanced, non-trivial parts) — capped.
         score += Math.min(p.length, 8);
     }
 
-    // No function word anywhere -> too risky (likely a compound). Reject.
-    if (!hasFunc) return -1000;
+    // All parts capitalized nouns -> likely a compound. Reject only if 2 parts.
+    if (nounCount === parts.length && parts.length === 2) {
+        // Could be a compound (e.g. "AutoBus") — but also could be missing space.
+        // Accept with low score only if both parts are long enough (>=4 chars).
+        if (parts[0].length >= 4 && parts[1].length >= 4) return 5;
+        return -1000;
+    }
 
-    // All parts capitalized nouns -> compound word (e.g. "AutoBus"). Reject.
-    if (nounCount === parts.length) return -1000;
+    // No function word but both parts are valid known words — accept with
+    // moderate score (the pre-splitter already handled function words).
+    if (!hasFunc) return 10;
 
     // Strong "missing space" signal: a lowercase function word directly
     // followed by a capitalised word (e.g. "die"+"Miete", "und"+"Der").
@@ -5777,6 +6159,34 @@ function renderCorpusLine(line, lineNum, pageNum, showNum, pageIdx, lineIdx) {
                 ws.dataset.word = tok.value;
                 ws.dataset.line = lineNum;
                 ws.dataset.page = pageNum;
+                // German: make word clickable for dictionary lookup
+                if (State.lang === 'de' && !State.editMode) {
+                    ws.style.cursor = 'pointer';
+                    ws.style.borderBottom = '1px dashed transparent';
+                    ws.style.transition = 'border-color 0.15s, background 0.15s';
+                    ws.addEventListener('mouseenter', function() {
+                        this.style.borderBottomColor = 'var(--lc-color-primary)';
+                        this.style.background = 'var(--lc-color-primary-soft)';
+                    });
+                    ws.addEventListener('mouseleave', function() {
+                        this.style.borderBottomColor = 'transparent';
+                        this.style.background = '';
+                    });
+                    ws.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        var rect = this.getBoundingClientRect();
+                        showDictPopup(this.dataset.word, rect.left, rect.bottom + 4);
+                        lookupGermanWord(this.dataset.word).then(function(result) {
+                            if (result) {
+                                showDictPopupResult(result.word || tok.value, result, rect.left, rect.bottom + 4);
+                            } else {
+                                showDictPopupResult(tok.value, { translation: '未找到释义，可尝试手动查找', source: 'none' }, rect.left, rect.bottom + 4);
+                            }
+                        }).catch(function() {
+                            showDictPopupResult(tok.value, { translation: '查词失败', source: 'error' }, rect.left, rect.bottom + 4);
+                        });
+                    });
+                }
                 textSpan2.appendChild(ws);
             }
         });
@@ -7904,7 +8314,217 @@ var DE_ZH_DICT = {
     'der ast': '树枝',
     'die frucht': '果实',
     'der sam': '种子',
-    'der samen': '种子'
+    'der samen': '种子',
+    // ---- expanded entries ----
+    'arbeiten': '工作',
+    'der arbeit': '工作',
+    'die arbeit': '工作',
+    'arbeitsplatz': '工作岗位',
+    'wohnung': '住所',
+    'wohnen': '居住',
+    'miete': '租金',
+    'mieten': '租',
+    'haus': '房子',
+    'häuser': '房子(复数)',
+    'familie': '家庭',
+    'familien': '家庭(复数)',
+    'eltern': '父母',
+    'mutter': '母亲',
+    'vater': '父亲',
+    'kind': '孩子',
+    'kinder': '孩子们',
+    'kindheit': '童年',
+    'jugend': '青年',
+    'freund': '朋友',
+    'freundin': '女性朋友',
+    'freunde': '朋友们',
+    'freundschaft': '友谊',
+    'schule': '学校',
+    'schüler': '学生',
+    'schülerin': '女学生',
+    'student': '大学生',
+    'studenten': '大学生(复数)',
+    'studentin': '女大学生',
+    'studium': '大学学习',
+    'studieren': '上大学',
+    'universität': '大学',
+    'hochschule': '高等院校',
+    'lehrer': '教师',
+    'lehrerin': '女教师',
+    'lernen': '学习',
+    'lernt': '学习(三单)',
+    'gelernt': '学过',
+    'prüfung': '考试',
+    'klausur': '闭卷考试',
+    'note': '成绩',
+    'noten': '成绩(复数)',
+    'test': '测试',
+    'semester': '学期',
+    'vorlesung': '讲座课',
+    'seminar': '研讨课',
+    'praktikum': '实习',
+    'übung': '练习',
+    'hausaufgabe': '家庭作业',
+    'aufgabe': '任务',
+    'aufgaben': '任务(复数)',
+    'sprache': '语言',
+    'sprachen': '语言(复数)',
+    'sprechen': '说',
+    'deutsch': '德语',
+    'deutschland': '德国',
+    'englisch': '英语',
+    'fremdsprache': '外语',
+    'wortschatz': '词汇量',
+    'grammatik': '语法',
+    'wörterbuch': '字典',
+    'wort': '单词',
+    'wörter': '单词(复数)',
+    'satz': '句子',
+    'sätze': '句子(复数)',
+    'text': '文本',
+    'lesen': '阅读',
+    'schreiben': '写',
+    'hören': '听',
+    'übersetzung': '翻译',
+    'kommunikation': '交流',
+    'information': '信息',
+    'technologie': '技术',
+    'technik': '技术',
+    'computer': '电脑',
+    'internet': '互联网',
+    'programm': '程序',
+    'software': '软件',
+    'wirtschaft': '经济',
+    'markt': '市场',
+    'bank': '银行',
+    'geld': '钱',
+    'preis': '价格',
+    'kosten': '花费',
+    'bezahlen': '支付',
+    'gehalt': '薪水',
+    'einkommen': '收入',
+    'verdienen': '赚取',
+    'firma': '公司',
+    'unternehmen': '企业',
+    'produkt': '产品',
+    'kunde': '客户',
+    'qualität': '质量',
+    'erfolg': '成功',
+    'gewinnen': '赢得',
+    'verlieren': '失去',
+    'politik': '政治',
+    'partei': '政党',
+    'regierung': '政府',
+    'gesetz': '法律',
+    'recht': '权利',
+    'gesellschaft': '社会',
+    'kultur': '文化',
+    'kunst': '艺术',
+    'musik': '音乐',
+    'literatur': '文学',
+    'geschichte': '历史',
+    'religion': '宗教',
+    'glaube': '信仰',
+    'umwelt': '环境',
+    'natur': '自然',
+    'klima': '气候',
+    'energie': '能源',
+    'gesundheit': '健康',
+    'krankheit': '疾病',
+    'arzt': '医生',
+    'ärzte': '医生(复数)',
+    'krankenhaus': '医院',
+    'medizin': '医学',
+    'medikament': '药物',
+    'patient': '病人',
+    'essen': '吃/食物',
+    'trinken': '喝',
+    'wasser': '水',
+    'kaffee': '咖啡',
+    'brot': '面包',
+    'fleisch': '肉',
+    'fisch': '鱼',
+    'gemüse': '蔬菜',
+    'obst': '水果',
+    'reisen': '旅行',
+    'reise': '旅行',
+    'urlaub': '假期',
+    'stadt': '城市',
+    'land': '乡村/国家',
+    'straße': '街道',
+    'wetter': '天气',
+    'sonne': '太阳',
+    'regen': '雨',
+    'wind': '风',
+    'schnee': '雪',
+    'auto': '汽车',
+    'fahren': '驾驶',
+    'zeit': '时间',
+    'minute': '分钟',
+    'stunde': '小时',
+    'tag': '天',
+    'woche': '周',
+    'monat': '月',
+    'jahr': '年',
+    'heute': '今天',
+    'morgen': '明天',
+    'gestern': '昨天',
+    'frühling': '春天',
+    'sommer': '夏天',
+    'herbst': '秋天',
+    'winter': '冬天',
+    'farbe': '颜色',
+    'rot': '红色',
+    'blau': '蓝色',
+    'grün': '绿色',
+    'gelb': '黄色',
+    'schwarz': '黑色',
+    'weiß': '白色',
+    'groß': '大的',
+    'klein': '小的',
+    'gut': '好的',
+    'schlecht': '坏的',
+    'neu': '新的',
+    'alt': '旧的',
+    'schön': '美丽的',
+    'hässlich': '丑陋的',
+    'schnell': '快的',
+    'langsam': '慢的',
+    'einfach': '简单的',
+    'schwer': '困难的/重的',
+    'leicht': '轻的/容易的',
+    'wichtig': '重要的',
+    'interessant': '有趣的',
+    'möglich': '可能的',
+    'vielleicht': '也许',
+    'natürlich': '当然',
+    'sicher': '确定的/安全的',
+    'richtig': '正确的',
+    'falsch': '错误的',
+    'viel': '多的',
+    'wenig': '少的',
+    'alle': '所有',
+    'manche': '一些',
+    'andere': '其他的',
+    'gleiche': '相同的',
+    'verschiedene': '不同的',
+    'eigene': '自己的',
+    'diese': '这个',
+    'jene': '那个',
+    'jede': '每个',
+    'welche': '哪个',
+    'keine': '没有',
+    'nichts': '什么都没有',
+    'etwas': '一些东西',
+    'jemand': '某人',
+    'niemand': '没有人',
+    'alles': '一切',
+    'viel': '多',
+    'mehr': '更多',
+    'am meisten': '最多',
+    'genug': '足够',
+    'zu viel': '太多',
+    'zu wenig': '太少'
 };
 
 /* ===========================================================================
@@ -8347,9 +8967,19 @@ function showDictPopupResult(word, result, x, y) {
     popup.className = 'lc-dict-popup';
     popup.style.left = Math.min(x, window.innerWidth - 380) + 'px';
     popup.style.top = (y + 8) + 'px';
+    var extLinks = '';
+    if (State.lang === 'de') {
+        extLinks = '<div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--lc-color-border);display:flex;gap:8px;flex-wrap:wrap;">' +
+            '<a href="https://www.godic.net/dicts/de/' + encodeURIComponent(word) + '" target="_blank" style="font-size:12px;color:var(--lc-color-primary);text-decoration:none;">德语助手</a>' +
+            '<a href="https://dict.talkmate.com/de/' + encodeURIComponent(word) + '" target="_blank" style="font-size:12px;color:var(--lc-color-primary);text-decoration:none;">Talkmate</a>' +
+            '<a href="https://de.wiktionary.org/wiki/' + encodeURIComponent(word) + '" target="_blank" style="font-size:12px;color:var(--lc-color-primary);text-decoration:none;">Wiktionary</a>' +
+            '<a href="https://www.linguee.com/german-english/translation/' + encodeURIComponent(word.toLowerCase()) + '.html" target="_blank" style="font-size:12px;color:var(--lc-color-primary);text-decoration:none;">Linguee</a>' +
+            '</div>';
+    }
     popup.innerHTML = '<div class="lc-dict-popup-header"><span class="lc-dict-popup-word">' + escapeHtml(word) + '</span><button class="lc-dict-popup-close" onclick="this.parentElement.parentElement.remove()">×</button></div>' +
         '<div class="lc-dict-popup-translation">' + escapeHtml(result.translation || '未找到') + '</div>' +
-        '<div class="lc-dict-popup-source">来源: ' + (result.source || 'builtin') + '</div>';
+        '<div class="lc-dict-popup-source">来源: ' + (result.source || 'builtin') + '</div>' +
+        extLinks;
     document.body.appendChild(popup);
     setTimeout(function() {
         document.addEventListener('click', function closePopup(e) {
@@ -9153,6 +9783,8 @@ function renderTestDaFTasks() {
             State.oral.testdafTask = parseInt(btn.dataset.task);
             State.oral.started = false;
             State.oral.messages = [];
+            // Clear any running timer
+            if (testdafTimerInterval) { clearInterval(testdafTimerInterval); testdafTimerInterval = null; }
             renderOralParts();
             renderConversation();
         });
@@ -9548,6 +10180,8 @@ function init() {
     document.getElementById('btn-start-oral').addEventListener('click', startOralPractice);
     document.getElementById('btn-next-question').addEventListener('click', nextQuestion);
     document.getElementById('btn-send').addEventListener('click', sendUserResponse);
+    document.getElementById('btn-start-prep')?.addEventListener('click', function() { startTestDaFTimer('prep'); });
+    document.getElementById('btn-start-speak')?.addEventListener('click', function() { startTestDaFTimer('speak'); });
     document.getElementById('conv-input').addEventListener('keydown', function(e) { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendUserResponse(); } });
     document.getElementById('btn-go-vocab').addEventListener('click', function() { switchView('vocabulary'); });
 
