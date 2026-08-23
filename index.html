@@ -3826,6 +3826,7 @@ function importBackup(file) {
     reader.onload = function(e) {
         try {
             var data = JSON.parse(e.target.result);
+            // Apply all data fields
             if (data.corpus) State.corpus = data.corpus;
             if (data.documents) State.documents = data.documents;
             if (data.hiddenItems) State.hiddenItems = data.hiddenItems;
@@ -3837,10 +3838,37 @@ function importBackup(file) {
                 if (data.oral.part) State.oral.part = data.oral.part;
                 if (data.oral.aiConfig) State.oral.aiConfig = data.oral.aiConfig;
             }
+            if (typeof data.translationCollapsed === 'boolean') State.translationCollapsed = data.translationCollapsed;
+            if (data.learning) { State.learning = Object.assign({ checkinDates: [], streak: 0, lastCheckin: null, dailyReminder: false, reminderTime: '20:00', reviewReminder: false, totalDays: 0 }, data.learning); }
+            // Ensure corpus references a valid document in the imported documents list
+            if (State.corpus && State.documents && State.documents.length > 0) {
+                var docExists = State.documents.some(function(d) { return d.id === State.corpus.docId; });
+                if (!docExists) {
+                    // Corpus points to a doc not in the list — clear it to avoid errors
+                    State.corpus = null;
+                }
+            } else if (State.corpus && (!State.documents || State.documents.length === 0)) {
+                // No documents at all — clear corpus
+                State.corpus = null;
+            }
+            // Save to localStorage
             saveUserData();
-            renderWorkbench(); renderAnswerRail(); updateHiddenCount(); renderVocabulary();
-            showToast('备份导入成功', 'success');
-        } catch(err) { showToast('备份文件格式错误', 'error'); }
+            // Full re-render (same as applyUserData)
+            switchView('workbench');
+            renderWorkbench();
+            renderAnswerRail();
+            updateHiddenCount();
+            updateTranslationToggleUI();
+            renderVocabulary();
+            renderTopicFolders();
+            populateTopicSelect();
+            renderTopicList();
+            // Show summary
+            var docCount = (data.documents || []).length;
+            var hideCount = (data.hiddenItems || []).length;
+            var vocabCount = (data.vocabulary && data.vocabulary.words) ? data.vocabulary.words.length : 0;
+            showToast('导入成功：' + docCount + ' 篇文档，' + hideCount + ' 个挖空，' + vocabCount + ' 个生词', 'success');
+        } catch(err) { showToast('备份文件格式错误: ' + (err.message || ''), 'error'); }
     };
     reader.readAsText(file);
 }
