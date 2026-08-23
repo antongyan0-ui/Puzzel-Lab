@@ -977,6 +977,95 @@ body { font-family: var(--lc-font-sans); background: var(--lc-color-bg); color: 
       </div>
       <button class="lc-btn lc-btn-primary" id="btn-auth-submit" style="width:100%;justify-content:center;">登录</button>
       <p class="lc-auth-hint">本地优先存储，云端同步支持跨设备登录 · <a href="javascript:void(0)" id="btn-view-auth-log" style="color:var(--lc-color-primary);text-decoration:underline;font-size:12px;">查看认证日志</a></p>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px;padding-top:8px;border-top:1px solid var(--lc-color-border);">
+        <a href="javascript:void(0)" id="btn-forgot-password" style="color:var(--lc-color-primary);text-decoration:underline;font-size:13px;">找回密码</a>
+        <a href="javascript:void(0)" id="btn-migrate-data" style="color:var(--lc-color-primary);text-decoration:underline;font-size:13px;">从旧站迁移数据</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== Forgot Password Modal ===== -->
+<div class="lc-modal-overlay" id="forgot-password-modal">
+  <div class="lc-modal" style="max-width:440px;">
+    <div class="lc-modal-header">
+      <h3>找回密码</h3>
+      <button class="lc-modal-close" onclick="document.getElementById('forgot-password-modal').classList.remove('show')">&times;</button>
+    </div>
+    <div class="lc-modal-body" id="forgot-password-body">
+      <div id="forgot-step-1">
+        <p style="font-size:13px;color:var(--lc-color-text-secondary);margin-bottom:12px;line-height:1.6;">请输入你的用户名。如果该用户名在本地或云端存在，你将可以重置密码。</p>
+        <input type="text" id="forgot-username" placeholder="用户名" class="lc-input" style="width:100%;margin-bottom:12px;" autocomplete="username">
+        <button class="lc-btn lc-btn-primary" id="btn-forgot-check" style="width:100%;justify-content:center;">查找账号</button>
+      </div>
+      <div id="forgot-step-2" style="display:none;">
+        <div id="forgot-account-info" style="margin-bottom:12px;padding:12px;border-radius:8px;background:var(--lc-color-surface);font-size:13px;line-height:1.6;"></div>
+        <div style="position:relative;margin-bottom:12px;">
+          <input type="password" id="forgot-new-password" placeholder="新密码（至少 4 位）" class="lc-input" style="width:100%;padding-right:40px;" autocomplete="new-password">
+          <button type="button" id="btn-toggle-forgot-pwd" class="lc-pwd-toggle" tabindex="-1" title="显示/隐藏密码"><i data-lucide="eye" style="width:18px;height:18px;"></i></button>
+        </div>
+        <div style="position:relative;margin-bottom:12px;">
+          <input type="password" id="forgot-new-password-confirm" placeholder="确认新密码" class="lc-input" style="width:100%;padding-right:40px;" autocomplete="new-password">
+          <button type="button" id="btn-toggle-forgot-pwd2" class="lc-pwd-toggle" tabindex="-1" title="显示/隐藏密码"><i data-lucide="eye" style="width:18px;height:18px;"></i></button>
+        </div>
+        <button class="lc-btn lc-btn-primary" id="btn-forgot-reset" style="width:100%;justify-content:center;">重置密码</button>
+      </div>
+      <div id="forgot-step-3" style="display:none;">
+        <div style="text-align:center;padding:20px 0;">
+          <i data-lucide="check-circle" style="width:48px;height:48px;color:var(--lc-state-success);margin-bottom:12px;"></i>
+          <p style="font-size:15px;font-weight:600;color:var(--lc-state-success);margin-bottom:8px;">密码重置成功！</p>
+          <p style="font-size:13px;color:var(--lc-color-text-secondary);">请使用新密码登录。</p>
+        </div>
+        <button class="lc-btn lc-btn-primary" id="btn-forgot-done" style="width:100%;justify-content:center;">去登录</button>
+      </div>
+      <div id="forgot-step-migrate" style="display:none;">
+        <div style="text-align:center;padding:16px 0;">
+          <i data-lucide="alert-triangle" style="width:40px;height:40px;color:var(--lc-state-warning);margin-bottom:12px;"></i>
+          <p style="font-size:14px;font-weight:600;margin-bottom:8px;">该用户名在当前站点不存在</p>
+          <p style="font-size:13px;color:var(--lc-color-text-secondary);margin-bottom:12px;line-height:1.6;">你的账号数据存储在旧域名 (surge.sh) 的浏览器中，需要先迁移到当前站点。</p>
+          <p style="font-size:13px;color:var(--lc-color-text-secondary);margin-bottom:12px;line-height:1.6;">有两种方式恢复：<br><b>方式一：</b>从旧站导出备份文件，再导入到当前站点<br><b>方式二：</b>直接在此用户名上注册新账号，然后导入旧数据</p>
+        </div>
+        <button class="lc-btn lc-btn-primary" id="btn-migrate-guide" style="width:100%;justify-content:center;margin-bottom:8px;">查看迁移教程</button>
+        <button class="lc-btn" id="btn-forgot-re-register" style="width:100%;justify-content:center;">用此用户名重新注册</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== Data Migration Guide Modal ===== -->
+<div class="lc-modal-overlay" id="migrate-guide-modal">
+  <div class="lc-modal" style="max-width:560px;">
+    <div class="lc-modal-header">
+      <h3>数据迁移教程</h3>
+      <button class="lc-modal-close" onclick="document.getElementById('migrate-guide-modal').classList.remove('show')">&times;</button>
+    </div>
+    <div class="lc-modal-body" style="font-size:14px;line-height:1.8;">
+      <div style="padding:12px;border-radius:8px;background:var(--lc-state-warning-bg);color:var(--lc-state-warning);font-size:13px;margin-bottom:16px;line-height:1.6;">
+        你的做题记录存储在浏览器的本地存储中，与域名绑定。换域名后数据不会自动迁移，需要手动操作。
+      </div>
+      <h4 style="font-size:14px;font-weight:700;margin-bottom:8px;">第一步：从旧站导出数据</h4>
+      <ol style="margin:0 0 16px 16px;padding:0;color:var(--lc-color-text-secondary);font-size:13px;line-height:2;">
+        <li>打开旧站：<a href="https://listen-cloze-edit.surge.sh/" target="_blank" style="color:var(--lc-color-primary);text-decoration:underline;">https://listen-cloze-edit.surge.sh/</a></li>
+        <li>登录你原来的账号</li>
+        <li>点击右上角用户菜单 →「导出备份」</li>
+        <li>保存下载的 JSON 文件到电脑</li>
+      </ol>
+      <h4 style="font-size:14px;font-weight:700;margin-bottom:8px;">第二步：在新站导入数据</h4>
+      <ol style="margin:0 0 16px 16px;padding:0;color:var(--lc-color-text-secondary);font-size:13px;line-height:2;">
+        <li>在当前站点注册或登录（可以使用原用户名）</li>
+        <li>点击右上角用户菜单 →「导入备份」</li>
+        <li>选择刚才下载的 JSON 文件</li>
+        <li>所有挖空记录、文档、词汇将恢复</li>
+      </ol>
+      <h4 style="font-size:14px;font-weight:700;margin-bottom:8px;">第三步：开启云端同步（防止再次丢失）</h4>
+      <ol style="margin:0 0 16px 16px;padding:0;color:var(--lc-color-text-secondary);font-size:13px;line-height:2;">
+        <li>点击用户菜单 →「云端同步设置」</li>
+        <li>输入 JSONBin API Key（免费注册：jsonbin.io）</li>
+        <li>设置后数据自动云端备份，换域名/设备不再丢失</li>
+      </ol>
+      <div style="padding:12px;border-radius:8px;background:var(--lc-color-primary-soft);font-size:13px;line-height:1.6;color:var(--lc-color-text);">
+        <b>提示：</b>如果旧站也无法登录（忘记了密码），可以在旧站使用「找回密码」功能重置后再导出。旧站地址：<a href="https://listen-cloze-edit.surge.sh/" target="_blank" style="color:var(--lc-color-primary);text-decoration:underline;">点击前往</a>
+      </div>
     </div>
   </div>
 </div>
@@ -3126,6 +3215,141 @@ function syncCloudInBackground(username, hash) {
             }
         }
     }).catch(function(e) { });
+}
+
+// ===== Forgot Password / Reset Password =====
+var _forgotUsername = null;
+
+async function checkForgotAccount() {
+    var username = document.getElementById('forgot-username').value.trim();
+    if (!username || username.length < 2) { showToast('请输入用户名', 'error'); return; }
+
+    var btn = document.getElementById('btn-forgot-check');
+    btn.disabled = true; btn.textContent = '查找中...';
+
+    try {
+        var localUsers = getUsers();
+        var foundLocal = !!localUsers[username];
+        var foundCloud = false;
+
+        // Check cloud if configured
+        if (hasCloudSync()) {
+            try {
+                var registry = await getCloudRegistry();
+                if (registry.users[username]) foundCloud = true;
+            } catch(e) {}
+        }
+
+        if (foundLocal) {
+            _forgotUsername = username;
+            showForgotStep2(username, true, false);
+        } else if (foundCloud) {
+            _forgotUsername = username;
+            showForgotStep2(username, false, true);
+        } else {
+            // Not found — show migration guide
+            _forgotUsername = username;
+            showForgotMigrateStep(username);
+        }
+    } catch(e) {
+        showToast('查找失败: ' + (e.message || ''), 'error');
+    } finally {
+        btn.disabled = false; btn.textContent = '查找账号';
+    }
+}
+
+function showForgotStep2(username, local, cloud) {
+    document.getElementById('forgot-step-1').style.display = 'none';
+    document.getElementById('forgot-step-migrate').style.display = 'none';
+    document.getElementById('forgot-step-3').style.display = 'none';
+    document.getElementById('forgot-step-2').style.display = 'block';
+
+    var info = document.getElementById('forgot-account-info');
+    var sources = [];
+    if (local) sources.push('本地');
+    if (cloud) sources.push('云端');
+    info.innerHTML = '用户名：<b>' + escapeHtml(username) + '</b><br>数据来源：' + sources.join(' + ') + '<br>请设置新密码：';
+}
+
+function showForgotMigrateStep(username) {
+    document.getElementById('forgot-step-1').style.display = 'none';
+    document.getElementById('forgot-step-2').style.display = 'none';
+    document.getElementById('forgot-step-3').style.display = 'none';
+    document.getElementById('forgot-step-migrate').style.display = 'block';
+
+    // Pre-fill register form with this username
+    _forgotUsername = username;
+}
+
+async function resetPassword() {
+    var newPwd = document.getElementById('forgot-new-password').value;
+    var confirmPwd = document.getElementById('forgot-new-password-confirm').value;
+
+    if (!newPwd || newPwd.length < 4) { showToast('密码至少 4 位', 'error'); return; }
+    if (newPwd !== confirmPwd) { showToast('两次密码不一致', 'error'); return; }
+
+    var btn = document.getElementById('btn-forgot-reset');
+    btn.disabled = true; btn.textContent = '重置中...';
+
+    try {
+        var hash = await hashPassword(newPwd);
+        var localUsers = getUsers();
+
+        // Update local password
+        if (localUsers[_forgotUsername]) {
+            localUsers[_forgotUsername].passwordHash = hash;
+            saveUsers(localUsers);
+        } else {
+            // Create local entry (if was cloud-only)
+            localUsers[_forgotUsername] = { passwordHash: hash, cloudBlobId: '', createdAt: Date.now() };
+            saveUsers(localUsers);
+        }
+
+        // Update cloud if configured
+        if (hasCloudSync()) {
+            try {
+                var registry = await getCloudRegistry();
+                if (registry.users[_forgotUsername]) {
+                    var blobId = registry.users[_forgotUsername].blobId;
+                    var userBlob = await cloudGet(blobId);
+                    userBlob.passwordHash = hash;
+                    await cloudUpdate(blobId, userBlob);
+                    localUsers[_forgotUsername].cloudBlobId = blobId;
+                    saveUsers(localUsers);
+                }
+            } catch(e) {
+                console.error('Cloud password update failed:', e);
+            }
+        }
+
+        logAuthEvent('password_reset', { username: _forgotUsername });
+
+        // Show success
+        document.getElementById('forgot-step-2').style.display = 'none';
+        document.getElementById('forgot-step-3').style.display = 'block';
+        refreshIcons();
+    } catch(e) {
+        showToast('重置失败: ' + (e.message || ''), 'error');
+    } finally {
+        btn.disabled = false; btn.textContent = '重置密码';
+    }
+}
+
+function forgotReRegister() {
+    // Close forgot modal, open auth modal in register mode with username pre-filled
+    document.getElementById('forgot-password-modal').classList.remove('show');
+    openAuthModal();
+    _authMode = 'register';
+    document.querySelectorAll('.lc-auth-tab').forEach(function(t) {
+        t.classList.toggle('active', t.dataset.mode === 'register');
+    });
+    document.getElementById('btn-auth-submit').textContent = '注册';
+    var confirmWrap = document.getElementById('confirm-password-wrap');
+    if (confirmWrap) confirmWrap.style.display = 'block';
+    var pwdInput = document.getElementById('auth-password');
+    if (pwdInput) pwdInput.setAttribute('autocomplete', 'new-password');
+    document.getElementById('auth-username').value = _forgotUsername || '';
+    document.getElementById('auth-password').focus();
 }
 
 function syncUserToCloud(username, hash, data) {
@@ -10256,12 +10480,41 @@ function init() {
     }
     bindPwdToggle('btn-toggle-pwd', 'auth-password');
     bindPwdToggle('btn-toggle-pwd2', 'auth-password-confirm');
+    bindPwdToggle('btn-toggle-forgot-pwd', 'forgot-new-password');
+    bindPwdToggle('btn-toggle-forgot-pwd2', 'forgot-new-password-confirm');
 
     // Auth log
     var authLogLink = document.getElementById('btn-view-auth-log');
     if (authLogLink) authLogLink.addEventListener('click', function(e) { e.preventDefault(); showAuthLog(); });
     var clearLogBtn = document.getElementById('btn-clear-auth-log');
     if (clearLogBtn) clearLogBtn.addEventListener('click', clearAuthLog);
+
+    // Forgot password
+    document.getElementById('btn-forgot-password')?.addEventListener('click', function() {
+        document.getElementById('auth-modal').classList.remove('show');
+        document.getElementById('forgot-step-1').style.display = 'block';
+        document.getElementById('forgot-step-2').style.display = 'none';
+        document.getElementById('forgot-step-3').style.display = 'none';
+        document.getElementById('forgot-step-migrate').style.display = 'none';
+        document.getElementById('forgot-username').value = '';
+        document.getElementById('forgot-password-modal').classList.add('show');
+        document.getElementById('forgot-username').focus();
+    });
+    document.getElementById('btn-forgot-check')?.addEventListener('click', checkForgotAccount);
+    document.getElementById('btn-forgot-reset')?.addEventListener('click', resetPassword);
+    document.getElementById('btn-forgot-done')?.addEventListener('click', function() {
+        document.getElementById('forgot-password-modal').classList.remove('show');
+        openAuthModal();
+    });
+    document.getElementById('btn-forgot-re-register')?.addEventListener('click', forgotReRegister);
+    document.getElementById('btn-migrate-guide')?.addEventListener('click', function() {
+        document.getElementById('forgot-password-modal').classList.remove('show');
+        document.getElementById('migrate-guide-modal').classList.add('show');
+    });
+    // Migrate data link
+    document.getElementById('btn-migrate-data')?.addEventListener('click', function() {
+        document.getElementById('migrate-guide-modal').classList.add('show');
+    });
     document.getElementById('btn-my-learning').addEventListener('click', function() { switchView('learning'); document.getElementById('user-dropdown').classList.remove('show'); });
     document.getElementById('btn-export-backup').addEventListener('click', function() { exportBackup(); document.getElementById('user-dropdown').classList.remove('show'); });
     document.getElementById('btn-import-backup').addEventListener('click', function() { document.getElementById('backup-import-input').click(); document.getElementById('user-dropdown').classList.remove('show'); });
