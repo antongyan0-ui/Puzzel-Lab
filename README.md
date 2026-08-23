@@ -1,37 +1,9919 @@
-name: Deploy to GitHub Pages
+[index.html](https://github.com/user-attachments/files/31344613/index.html)
 
-on:
-  push:
-    branches: [main, master]
-  workflow_dispatch:
+<!DOCTYPE html>
+<html lang="zh-CN" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>听空 ListenCloze · 多语种版</title>
+    <style>
+.lc-testdaf-bar { background: var(--lc-color-surface-2); border: 1px solid var(--lc-color-border); border-radius: var(--lc-radius-lg); padding: 12px 16px; margin-bottom: 12px; }
+.lc-testdaf-selector { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.lc-testdaf-task-btn { padding: 4px 10px; border: 1px solid var(--lc-color-border); border-radius: var(--lc-radius-full); background: var(--lc-color-surface); cursor: pointer; font-size: 12px; color: var(--lc-color-text-secondary); transition: all 0.15s; font-family: inherit; }
+.lc-testdaf-task-btn:hover { border-color: var(--lc-color-border-strong); background: var(--lc-color-primary-soft); color: var(--lc-color-primary); }
+.lc-testdaf-task-btn.active { background: var(--lc-color-primary); color: var(--lc-color-text-inverse); border-color: var(--lc-color-primary); font-weight: 600; }
+.lc-testdaf-info { background: var(--lc-color-primary-soft); border-radius: var(--lc-radius-md); padding: 12px; margin: 8px 0; font-size: 13px; line-height: 1.6; color: var(--lc-color-text); }
+.lc-testdaf-timer { display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; border-radius: var(--lc-radius-full); background: var(--lc-state-warning-bg); color: var(--lc-state-warning); font-size: 12px; font-weight: 600; }
+.lc-dict-popup { position: fixed; z-index: 10000; background: var(--lc-color-surface); border: 1px solid var(--lc-color-border); border-radius: var(--lc-radius-md); box-shadow: var(--lc-shadow-float); padding: 16px; min-width: 240px; max-width: 360px; font-size: 14px; }
+.lc-dict-popup-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; padding-bottom: 8px; border-bottom: 1px solid var(--lc-color-border); }
+.lc-dict-popup-word { font-weight: 700; font-size: 16px; color: var(--lc-color-primary); }
+.lc-dict-popup-translation { color: var(--lc-color-text); line-height: 1.5; margin: 8px 0; }
+.lc-dict-popup-close { background: none; border: none; cursor: pointer; color: var(--lc-color-text-tertiary); font-size: 20px; padding: 0 4px; }
+.lc-dict-popup-source { font-size: 11px; color: var(--lc-color-text-tertiary); margin-top: 8px; }
+.lc-dict-popup-loading { display: flex; align-items: center; gap: 8px; color: var(--lc-color-text-secondary); }
+.lc-vocab-dict-btn { display: inline-flex; align-items: center; gap: 3px; padding: 2px 8px; border: 1px solid var(--lc-color-border); border-radius: var(--lc-radius-full); background: var(--lc-color-surface-2); cursor: pointer; font-size: 11px; color: var(--lc-color-text-secondary); transition: all 0.15s; font-family: inherit; margin-left: 6px; }
+.lc-vocab-dict-btn:hover { border-color: var(--lc-color-border-strong); background: var(--lc-color-primary-soft); color: var(--lc-color-primary); }
+</style><style id="theme-vars">
+:root {
+  --lc-color-primary: #B06A36;
+  --lc-color-primary-hover: #9C5B2C;
+  --lc-color-primary-active: #8A4F26;
+  --lc-color-primary-tint: #EBD9C5;
+  --lc-color-primary-tint-2: #F2E4D3;
+  --lc-color-primary-soft: #F6ECDF;
+  --lc-color-bg: #F5EFE3;
+  --lc-color-surface: #FCF8EF;
+  --lc-color-surface-2: #FFFBF4;
+  --lc-color-surface-sunken: #EFE7D6;
+  --lc-color-text: #4A4135;
+  --lc-color-text-secondary: #837868;
+  --lc-color-text-tertiary: #A89C88;
+  --lc-color-text-disabled: #C2B8A6;
+  --lc-color-text-inverse: #FCF8EF;
+  --lc-color-border: #E4D9C5;
+  --lc-color-border-strong: #D2C4AA;
+  --lc-color-border-focus: #B06A36;
+  --lc-state-success: #6E8A5A; --lc-state-success-bg: #E7EDDA;
+  --lc-state-warning: #BE8A45; --lc-state-warning-bg: #F3E7D5;
+  --lc-state-error: #B05E3C; --lc-state-error-bg: #F1DCD1;
+  --lc-state-info: #6F8390; --lc-state-info-bg: #DCE3E8;
+  --lc-radius-sm: 4px; --lc-radius-md: 8px; --lc-radius-lg: 12px; --lc-radius-full: 9999px;
+  --lc-shadow-sm: 0 1px 2px rgba(74,65,53,0.04);
+  --lc-shadow-md: 0 4px 14px rgba(74,65,53,0.05);
+  --lc-shadow-lg: 0 10px 28px rgba(74,65,53,0.05);
+  --lc-shadow-float: 0 12px 32px rgba(74,65,53,0.14);
+  --lc-font-sans: 'Noto Sans SC', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  --lc-font-serif: 'Noto Serif SC', 'Source Serif 4', Georgia, serif;
+  --lc-font-mono: 'JetBrains Mono', ui-monospace, monospace;
+  --lc-space-1: 4px; --lc-space-2: 8px; --lc-space-3: 12px; --lc-space-4: 16px;
+  --lc-space-5: 20px; --lc-space-6: 24px; --lc-space-8: 32px;
+}
+.dark {
+  --lc-color-primary: #CC9263; --lc-color-primary-hover: #D6A074; --lc-color-primary-tint: #4A3826;
+  --lc-color-bg: #221E18; --lc-color-surface: #2C2720; --lc-color-surface-2: #332D25; --lc-color-surface-sunken: #1E1A14;
+  --lc-color-text: #E4DACB; --lc-color-text-secondary: #B3A896; --lc-color-text-tertiary: #8C8273;
+  --lc-color-border: #3D362C; --lc-color-border-strong: #4E463A;
+  --lc-state-success: #8FAE76; --lc-state-success-bg: #2E3A26; --lc-state-warning: #D6A067; --lc-state-warning-bg: #3A2E1E;
+  --lc-state-error: #CC8060; --lc-state-error-bg: #3A241B; --lc-state-info: #8AA0AE; --lc-state-info-bg: #243038;
+}
+    </style>
+    <script>
+window._lucideQueue = [];
+if (typeof window.lucide === 'undefined') {
+    window.lucide = {
+        createIcons: function() { window._lucideQueue.push(arguments); },
+        _ready: false
+    };
+}
+</script>
+<script>
+    // Load Lucide with CDN fallback
+    (function(){
+        var urls = ['https://unpkg.com/lucide@1.8.0/dist/umd/lucide.min.js', 'https://cdn.jsdelivr.net/npm/lucide@1.8.0/dist/umd/lucide.min.js'];
+        var i = 0;
+        function flushQueue() {
+            if (window.lucide && window.lucide.createIcons && !window.lucide._shim) {
+                try { window.lucide.createIcons(); } catch(e){}
+            }
+        }
+        function tryLoad() {
+            if (i >= urls.length) return;
+            var s = document.createElement('script');
+            s.src = urls[i];
+            s.onload = function() { setTimeout(flushQueue, 0); };
+            s.onerror = function() { i++; tryLoad(); };
+            document.head.appendChild(s);
+        }
+        tryLoad();
+        // If lucide already loaded (unlikely but safe)
+        setTimeout(flushQueue, 500);
+    })();
+    </script>
+</head>
+<body>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: var(--lc-font-sans); background: var(--lc-color-bg); color: var(--lc-color-text); -webkit-font-smoothing: antialiased; }
+.lc-appbar { position: sticky; top: 0; z-index: 100; background: var(--lc-color-surface); border-bottom: 1px solid var(--lc-color-border); }
+.lc-appbar-inner { max-width: 1280px; margin: 0 auto; display: flex; align-items: center; gap: 16px; padding: 0 24px; height: 56px; }
+.lc-brand { display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 16px; color: var(--lc-color-text); white-space: nowrap; }
+.lc-brand i { width: 20px; height: 20px; color: var(--lc-color-primary); }
+.lc-nav { display: flex; gap: 4px; flex: 1; justify-content: center; }
+.lc-nav-item { padding: 6px 16px; border: none; background: transparent; border-radius: 9999px; font-size: 14px; color: var(--lc-color-text-secondary); cursor: pointer; transition: all 0.15s; font-family: inherit; }
+.lc-nav-item:hover { background: var(--lc-color-primary-soft); color: var(--lc-color-primary); }
+.lc-nav-item.active { background: var(--lc-color-primary-soft); color: var(--lc-color-primary); font-weight: 600; }
+.lc-appbar-actions { display: flex; gap: 8px; align-items: center; }
+.lc-lang-switcher { position: relative; flex-shrink: 0; }
+.lc-lang-btn { display: flex; align-items: center; gap: 6px; padding: 5px 10px; border: 1px solid var(--lc-color-border); border-radius: var(--lc-radius-full); background: var(--lc-color-surface-2); cursor: pointer; font-family: inherit; font-size: 13px; color: var(--lc-color-text); transition: all 0.15s; white-space: nowrap; }
+.lc-lang-btn:hover { border-color: var(--lc-color-border-strong); background: var(--lc-color-primary-soft); }
+.lc-lang-flag { font-size: 16px; line-height: 1; }
+.lc-lang-dropdown { position: absolute; top: calc(100% + 4px); left: 0; min-width: 180px; background: var(--lc-color-surface-2); border: 1px solid var(--lc-color-border); border-radius: var(--lc-radius-md); box-shadow: var(--lc-shadow-float); z-index: 200; display: none; overflow: hidden; }
+.lc-lang-dropdown.show { display: block; }
+.lc-lang-option { display: flex; align-items: center; gap: 8px; padding: 10px 14px; cursor: pointer; font-size: 13px; color: var(--lc-color-text); transition: background 0.1s; }
+.lc-lang-option:hover { background: var(--lc-color-primary-soft); }
+.lc-lang-option.active { background: var(--lc-color-primary-tint-2); color: var(--lc-color-primary); font-weight: 600; }
+.lc-lang-exam { margin-left: auto; font-size: 11px; padding: 2px 6px; border-radius: var(--lc-radius-sm); background: var(--lc-color-primary-tint); color: var(--lc-color-primary); }
+.lc-icon-btn { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; border: 1px solid var(--lc-color-border); border-radius: 8px; background: var(--lc-color-surface); cursor: pointer; color: var(--lc-color-text-secondary); transition: all 0.15s; }
+.lc-icon-btn:hover { border-color: var(--lc-color-primary); color: var(--lc-color-primary); }
+.lc-icon-btn i { width: 18px; height: 18px; }
+.lc-main { max-width: 1280px; margin: 0 auto; padding: 24px; min-height: calc(100vh - 56px); }
+.lc-view { display: none; }
+.lc-view.active { display: block; content-visibility: auto; contain-intrinsic-size: auto 500px; }
+.lc-eyebrow { font-size: 12px; color: var(--lc-color-text-tertiary); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 8px; }
+.lc-h1 { font-size: 24px; font-weight: 700; color: var(--lc-color-text); margin-bottom: 8px; }
+.lc-h2 { font-size: 18px; font-weight: 600; color: var(--lc-color-text); }
+.lc-h3 { font-size: 15px; font-weight: 600; color: var(--lc-color-text); }
+.lc-subtitle { font-size: 14px; color: var(--lc-color-text-secondary); line-height: 1.6; margin-bottom: 24px; }
+.lc-card { background: var(--lc-color-surface); border: 1px solid var(--lc-color-border); border-radius: 12px; padding: 20px; }
+.lc-btn { padding: 8px 20px; border: none; border-radius: 8px; font-size: 14px; font-family: inherit; cursor: pointer; transition: all 0.15s; display: inline-flex; align-items: center; gap: 6px; }
+.lc-btn-sm { padding: 6px 14px; font-size: 13px; }
+.lc-btn-primary { background: var(--lc-color-primary); color: var(--lc-color-text-inverse); }
+.lc-btn-primary:hover { background: var(--lc-color-primary-hover); }
+.lc-btn-primary:active { transform: translateY(1px); }
+.lc-btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+.lc-btn-ghost { background: var(--lc-color-surface); color: var(--lc-color-text-secondary); border: 1px solid var(--lc-color-border); }
+.lc-btn-ghost:hover { border-color: var(--lc-color-primary); color: var(--lc-color-primary); }
+.lc-badge { display: inline-flex; align-items: center; padding: 2px 10px; border-radius: 9999px; font-size: 12px; font-weight: 500; }
+.lc-badge-primary { background: var(--lc-color-primary-soft); color: var(--lc-color-primary); }
+.lc-badge-success { background: var(--lc-state-success-bg); color: var(--lc-state-success); }
+.lc-badge-warning { background: var(--lc-state-warning-bg); color: var(--lc-state-warning); }
+.lc-badge-neutral { background: var(--lc-color-surface-sunken); color: var(--lc-color-text-secondary); }
+.lc-input { padding: 8px 14px; border: 1px solid var(--lc-color-border); border-radius: 8px; font-size: 14px; font-family: inherit; background: var(--lc-color-surface); color: var(--lc-color-text); outline: none; transition: border 0.15s; }
+.lc-input:focus { border-color: var(--lc-color-primary); box-shadow: 0 0 0 3px var(--lc-color-primary-soft); }
+.lc-select { padding: 8px 14px; border: 1px solid var(--lc-color-border); border-radius: 8px; font-size: 14px; font-family: inherit; background: var(--lc-color-surface); color: var(--lc-color-text); cursor: pointer; outline: none; }
+.lc-upload-zone { border: 2px dashed var(--lc-color-border-strong); border-radius: 12px; padding: 48px 24px; text-align: center; cursor: pointer; transition: all 0.15s; background: var(--lc-color-surface); }
+.lc-upload-zone:hover { border-color: var(--lc-color-primary); background: var(--lc-color-primary-soft); }
+.lc-upload-zone.dragover { border-color: var(--lc-color-primary); background: var(--lc-color-primary-soft); }
+.lc-upload-zone i { width: 40px; height: 40px; color: var(--lc-color-primary); margin-bottom: 12px; }
+.lc-upload-zone h3 { font-size: 16px; color: var(--lc-color-text); margin-bottom: 4px; }
+.lc-upload-zone p { font-size: 13px; color: var(--lc-color-text-tertiary); }
+.lc-format-chips { display: flex; gap: 8px; justify-content: center; margin-top: 16px; }
+.lc-format-chip { padding: 4px 12px; border-radius: 9999px; font-size: 12px; background: var(--lc-color-surface-sunken); color: var(--lc-color-text-secondary); }
+.lc-topic-folder-card { grid-column: 1 / -1; }
+.lc-topic-folder-list { display: flex; flex-direction: column; gap: 12px; }
+.lc-topic-folder-group { border: 1px solid var(--lc-color-border); border-radius: 12px; overflow: hidden; }
+.lc-topic-folder-header { display: flex; align-items: center; gap: 8px; padding: 10px 14px; cursor: pointer; font-size: 14px; font-weight: 600; user-select: none; }
+.lc-topic-folder-header i { width: 16px; height: 16px; }
+.lc-topic-folder-header .lc-folder-count { margin-left: auto; font-size: 12px; font-weight: 400; color: var(--lc-color-text-tertiary); }
+.lc-topic-folder-header .lc-folder-chevron { transition: transform 0.2s; }
+.lc-topic-folder-group.collapsed .lc-folder-chevron { transform: rotate(-90deg); }
+.lc-topic-folder-body { padding: 0 14px 12px; }
+.lc-topic-folder-group.collapsed .lc-topic-folder-body { display: none; }
+.lc-topic-doc-item { display: flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 8px; cursor: pointer; font-size: 13px; transition: background 0.15s; margin-bottom: 4px; }
+.lc-topic-doc-item:hover { background: var(--lc-color-primary-soft); }
+.lc-topic-doc-item.active { background: var(--lc-color-primary-tint); }
+.lc-topic-doc-item .lc-doc-title { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.lc-topic-doc-item .lc-doc-meta { font-size: 11px; color: var(--lc-color-text-tertiary); }
+.lc-topic-doc-item .lc-doc-delete { opacity: 0; transition: opacity 0.15s; border: none; background: none; cursor: pointer; color: var(--lc-state-error); padding: 2px; }
+.lc-topic-doc-item:hover .lc-doc-delete { opacity: 1; }
+.lc-topic-doc-item .lc-doc-delete i { width: 14px; height: 14px; }
+.lc-topic-tag { display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; border-radius: 6px; font-size: 11px; font-weight: 500; }
+.lc-topic-empty { text-align: center; padding: 20px; color: var(--lc-color-text-tertiary); font-size: 13px; }
+.lc-folder-name-edit { font: inherit; font-weight: 600; border: 1px solid var(--lc-color-border-focus); border-radius: 4px; padding: 2px 6px; background: var(--lc-color-surface); color: inherit; outline: none; width: 140px; }
+.lc-folder-add-btn { display: flex; align-items: center; gap: 6px; padding: 8px 14px; border: 1px dashed var(--lc-color-border-strong); border-radius: 8px; background: transparent; cursor: pointer; font-size: 13px; color: var(--lc-color-text-secondary); font-family: inherit; transition: all 0.15s; margin-top: 8px; }
+.lc-folder-add-btn:hover { border-color: var(--lc-color-primary); color: var(--lc-color-primary); background: var(--lc-color-primary-soft); }
+.lc-folder-add-btn i { width: 14px; height: 14px; }
+.lc-folder-actions { display: flex; gap: 4px; margin-left: 4px; }
+.lc-folder-action-btn { border: none; background: none; cursor: pointer; color: var(--lc-color-text-tertiary); padding: 2px; border-radius: 4px; transition: all 0.15s; display: flex; align-items: center; justify-content: center; }
+.lc-folder-action-btn:hover { color: var(--lc-state-error); background: var(--lc-state-error-bg); }
+.lc-folder-action-btn i { width: 13px; height: 13px; }
+.lc-doc-progress { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; font-family: var(--lc-font-mono); color: var(--lc-color-text-tertiary); }
+.lc-doc-progress-bar { width: 40px; height: 4px; background: var(--lc-color-surface-sunken); border-radius: 2px; overflow: hidden; }
+.lc-doc-progress-fill { height: 100%; background: var(--lc-state-success); border-radius: 2px; transition: width 0.3s; }
+.lc-save-btn { background: var(--lc-state-success); color: white; }
+.lc-save-btn:hover { filter: brightness(1.1); }
+.lc-translation-toggle { display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px; border: 1px solid var(--lc-color-border); border-radius: 9999px; cursor: pointer; font-size: 13px; font-family: inherit; transition: all 0.15s; background: var(--lc-color-surface); color: var(--lc-color-text-secondary); }
+.lc-translation-toggle:hover { border-color: var(--lc-color-primary); }
+.lc-translation-toggle.on { background: var(--lc-color-primary-soft); color: var(--lc-color-primary); border-color: var(--lc-color-primary); }
+.lc-translation-toggle .lc-mini-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--lc-color-border-strong); transition: background 0.2s; }
+.lc-translation-toggle.on .lc-mini-dot { background: var(--lc-color-primary); }
+.lc-paste-area { width: 100%; min-height: 200px; padding: 14px; border: 1px solid var(--lc-color-border); border-radius: 12px; font-size: 14px; font-family: inherit; line-height: 1.8; background: var(--lc-color-surface); color: var(--lc-color-text); resize: vertical; outline: none; transition: border 0.15s; }
+.lc-paste-area:focus { border-color: var(--lc-color-primary); box-shadow: 0 0 0 3px var(--lc-color-primary-soft); }
+.lc-parse-status { display: none; padding: 12px 16px; border-radius: 8px; font-size: 14px; margin-top: 16px; }
+.lc-parse-status.show { display: flex; align-items: center; gap: 8px; }
+.lc-parse-status.success { background: var(--lc-state-success-bg); color: var(--lc-state-success); }
+.lc-parse-status.error { background: var(--lc-state-error-bg); color: var(--lc-state-error); }
+.lc-parse-status.loading { background: var(--lc-state-info-bg); color: var(--lc-state-info); }
+.lc-spin { animation: lc-spin 0.8s linear infinite; }
+@keyframes lc-spin { to { transform: rotate(360deg); } }
+.lc-toolbar { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 16px; }
+.lc-hint-banner { display: flex; align-items: center; gap: 10px; padding: 10px 16px; background: var(--lc-state-info-bg); border-radius: 8px; font-size: 13px; color: var(--lc-state-info); margin-bottom: 16px; }
+.lc-hint-banner i { width: 16px; height: 16px; flex-shrink: 0; }
+.lc-workbench-grid { display: grid; grid-template-columns: 1fr; gap: 24px; }
+@media (min-width: 1024px) { .lc-workbench-grid { grid-template-columns: 62fr 38fr; } }
+.lc-corpus-panel { background: var(--lc-color-surface); border: 1px solid var(--lc-color-border); border-radius: 12px; padding: 24px; max-height: 70vh; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+.lc-corpus-line { display: flex; align-items: baseline; padding: 1px 0; }
+.lc-gutter { flex-shrink: 0; width: 40px; text-align: right; padding-right: 14px; font-family: var(--lc-font-mono); font-size: 12px; color: var(--lc-color-text-tertiary); user-select: none; }
+.lc-corpus-text { flex: 1; font-family: var(--lc-font-serif); font-size: 16px; line-height: 2.1; color: var(--lc-color-text); }
+.lc-word { cursor: pointer; border-radius: 2px; transition: background 0.1s; padding: 0 1px; }
+.lc-word:hover { background: var(--lc-color-primary-tint-2); }
+.lc-word.lc-selecting { background: var(--lc-color-primary-soft) !important; box-shadow: 0 0 0 1px var(--lc-color-primary); border-radius: 2px; }
+.lc-blank { display: inline-block; min-width: 3.5em; border-bottom: 2px solid var(--lc-color-primary); cursor: pointer; transition: border-color 0.15s; vertical-align: baseline; }
+.lc-blank:hover { border-color: var(--lc-color-primary-hover); }
+.lc-phrase-blank { display: inline-block; min-width: 8em; border-bottom: 2px solid var(--lc-color-primary); cursor: pointer; transition: border-color 0.15s; vertical-align: baseline; }
+.lc-phrase-blank:hover { border-color: var(--lc-color-primary-hover); }
+.lc-corpus-line.editing .lc-corpus-text { outline: 1px dashed var(--lc-color-border); outline-offset: 2px; border-radius: 2px; background: var(--lc-color-surface-2); transition: outline 0.15s, background 0.15s; cursor: text; }
+.lc-corpus-line.editing .lc-corpus-text:focus { outline: 2px solid var(--lc-color-primary); background: var(--lc-color-primary-tint-2); }
+.lc-corpus-line.editing .lc-gutter { color: var(--lc-color-primary); font-weight: 600; }
+.lc-corpus-line.editing .lc-translation-text { outline: 1px dashed var(--lc-color-border); outline-offset: 2px; border-radius: 2px; cursor: text; }
+.lc-corpus-line.editing .lc-translation-text:focus { outline: 2px solid var(--lc-color-primary); }
+#btn-edit-mode.active { background: var(--lc-color-primary); color: #fff; border-color: var(--lc-color-primary); }
+.lc-page-sep { text-align: center; padding: 16px 0; color: var(--lc-color-text-tertiary); font-size: 13px; font-family: var(--lc-font-mono); border-top: 1px dashed var(--lc-color-border); border-bottom: 1px dashed var(--lc-color-border); margin: 16px 0; }
+.lc-translation-block { background: var(--lc-color-surface-sunken); border-radius: 8px; margin: 4px 0; overflow: hidden; }
+.lc-translation-header { display: flex; align-items: center; gap: 6px; padding: 6px 12px; cursor: pointer; font-size: 12px; color: var(--lc-color-text-tertiary); user-select: none; }
+.lc-translation-header i { width: 14px; height: 14px; transition: transform 0.2s; }
+.lc-translation-block.collapsed .lc-translation-header i { transform: rotate(-90deg); }
+.lc-translation-content { padding: 4px 0; }
+.lc-translation-block.collapsed .lc-translation-content { display: none; }
+.lc-translation-text { font-family: var(--lc-font-serif); font-size: 14px; line-height: 1.8; color: var(--lc-color-text-secondary); padding: 0 12px; }
+.lc-answer-rail { background: var(--lc-color-surface); border: 1px solid var(--lc-color-border); border-radius: 12px; padding: 20px; max-height: 70vh; overflow-y: auto; }
+.lc-rail-header { display: flex; align-items: center; gap: 8px; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid var(--lc-color-border); }
+.lc-rail-header i { width: 18px; height: 18px; color: var(--lc-color-primary); }
+.lc-rail-section { margin-bottom: 20px; }
+.lc-rail-section-title { display: flex; align-items: center; justify-content: space-between; font-size: 13px; font-weight: 600; color: var(--lc-color-text-secondary); margin-bottom: 10px; }
+.lc-answer-item { display: flex; align-items: center; justify-content: space-between; padding: 6px 12px; border-radius: 6px; margin-bottom: 4px; background: var(--lc-color-surface-sunken); transition: background 0.1s; cursor: pointer; position: relative; }
+.lc-answer-item:hover { background: var(--lc-color-primary-tint-2); }
+.lc-answer-item:hover::after { content: '双击删除'; position: absolute; right: 8px; font-size: 10px; color: var(--lc-color-error,#ef4444); opacity: 0.7; }
+.lc-answer-item.phrase { background: var(--lc-color-primary-soft); }
+.lc-answer-word { font-family: var(--lc-font-serif); font-size: 15px; color: var(--lc-color-text); }
+.lc-answer-phrase-meaning { display: block; font-size: 11px; color: var(--lc-color-text-tertiary); margin-top: 2px; line-height: 1.3; }
+.lc-answer-locator { font-family: var(--lc-font-mono); font-size: 12px; color: var(--lc-color-text-tertiary); }
+.lc-empty-hint { text-align: center; padding: 32px 16px; color: var(--lc-color-text-tertiary); font-size: 13px; }
+.lc-empty-hint i { width: 32px; height: 32px; margin-bottom: 8px; opacity: 0.5; }
+.lc-stats-bar { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 24px; }
+@media (min-width: 768px) { .lc-stats-bar { grid-template-columns: repeat(4, 1fr); } }
+.lc-stat-card { display: flex; align-items: center; gap: 12px; padding: 16px; background: var(--lc-color-surface); border: 1px solid var(--lc-color-border); border-radius: 12px; }
+.lc-stat-card i { width: 24px; height: 24px; flex-shrink: 0; }
+.lc-stat-card .lc-stat-val { font-size: 20px; font-weight: 700; font-family: var(--lc-font-mono); }
+.lc-stat-card .lc-stat-label { font-size: 12px; color: var(--lc-color-text-secondary); }
+.lc-tabs { display: flex; gap: 4px; margin-bottom: 20px; border-bottom: 1px solid var(--lc-color-border); }
+.lc-tab { padding: 10px 20px; border: none; background: transparent; font-size: 15px; color: var(--lc-color-text-secondary); cursor: pointer; position: relative; font-family: inherit; transition: color 0.15s; }
+.lc-tab:hover { color: var(--lc-color-text); }
+.lc-tab.active { color: var(--lc-color-primary); font-weight: 600; }
+.lc-tab.active::after { content: ''; position: absolute; bottom: -1px; left: 0; right: 0; height: 2px; background: var(--lc-color-primary); }
+.lc-tab-count { display: inline-flex; margin-left: 6px; padding: 1px 7px; border-radius: 9999px; font-size: 11px; background: var(--lc-color-surface-sunken); color: var(--lc-color-text-secondary); }
+.lc-tab.active .lc-tab-count { background: var(--lc-color-primary-soft); color: var(--lc-color-primary); }
+.lc-table-wrap { overflow-x: auto; }
+.lc-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+.lc-table th { text-align: left; padding: 10px 12px; font-weight: 600; color: var(--lc-color-text-secondary); border-bottom: 1px solid var(--lc-color-border-strong); font-size: 13px; white-space: nowrap; }
+.lc-table td { padding: 10px 12px; border-bottom: 1px solid var(--lc-color-border); color: var(--lc-color-text); vertical-align: middle; }
+.lc-table tr:hover td { background: var(--lc-color-primary-soft); }
+.lc-word-cell { font-family: var(--lc-font-serif); font-size: 15px; font-weight: 500; }
+.lc-phonetic { font-family: var(--lc-font-mono); font-size: 12px; color: var(--lc-color-text-tertiary); display: block; }
+.lc-mono { font-family: var(--lc-font-mono); font-size: 12px; }
+.lc-action-btn { width: 30px; height: 30px; display: inline-flex; align-items: center; justify-content: center; border: 1px solid var(--lc-color-border); border-radius: 6px; background: var(--lc-color-surface); cursor: pointer; color: var(--lc-color-text-secondary); transition: all 0.15s; }
+.lc-action-btn:hover { border-color: var(--lc-color-primary); color: var(--lc-color-primary); }
+.lc-action-btn i { width: 14px; height: 14px; }
+.lc-phrase-grid { display: grid; grid-template-columns: 1fr; gap: 12px; }
+@media (min-width: 768px) { .lc-phrase-grid { grid-template-columns: 1fr 1fr; } }
+.lc-phrase-card { padding: 16px; background: var(--lc-color-surface); border: 1px solid var(--lc-color-border); border-radius: 12px; position: relative; transition: border-color 0.15s, box-shadow 0.15s; }
+.lc-phrase-card.selected { border-color: var(--lc-color-primary); box-shadow: 0 0 0 2px var(--lc-color-primary-tint); }
+.lc-phrase-checkbox { position: absolute; top: 10px; right: 10px; width: 20px; height: 20px; cursor: pointer; accent-color: var(--lc-color-primary); opacity: 0; transition: opacity 0.15s; }
+.lc-phrase-card.show-checkbox .lc-phrase-checkbox { opacity: 1; }
+.lc-phrase-card.show-checkbox { cursor: pointer; }
+.lc-phrase-tag { display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; border-radius: 6px; font-size: 11px; font-weight: 500; cursor: pointer; transition: opacity 0.15s; }
+.lc-phrase-tag:hover { opacity: 0.8; }
+.lc-phrase-card { border-left: 3px solid var(--lc-color-border); }
+.lc-phrase-card .phrase-text { font-family: var(--lc-font-serif); font-size: 17px; font-weight: 500; color: var(--lc-color-text); }
+.lc-phrase-card .phrase-phonetic { font-family: var(--lc-font-mono); font-size: 12px; color: var(--lc-color-text-tertiary); margin-top: 4px; }
+.lc-phrase-card .phrase-meaning { font-size: 14px; color: var(--lc-color-text-secondary); margin-top: 8px; }
+.lc-phrase-card .phrase-meta { display: flex; gap: 8px; margin-top: 10px; }
 
-permissions:
-  contents: read
-  pages: write
-  id-token: write
+.lc-tag-popup-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.35); z-index: 9999; display: flex; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.2s; }
+.lc-tag-popup-overlay.show { opacity: 1; }
+.lc-tag-popup { background: var(--lc-color-surface); border-radius: 16px; box-shadow: 0 8px 32px rgba(0,0,0,0.15); max-width: 420px; width: 90%; max-height: 80vh; overflow-y: auto; transform: scale(0.95); transition: transform 0.2s; }
+.lc-tag-popup-overlay.show .lc-tag-popup { transform: scale(1); }
+.lc-tag-popup-header { padding: 20px 24px 12px; border-bottom: 1px solid var(--lc-color-border); display: flex; align-items: center; justify-content: space-between; }
+.lc-tag-popup-header h3 { font-size: 16px; font-weight: 600; color: var(--lc-color-text); }
+.lc-tag-popup-close { border: none; background: none; cursor: pointer; color: var(--lc-color-text-tertiary); padding: 4px; border-radius: 6px; }
+.lc-tag-popup-close:hover { background: var(--lc-color-surface-sunken); }
+.lc-tag-popup-body { padding: 16px 24px; }
+.lc-tag-popup-phrase { font-family: var(--lc-font-serif); font-size: 18px; font-weight: 500; color: var(--lc-color-text); padding: 12px 16px; background: var(--lc-color-primary-soft); border-radius: 8px; margin-bottom: 16px; text-align: center; }
+.lc-tag-popup-label { font-size: 12px; color: var(--lc-color-text-tertiary); margin-bottom: 8px; }
+.lc-tag-popup-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 8px; }
+.lc-tag-option { display: flex; align-items: center; gap: 6px; padding: 8px 12px; border: 2px solid transparent; border-radius: 10px; cursor: pointer; font-size: 13px; transition: all 0.15s; background: var(--lc-color-surface-sunken); }
+.lc-tag-option:hover { border-color: var(--lc-color-border-strong); }
+.lc-tag-option.selected { border-color: var(--lc-color-primary); background: var(--lc-color-primary-soft); }
+.lc-tag-option-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+.lc-tag-popup-footer { padding: 12px 24px 20px; display: flex; gap: 8px; justify-content: flex-end; }
 
-concurrency:
-  group: pages
-  cancel-in-progress: true
+.lc-cat-mgmt-bar { display: flex; align-items: center; gap: 8px; margin-bottom: 16px; padding: 12px 16px; background: var(--lc-color-surface-sunken); border-radius: 10px; }
+.lc-cat-mgmt-bar span { font-size: 13px; color: var(--lc-color-text-secondary); }
+.lc-cat-mgmt-list { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+.lc-cat-chip { display: flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 9999px; font-size: 12px; font-weight: 500; border: 1px solid transparent; }
+.lc-cat-chip-actions { display: flex; gap: 2px; margin-left: 4px; }
+.lc-cat-chip-btn { border: none; background: none; cursor: pointer; padding: 2px; border-radius: 4px; color: inherit; opacity: 0.6; display: flex; align-items: center; }
+.lc-cat-chip-btn:hover { opacity: 1; }
+.lc-cat-chip-btn i { width: 12px; height: 12px; }
 
-jobs:
-  deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+.lc-color-picker-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.35); z-index: 10000; display: flex; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.2s; }
+.lc-color-picker-overlay.show { opacity: 1; }
+.lc-color-picker { background: var(--lc-color-surface); border-radius: 16px; box-shadow: 0 8px 32px rgba(0,0,0,0.15); max-width: 360px; width: 90%; padding: 24px; }
+.lc-color-picker h3 { font-size: 16px; font-weight: 600; margin-bottom: 16px; }
+.lc-color-picker-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin-bottom: 16px; }
+.lc-color-swatch { width: 48px; height: 48px; border-radius: 12px; cursor: pointer; border: 3px solid transparent; transition: all 0.15s; display: flex; align-items: center; justify-content: center; }
+.lc-color-swatch:hover { transform: scale(1.1); }
+.lc-color-swatch.selected { border-color: var(--lc-color-text); }
+.lc-color-swatch.selected::after { content: '✓'; color: white; font-size: 20px; font-weight: bold; }
+.lc-color-picker-input { width: 100%; padding: 8px 12px; border: 1px solid var(--lc-color-border); border-radius: 8px; font-family: inherit; font-size: 14px; margin-bottom: 16px; background: var(--lc-color-surface); color: var(--lc-color-text); }
+.lc-color-picker-actions { display: flex; gap: 8px; justify-content: flex-end; }
 
-      - name: Setup Pages
-        uses: actions/configure-pages@v4
+.lc-learning-panel { display: none; }
+.lc-learning-panel.show { display: block; }
+.lc-checkin-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; margin: 16px 0; }
+.lc-checkin-day { aspect-ratio: 1; border-radius: 8px; background: var(--lc-color-surface-sunken); display: flex; align-items: center; justify-content: center; font-size: 12px; color: var(--lc-color-text-tertiary); font-weight: 500; position: relative; }
+.lc-checkin-day.checked { background: var(--lc-state-success); color: white; }
+.lc-checkin-day.today { border: 2px solid var(--lc-color-primary); }
+.lc-checkin-day.checked.today { background: var(--lc-color-primary); }
+.lc-streak-card { background: linear-gradient(135deg, var(--lc-color-primary), var(--lc-color-primary-dark, #8A6A3A)); color: white; border-radius: 16px; padding: 24px; margin-bottom: 16px; text-align: center; }
+.lc-streak-num { font-size: 48px; font-weight: 700; font-family: var(--lc-font-display); line-height: 1; }
+.lc-streak-label { font-size: 14px; opacity: 0.9; margin-top: 4px; }
+.lc-checkin-btn { width: 100%; padding: 14px; font-size: 16px; font-weight: 600; border-radius: 12px; border: none; cursor: pointer; font-family: inherit; transition: all 0.2s; }
+.lc-checkin-btn:not(.done) { background: var(--lc-state-success); color: white; }
+.lc-checkin-btn:not(.done):hover { filter: brightness(1.1); transform: translateY(-1px); }
+.lc-checkin-btn.done { background: var(--lc-color-surface-sunken); color: var(--lc-color-text-tertiary); cursor: default; }
+.lc-reminder-row { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; background: var(--lc-color-surface-sunken); border-radius: 10px; margin-bottom: 8px; }
+.lc-reminder-row label { display: flex; align-items: center; gap: 8px; font-size: 14px; cursor: pointer; }
+.lc-reminder-row input[type="checkbox"] { width: 18px; height: 18px; cursor: pointer; accent-color: var(--lc-color-primary); }
+.lc-reminder-time { padding: 6px 10px; border: 1px solid var(--lc-color-border); border-radius: 8px; font-family: inherit; font-size: 13px; background: var(--lc-color-surface); color: var(--lc-color-text); }
+.lc-review-container { max-width: 600px; margin: 0 auto; }
+.lc-review-progress { margin-bottom: 24px; }
+.lc-progress-bar { height: 6px; background: var(--lc-color-surface-sunken); border-radius: 3px; margin-top: 8px; overflow: hidden; }
+.lc-progress-fill { height: 100%; background: var(--lc-color-primary); border-radius: 3px; transition: width 0.3s; }
+.lc-flashcard { background: var(--lc-color-surface); border: 1px solid var(--lc-color-border); border-radius: 16px; padding: 48px 32px; text-align: center; min-height: 280px; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; transition: all 0.3s; position: relative; }
+.lc-flashcard:hover { box-shadow: var(--lc-shadow-md); border-color: var(--lc-color-primary); }
+.lc-flashcard-word { font-family: var(--lc-font-serif); font-size: 36px; font-weight: 600; color: var(--lc-color-text); margin-bottom: 12px; }
+.lc-flashcard-phonetic { font-family: var(--lc-font-mono); font-size: 16px; color: var(--lc-color-text-tertiary); margin-bottom: 16px; }
+.lc-flashcard-meaning { font-size: 16px; color: var(--lc-color-text-secondary); line-height: 1.7; margin-bottom: 12px; max-width: 400px; }
+.lc-flashcard-example { font-size: 14px; color: var(--lc-color-text-tertiary); font-style: italic; max-width: 400px; }
+.lc-flashcard-hint { font-size: 13px; color: var(--lc-color-text-tertiary); margin-top: 24px; }
+.lc-flashcard-speak { position: absolute; top: 16px; right: 16px; width: 36px; height: 36px; border: 1px solid var(--lc-color-border); border-radius: 50%; background: var(--lc-color-surface); cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--lc-color-text-secondary); }
+.lc-flashcard-speak:hover { border-color: var(--lc-color-primary); color: var(--lc-color-primary); }
+.lc-flashcard-actions { display: flex; gap: 12px; justify-content: center; margin-top: 24px; }
+.lc-review-wrong { color: var(--lc-state-error) !important; border-color: var(--lc-state-error) !important; }
+.lc-review-wrong:hover { background: var(--lc-state-error-bg) !important; }
+.lc-review-complete { text-align: center; padding: 48px 24px; }
+.lc-review-complete i { width: 48px; height: 48px; color: var(--lc-state-success); margin-bottom: 16px; }
+.lc-oral-grid { display: grid; grid-template-columns: 1fr; gap: 24px; }
+@media (min-width: 768px) { .lc-oral-grid { grid-template-columns: 240px 1fr; } }
+.lc-topic-sidebar { background: var(--lc-color-surface); border: 1px solid var(--lc-color-border); border-radius: 12px; padding: 16px; height: fit-content; }
+.lc-topic-sidebar h3 { display: flex; align-items: center; gap: 6px; font-size: 14px; color: var(--lc-color-text-secondary); margin-bottom: 12px; }
+.lc-topic-sidebar h3 i { width: 16px; height: 16px; }
+.lc-topic-item { display: flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 8px; cursor: pointer; transition: all 0.15s; margin-bottom: 2px; }
+.lc-topic-item:hover { background: var(--lc-color-surface-sunken); }
+.lc-topic-item.active { background: var(--lc-color-primary-soft); color: var(--lc-color-primary); font-weight: 600; border-left: 3px solid var(--lc-color-primary); padding-left: 9px; }
+.lc-topic-item i { width: 16px; height: 16px; flex-shrink: 0; }
+.lc-topic-item span:first-of-type { flex: 1; font-size: 14px; }
+.lc-topic-count { font-size: 12px; color: var(--lc-color-text-tertiary); font-family: var(--lc-font-mono); }
+.lc-topic-item.active .lc-topic-count { color: var(--lc-color-primary); }
+.lc-part-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 20px; }
+.lc-part-card { padding: 14px; background: var(--lc-color-surface); border: 1px solid var(--lc-color-border); border-radius: 12px; cursor: pointer; transition: all 0.15s; text-align: center; }
+.lc-part-card:hover { border-color: var(--lc-color-border-strong); background: var(--lc-color-surface-2); }
+.lc-part-card.active { border-color: var(--lc-color-primary); background: var(--lc-color-primary-soft); }
+.lc-part-card i { width: 20px; height: 20px; color: var(--lc-color-text-secondary); margin-bottom: 6px; }
+.lc-part-card.active i { color: var(--lc-color-primary); }
+.lc-part-card h4 { font-size: 14px; font-weight: 600; color: var(--lc-color-text); }
+.lc-part-card p { font-size: 12px; color: var(--lc-color-text-tertiary); margin-top: 4px; }
+.lc-ai-settings { background: var(--lc-color-surface); border: 1px solid var(--lc-color-border); border-radius: 12px; margin-bottom: 20px; overflow: hidden; }
+.lc-ai-settings-toggle { width: 100%; padding: 12px 16px; border: none; background: var(--lc-color-surface); font-size: 14px; font-weight: 600; color: var(--lc-color-text-secondary); cursor: pointer; display: flex; align-items: center; gap: 8px; font-family: inherit; }
+.lc-ai-settings-toggle:hover { background: var(--lc-color-primary-soft); color: var(--lc-color-primary); }
+.lc-ai-settings-toggle i { width: 16px; height: 16px; }
+.lc-ai-settings-body { padding: 16px; border-top: 1px solid var(--lc-color-border); }
+.lc-vocab-hint-panel { background: var(--lc-state-warning-bg); border: 1px solid var(--lc-state-warning); border-radius: 12px; margin-bottom: 16px; overflow: hidden; }
+.lc-vocab-hint-header { display: flex; align-items: center; gap: 8px; padding: 10px 14px; font-size: 13px; font-weight: 600; color: var(--lc-state-warning); background: rgba(190,138,69,0.08); }
+.lc-vocab-hint-close { margin-left: auto; border: none; background: none; font-size: 18px; cursor: pointer; color: var(--lc-state-warning); line-height: 1; }
+.lc-vocab-hint-body { padding: 10px 14px; }
+.lc-vocab-hint-words { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; }
+.lc-vocab-hint-word { background: var(--lc-color-surface); border: 1px solid var(--lc-color-border); border-radius: 6px; padding: 4px 10px; font-size: 13px; color: var(--lc-color-text); cursor: pointer; transition: all 0.15s; }
+.lc-vocab-hint-word:hover { border-color: var(--lc-color-primary); color: var(--lc-color-primary); }
+.lc-vocab-hint-phrases { margin-top: 4px; }
+.lc-vocab-hint-phrase { font-size: 12px; color: var(--lc-color-text-secondary); margin: 3px 0; padding: 4px 10px; background: rgba(255,255,255,0.5); border-radius: 4px; cursor: pointer; }
+.lc-vocab-hint-phrase:hover { background: rgba(255,255,255,0.8); }
+.dark .lc-vocab-hint-word, .dark .lc-vocab-hint-phrase { background: rgba(0,0,0,0.2); }
+.lc-vocab-hint-motivate { font-size: 12px; color: var(--lc-state-warning); margin-top: 8px; font-style: italic; }
+.lc-ai-status { font-size: 12px; color: var(--lc-state-success); margin-left: 8px; }
+.lc-conversation { background: var(--lc-color-surface); border: 1px solid var(--lc-color-border); border-radius: 12px; padding: 20px; min-height: 400px; display: flex; flex-direction: column; }
+.lc-conv-messages { flex: 1; overflow-y: auto; margin-bottom: 16px; min-height: 280px; display: flex; flex-direction: column; }
+.lc-msg { max-width: 80%; padding: 12px 16px; border-radius: 12px; font-size: 14px; line-height: 1.7; margin-bottom: 12px; position: relative; }
+.lc-msg-examiner { background: var(--lc-color-surface-sunken); color: var(--lc-color-text); border-top-left-radius: 4px; align-self: flex-start; }
+.lc-msg-user { background: var(--lc-color-primary-soft); color: var(--lc-color-text); border-top-right-radius: 4px; align-self: flex-end; text-align: left; }
+.lc-msg-role { font-size: 11px; color: var(--lc-color-text-tertiary); margin-bottom: 4px; display: flex; align-items: center; gap: 6px; }
+.lc-msg-speak { width: 22px; height: 22px; border: none; background: none; cursor: pointer; color: var(--lc-color-text-tertiary); display: inline-flex; align-items: center; justify-content: center; border-radius: 50%; transition: all 0.15s; }
+.lc-msg-speak:hover { color: var(--lc-color-primary); background: var(--lc-color-primary-soft); }
+.lc-msg-speak i { width: 14px; height: 14px; }
+.lc-speaking-indicator { display: inline-flex; align-items: center; gap: 2px; margin-left: 6px; }
+.lc-speaking-indicator span { width: 4px; height: 4px; border-radius: 50%; background: var(--lc-color-primary); animation: lc-speaking 1s infinite; }
+.lc-speaking-indicator span:nth-child(2) { animation-delay: 0.2s; }
+.lc-speaking-indicator span:nth-child(3) { animation-delay: 0.4s; }
+@keyframes lc-speaking { 0%,100% { opacity: 0.3; } 50% { opacity: 1; } }
+.lc-conv-input { display: flex; gap: 8px; align-items: flex-end; }
+.lc-conv-input textarea { flex: 1; padding: 10px 14px; border: 1px solid var(--lc-color-border); border-radius: 8px; font-size: 14px; font-family: inherit; line-height: 1.6; background: var(--lc-color-surface-2); color: var(--lc-color-text); resize: none; outline: none; min-height: 44px; transition: border 0.15s; }
+.lc-conv-input textarea:focus { border-color: var(--lc-color-primary); box-shadow: 0 0 0 3px var(--lc-color-primary-soft); }
+.lc-mic-btn { width: 48px; height: 48px; border-radius: 50%; border: 2px solid var(--lc-color-border); background: var(--lc-color-surface); cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--lc-color-text-secondary); flex-shrink: 0; transition: all 0.2s; }
+.lc-mic-btn:hover { border-color: var(--lc-color-primary); color: var(--lc-color-primary); }
+.lc-mic-btn.recording { background: var(--lc-state-error); border-color: var(--lc-state-error); color: white; animation: lc-mic-pulse 1.5s infinite; }
+.lc-mic-btn i { width: 20px; height: 20px; }
+@keyframes lc-mic-pulse { 0%,100% { box-shadow: 0 0 0 0 rgba(176,94,60,0.4); } 50% { box-shadow: 0 0 0 8px rgba(176,94,60,0); } }
+.lc-recording-hint { font-size: 12px; color: var(--lc-state-error); text-align: center; margin-top: 4px; display: none; }
+.lc-recording-hint.show { display: block; }
+.lc-conv-footer { display: flex; align-items: center; justify-content: space-between; margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--lc-color-border); }
+.lc-export-grid { display: grid; grid-template-columns: 1fr; gap: 24px; }
+@media (min-width: 1024px) { .lc-export-grid { grid-template-columns: 360px 1fr; } }
+.lc-option-group { margin-bottom: 20px; }
+.lc-option-group h3 { font-size: 14px; font-weight: 600; color: var(--lc-color-text-secondary); margin-bottom: 10px; }
+.lc-format-option { display: flex; align-items: center; gap: 10px; padding: 12px 14px; border: 1px solid var(--lc-color-border); border-radius: 8px; cursor: pointer; transition: all 0.15s; margin-bottom: 8px; }
+.lc-format-option:hover { border-color: var(--lc-color-border-strong); }
+.lc-format-option.selected { border-color: var(--lc-color-primary); background: var(--lc-color-primary-soft); }
+.lc-format-option i { width: 20px; height: 20px; color: var(--lc-color-text-secondary); }
+.lc-format-option.selected i { color: var(--lc-color-primary); }
+.lc-format-option input[type="radio"] { accent-color: var(--lc-color-primary); }
+.lc-toggle { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; }
+.lc-toggle-label { font-size: 14px; color: var(--lc-color-text); }
+.lc-switch { position: relative; width: 40px; height: 22px; }
+.lc-switch input { opacity: 0; width: 0; height: 0; }
+.lc-switch-slider { position: absolute; cursor: pointer; inset: 0; background: var(--lc-color-border-strong); border-radius: 9999px; transition: 0.2s; }
+.lc-switch-slider::before { content: ''; position: absolute; height: 16px; width: 16px; left: 3px; bottom: 3px; background: white; border-radius: 50%; transition: 0.2s; }
+.lc-switch input:checked + .lc-switch-slider { background: var(--lc-color-primary); }
+.lc-switch input:checked + .lc-switch-slider::before { transform: translateX(18px); }
+.lc-preview-paper { background: white; border: 1px solid var(--lc-color-border); border-radius: 4px; padding: 40px; min-height: 500px; font-family: var(--lc-font-serif); font-size: 14px; line-height: 2.0; color: #333; box-shadow: 0 4px 14px rgba(74,65,53,0.05); }
+.lc-preview-paper .preview-blank { display: inline-block; min-width: 50px; border-bottom: 2px solid #B06A36; }
+.lc-preview-paper .preview-page-sep { text-align: center; color: #999; padding: 16px 0; border-top: 1px dashed #ccc; border-bottom: 1px dashed #ccc; margin: 16px 0; font-family: monospace; font-size: 12px; }
+.lc-preview-paper .preview-gutter { display: inline-block; width: 30px; text-align: right; padding-right: 10px; color: #999; font-family: monospace; font-size: 11px; }
+.lc-preview-paper .preview-translation { font-family: 'Noto Serif SC', Georgia, serif; font-size: 13px; color: #666; padding: 4px 0 4px 30px; }
+.lc-modal-overlay { display: none; position: fixed; inset: 0; background: rgba(74,65,53,0.4); z-index: 1000; align-items: center; justify-content: center; }
+.lc-modal-overlay.show { display: flex; }
+.lc-modal { background: var(--lc-color-surface); border-radius: 16px; padding: 0; max-width: 400px; width: 90%; box-shadow: var(--lc-shadow-float); }
+.lc-modal-header { display: flex; align-items: center; justify-content: space-between; padding: 20px 24px; border-bottom: 1px solid var(--lc-color-border); }
+.lc-modal-header h3 { font-size: 18px; font-weight: 700; }
+.lc-modal-close { border: none; background: none; font-size: 24px; cursor: pointer; color: var(--lc-color-text-tertiary); }
+.lc-modal-body { padding: 24px; }
+.lc-auth-tabs { display: flex; gap: 4px; margin-bottom: 20px; border-bottom: 1px solid var(--lc-color-border); }
+.lc-auth-tab { padding: 10px 20px; border: none; background: transparent; font-size: 15px; color: var(--lc-color-text-secondary); cursor: pointer; position: relative; font-family: inherit; }
+.lc-auth-tab.active { color: var(--lc-color-primary); font-weight: 600; }
+.lc-auth-tab.active::after { content: ''; position: absolute; bottom: -1px; left: 0; right: 0; height: 2px; background: var(--lc-color-primary); }
+.lc-auth-hint { font-size: 12px; color: var(--lc-color-text-tertiary); text-align: center; margin-top: 16px; }
+.lc-pwd-toggle { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); background: transparent; border: none; cursor: pointer; color: var(--lc-color-text-tertiary); padding: 4px; display: flex; align-items: center; justify-content: center; }
+.lc-pwd-toggle:hover { color: var(--lc-color-primary); }
+.lc-auth-log-entry { padding: 6px 8px; border-bottom: 1px solid var(--lc-color-border); display: flex; gap: 8px; align-items: flex-start; }
+.lc-auth-log-entry:last-child { border-bottom: none; }
+.lc-auth-log-time { color: var(--lc-color-text-tertiary); white-space: nowrap; min-width: 60px; }
+.lc-auth-log-action { font-weight: 600; white-space: nowrap; min-width: 90px; }
+.lc-auth-log-action.success { color: var(--lc-color-success, #22c55e); }
+.lc-auth-log-action.fail { color: var(--lc-color-error, #ef4444); }
+.lc-auth-log-action.info { color: var(--lc-color-primary); }
+.lc-auth-log-detail { color: var(--lc-color-text-secondary); word-break: break-all; }
+#sync-indicator { padding: 6px; border-radius: 6px; transition: all 0.15s; }
+#sync-indicator:hover { background: var(--lc-color-surface-hover); }
+.lc-user-menu { position: relative; }
+.lc-user-btn { display: flex; align-items: center; gap: 6px; padding: 6px 14px; border: 1px solid var(--lc-color-border); border-radius: 9999px; background: var(--lc-color-surface); cursor: pointer; color: var(--lc-color-text-secondary); font-size: 14px; font-family: inherit; transition: all 0.15s; }
+.lc-user-btn:hover { border-color: var(--lc-color-primary); color: var(--lc-color-primary); }
+.lc-user-btn i { width: 16px; height: 16px; }
+.lc-user-dropdown { position: absolute; right: 0; top: 100%; margin-top: 4px; background: var(--lc-color-surface); border: 1px solid var(--lc-color-border); border-radius: 8px; box-shadow: var(--lc-shadow-md); min-width: 160px; z-index: 200; display: none; }
+.lc-user-dropdown.show { display: block; }
+.lc-user-dropdown-item { display: flex; align-items: center; gap: 8px; padding: 10px 16px; cursor: pointer; font-size: 14px; color: var(--lc-color-text); }
+.lc-user-dropdown-item:hover { background: var(--lc-color-primary-soft); }
+.lc-user-dropdown-item i { width: 16px; height: 16px; }
+.lc-toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(20px); padding: 12px 24px; border-radius: 8px; font-size: 14px; color: white; z-index: 9999; opacity: 0; transition: all 0.3s; pointer-events: none; }
+.lc-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+.lc-toast-success { background: var(--lc-state-success); }
+.lc-toast-error { background: var(--lc-state-error); }
+.lc-toast-info { background: var(--lc-state-info); }
+@media (max-width: 640px) {
+    .lc-appbar-inner { padding: 0 12px; gap: 8px; }
+    .lc-nav { gap: 2px; }
+    .lc-nav-item { padding: 4px 10px; font-size: 12px; }
+    .lc-main { padding: 12px; }
+    .lc-part-cards { grid-template-columns: 1fr; }
+}
+</style>
 
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: '.'
+<!-- ===== App Bar ===== -->
+<header class="lc-appbar">
+    <div class="lc-appbar-inner">
+        <div class="lc-lang-switcher" id="lang-switcher">
+            <button class="lc-lang-btn" id="lang-current-btn">
+                <span class="lc-lang-flag" id="lang-current-flag">🇬🇧</span>
+                <span class="lc-lang-name" id="lang-current-name">英语</span>
+                <i data-lucide="chevron-down" style="width:12px;height:12px;"></i>
+            </button>
+            <div class="lc-lang-dropdown" id="lang-dropdown">
+                <div class="lc-lang-option" data-lang="en"><span class="lc-lang-flag">🇬🇧</span><span>英语</span><span class="lc-lang-exam">IELTS</span></div>
+                <div class="lc-lang-option" data-lang="de"><span class="lc-lang-flag">🇩🇪</span><span>德语</span><span class="lc-lang-exam">TestDaF</span></div>
+                <div class="lc-lang-option" data-lang="ja"><span class="lc-lang-flag">🇯🇵</span><span>日语</span><span class="lc-lang-exam">JLPT</span></div>
+            </div>
+        </div>
+        <div class="lc-brand">
+            <i data-lucide="headphones"></i>
+            <span>听空 ListenCloze</span>
+        </div>
+        <nav class="lc-nav">
+            <button class="lc-nav-item active" data-view="import">导入</button>
+            <button class="lc-nav-item" data-view="workbench">训练台</button>
+            <button class="lc-nav-item" data-view="oral">口语训练</button>
+            <button class="lc-nav-item" data-view="vocabulary">生词本</button>
+            <button class="lc-nav-item" data-view="export">导出</button>
+        </nav>
+        <div class="lc-appbar-actions">
+            <button class="lc-icon-btn" id="sync-indicator" title="点击同步数据" style="display:none;">
+                <i data-lucide="refresh-cw" style="width:14px;height:14px;"></i>
+            </button>
+            <button class="lc-icon-btn" id="toggle-theme" title="切换主题">
+                <i data-lucide="moon"></i>
+            </button>
+            <div class="lc-user-menu" id="user-menu">
+                <button class="lc-user-btn" id="user-account-btn">
+                    <i data-lucide="user"></i>
+                    <span id="user-account-label">登录</span>
+                </button>
+                <div class="lc-user-dropdown" id="user-dropdown">
+                    <div class="lc-user-dropdown-item" id="btn-sync-now" style="display:none;">
+                        <i data-lucide="refresh-cw"></i> 立即同步
+                    </div>
+                    <div class="lc-user-dropdown-item" id="btn-cloud-sync-settings">
+                        <i data-lucide="cloud"></i> 云端同步设置
+                    </div>
+                    <div class="lc-user-dropdown-item" id="btn-my-learning">
+                        <i data-lucide="flame"></i> 我的学习
+                    </div>
+                    <div class="lc-user-dropdown-item" id="btn-export-backup">
+                        <i data-lucide="download"></i> 导出备份
+                    </div>
+                    <div class="lc-user-dropdown-item" id="btn-import-backup">
+                        <i data-lucide="upload"></i> 导入备份
+                    </div>
+                    <div class="lc-user-dropdown-item" id="btn-login" style="display:none;">
+                        <i data-lucide="log-in"></i> 登录 / 注册
+                    </div>
+                    <div class="lc-user-dropdown-item" id="btn-logout" style="color:var(--lc-state-error);">
+                        <i data-lucide="log-out"></i> 退出登录
+                    </div>
+                </div>
+            </div>
+            <input type="file" id="backup-import-input" accept=".json" style="display:none;">
+        </div>
+    </div>
+</header>
 
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
+<!-- ===== Main Content ===== -->
+<main class="lc-main">
+
+    <!-- ========== IMPORT VIEW ========== -->
+    <section id="view-import" class="lc-view active">
+        <div class="lc-eyebrow">第一步 · 导入语料</div>
+        <h1 class="lc-h1">导入文档</h1>
+        <p class="lc-subtitle">上传 PDF / Word 文档或直接粘贴文本，系统将自动解析为可编辑的逐字语料。中文译文将自动识别并折叠。</p>
+        <div style="display: grid; grid-template-columns: 1fr; gap: 24px;">
+            <div>
+                <div class="lc-upload-zone" id="upload-zone">
+                    <i data-lucide="upload-cloud"></i>
+                    <h3>点击或拖拽文件到此处</h3>
+                    <p>支持 PDF、Word (.docx)、TXT 格式</p>
+                    <div class="lc-format-chips">
+                        <span class="lc-format-chip">PDF</span>
+                        <span class="lc-format-chip">Word</span>
+                        <span class="lc-format-chip">TXT</span>
+                    </div>
+                    <input type="file" id="file-input" accept=".pdf,.docx,.txt" style="display:none;">
+                </div>
+                <div class="lc-parse-status" id="parse-status"></div>
+            </div>
+            <div class="lc-card">
+                <h3 class="lc-h3" style="margin-bottom: 12px;">或粘贴文本</h3>
+                <textarea class="lc-paste-area" id="paste-area" placeholder="将语料文本粘贴到此处...&#10;&#10;提示：可用 --- 分隔不同页面&#10;中文译文行将自动识别并折叠"></textarea>
+                <div style="display: flex; align-items: center; gap: 12px; margin-top: 16px; flex-wrap: wrap;">
+                    <label style="font-size: 14px; color: var(--lc-color-text-secondary);">主题分类：</label>
+                    <select class="lc-select" id="topic-select">
+                        <option value="education">教育</option>
+                        <option value="technology">科技</option>
+                        <option value="environment">环境</option>
+                        <option value="society">社会</option>
+                        <option value="culture">文化</option>
+                        <option value="economy">经济</option>
+                    </select>
+                    <label style="font-size: 14px; color: var(--lc-color-text-secondary);">语料标题：</label>
+                    <input type="text" class="lc-input" id="corpus-title" placeholder="例如：印刷术与教育普及" style="flex: 1; min-width: 200px;">
+                </div>
+                <div style="display: flex; gap: 12px; margin-top: 16px;">
+                    <button class="lc-btn lc-btn-primary" id="btn-parse-text">
+                        <i data-lucide="file-search" style="width:16px;height:16px;"></i> 解析文本
+                    </button>
+                    <button class="lc-btn lc-btn-ghost" id="btn-load-sample">
+                        <i data-lucide="book-open" style="width:16px;height:16px;"></i> 加载示例语料
+                    </button>
+                </div>
+            </div>
+            <!-- Topic Folder Card -->
+            <div class="lc-card lc-topic-folder-card">
+                <h3 class="lc-h3" style="margin-bottom:12px;display:flex;align-items:center;gap:8px;">
+                    <i data-lucide="folder-tree" style="width:18px;height:18px;color:var(--lc-color-primary);"></i>
+                    主题分区文件夹
+                </h3>
+                <p style="font-size:13px;color:var(--lc-color-text-secondary);margin-bottom:12px;">已导入的文章按主题分类管理，点击可快速切换至该文章。</p>
+                <div id="topic-folder-list" class="lc-topic-folder-list"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== WORKBENCH VIEW ========== -->
+    <section id="view-workbench" class="lc-view">
+        <div class="lc-toolbar">
+            <h2 class="lc-h2" id="wb-title">挖空训练台</h2>
+            <div style="flex: 1;"></div>
+            <span class="lc-badge lc-badge-primary" id="wb-hidden-count">已挖空 0 项</span>
+            <button class="lc-translation-toggle on" id="btn-toggle-translation" title="一键显示/隐藏全文译文">
+                <span class="lc-mini-dot"></span>
+                <span id="toggle-translation-label">译文可见</span>
+            </button>
+            <button class="lc-btn lc-btn-ghost lc-btn-sm" id="btn-save-progress">
+                <i data-lucide="save" style="width:14px;height:14px;"></i> 保存进度
+            </button>
+            <button class="lc-btn lc-btn-ghost" id="btn-edit-mode" title="切换文本编辑模式（挖空功能不受影响）">
+                <i data-lucide="pencil" style="width:14px;height:14px;"></i> 编辑文本
+            </button>
+            <button class="lc-btn lc-btn-ghost" id="btn-undo">
+                <i data-lucide="undo-2" style="width:14px;height:14px;"></i> 撤销
+            </button>
+            <button class="lc-btn lc-btn-ghost" id="btn-reset">
+                <i data-lucide="rotate-ccw" style="width:14px;height:14px;"></i> 重置
+            </button>
+            <button class="lc-btn lc-btn-primary" id="btn-go-export">
+                <i data-lucide="download" style="width:14px;height:14px;"></i> 导出
+            </button>
+        </div>
+        <div class="lc-hint-banner">
+            <i data-lucide="info"></i>
+            <span id="wb-hint-text">单击单词即可隐藏 · 长按拖动选择短语可整段隐藏 · 答案自动归纳至右侧并标注行号 · 点击空白处可恢复 · 双击右侧词条可删除 · 译文行自动折叠</span>
+        </div>
+        <div class="lc-workbench-grid">
+            <div class="lc-corpus-panel" id="corpus-panel">
+                <div class="lc-empty-hint" id="wb-empty">
+                    <i data-lucide="file-text"></i>
+                    <p>请先在「导入」页面上传文档或粘贴文本</p>
+                </div>
+            </div>
+            <div class="lc-answer-rail" id="answer-rail">
+                <div class="lc-rail-header">
+                    <i data-lucide="list-checks"></i>
+                    <h3 class="lc-h3">答案归纳</h3>
+                    <span class="lc-badge lc-badge-primary" id="rail-count" style="margin-left: auto;">0</span>
+                </div>
+                <div class="lc-rail-section">
+                    <div class="lc-rail-section-title"><span>单词</span><span class="lc-mono" id="word-count">0</span></div>
+                    <div id="rail-words"><div class="lc-empty-hint" style="padding: 16px 8px;"><p style="font-size: 12px;">点击语料中的单词开始</p></div></div>
+                </div>
+                <div class="lc-rail-section">
+                    <div class="lc-rail-section-title"><span>短语</span><span class="lc-mono" id="phrase-count">0</span></div>
+                    <div id="rail-phrases"><div class="lc-empty-hint" style="padding: 16px 8px;"><p style="font-size: 12px;">长按拖动选择短语</p></div></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== ORAL TRAINING VIEW ========== -->
+    <section id="view-oral" class="lc-view">
+        <div class="lc-eyebrow">口语表达训练</div>
+        <h1 class="lc-h1">口语训练</h1>
+        <p class="lc-subtitle">语料按主题分类，每篇语料可生成雅思口语题目，模拟考官与用户交谈。支持文字输入与语音输入，考官回复自动朗读。</p>
+        <div class="lc-oral-grid">
+            <aside class="lc-topic-sidebar">
+                <h3><i data-lucide="folder-open"></i> 主题分类</h3>
+                <div id="topic-list"></div>
+            </aside>
+            <div>
+                <div class="lc-testdaf-bar" id="testdaf-bar" style="display:none;">
+                <div class="lc-testdaf-selector">
+                    <label style="font-size:13px;color:var(--lc-color-text-secondary);">模拟题：</label>
+                    <select id="testdaf-select" class="lc-input" style="width:auto;padding:4px 8px;">
+                        <option value="1">Modelltest 1</option><option value="2">Modelltest 2</option>
+                        <option value="3">Modelltest 3</option><option value="4">Modelltest 4</option>
+                        <option value="5">Modelltest 5</option><option value="6">Modelltest 6</option>
+                        <option value="7">Modelltest 7</option><option value="8">Modelltest 8</option>
+                        <option value="9">Modelltest 9</option><option value="10">Modelltest 10</option>
+                    </select>
+                    <div class="lc-testdaf-tasks" id="testdaf-tasks" style="display:flex;gap:4px;flex-wrap:wrap;margin-top:8px;"></div>
+                </div>
+            </div><div class="lc-part-cards" id="part-cards">
+                    <div class="lc-part-card" data-part="1"><i data-lucide="message-circle"></i><h4>Part 1</h4><p>个人问答</p></div>
+                    <div class="lc-part-card active" data-part="2"><i data-lucide="clipboard-list"></i><h4>Part 2</h4><p>话题卡</p></div>
+                    <div class="lc-part-card" data-part="3"><i data-lucide="messages-square"></i><h4>Part 3</h4><p>深入讨论</p></div>
+                </div>
+                <div class="lc-ai-settings">
+                    <button class="lc-ai-settings-toggle" id="ai-settings-toggle">
+                        <i data-lucide="settings"></i> AI 考官设置
+                    </button>
+                    <div class="lc-ai-settings-body" id="ai-settings-body" style="display:none;">
+                        <p style="font-size:13px;color:var(--lc-color-text-secondary);margin-bottom:12px;">配置 AI API 后，考官将使用人工智能生成地道回复。未配置时使用预设话术库。</p>
+                        <input type="text" id="ai-api-key" placeholder="API Key (如 sk-...)" class="lc-input" style="width:100%;margin-bottom:8px;">
+                        <input type="text" id="ai-base-url" placeholder="API Base URL (默认: https://api.openai.com/v1)" class="lc-input" style="width:100%;margin-bottom:8px;">
+                        <input type="text" id="ai-model" placeholder="模型 (默认: gpt-4o-mini)" class="lc-input" style="width:100%;margin-bottom:12px;">
+                        <button class="lc-btn lc-btn-primary lc-btn-sm" id="btn-save-ai-config">保存配置</button>
+                        <span class="lc-ai-status" id="ai-status"></span>
+                    </div>
+                </div>
+                <div class="lc-vocab-hint-panel" id="vocab-hint-panel" style="display:none;">
+                    <div class="lc-vocab-hint-header">
+                        <i data-lucide="lightbulb" style="width:14px;height:14px;color:var(--lc-state-warning);"></i>
+                        <span>生词运用提醒</span>
+                        <button class="lc-vocab-hint-close" onclick="document.getElementById('vocab-hint-panel').style.display='none'">&times;</button>
+                    </div>
+                    <div class="lc-vocab-hint-body" id="vocab-hint-body"></div>
+                </div>
+                <div class="lc-conversation">
+                    <div class="lc-conv-messages" id="conv-messages">
+                        <div class="lc-empty-hint"><i data-lucide="message-square"></i><p>选择主题和题型后点击「开始练习」</p></div>
+                    </div>
+                    <div class="lc-recording-hint" id="recording-hint">正在录音...松开结束</div>
+                    <div class="lc-conv-input">
+                        <textarea id="conv-input" placeholder="在此输入你的回答..." rows="2"></textarea>
+                        <button class="lc-mic-btn" id="btn-mic" title="按住说话"><i data-lucide="mic"></i></button>
+                        <button class="lc-btn lc-btn-primary" id="btn-send">发送</button>
+                    </div>
+                    <div class="lc-conv-footer">
+                        <div style="display: flex; gap: 8px;">
+                            <button class="lc-btn lc-btn-ghost" id="btn-start-oral"><i data-lucide="play" style="width:14px;height:14px;"></i> 开始练习</button>
+                            <button class="lc-btn lc-btn-ghost" id="btn-next-question"><i data-lucide="sparkles" style="width:14px;height:14px;"></i> 下一题</button>
+                        </div>
+                        <button class="lc-btn lc-btn-primary" id="btn-go-vocab"><i data-lucide="book-marked" style="width:14px;height:14px;"></i> 进入生词本</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== VOCABULARY VIEW ========== -->
+    <section id="view-vocabulary" class="lc-view">
+        <div class="lc-eyebrow">生词管理</div>
+        <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+            <h1 class="lc-h1" style="margin:0;">生词本</h1>
+            <span class="lc-badge lc-badge-primary" id="vocab-lang-badge">英语</span>
+        </div>
+        <p class="lc-subtitle">挖空单词自动加入生词本方便后续背诵；短语按主题分类收纳。支持艾宾浩斯记忆曲线复习。英、德、日三语生词独立管理，切换语言查看对应生词。</p>
+        <div class="lc-stats-bar" id="vocab-stats"></div>
+        <div class="lc-tabs">
+            <button class="lc-tab active" data-vtab="words">单词本 <span class="lc-tab-count" id="tab-word-count">0</span></button>
+            <button class="lc-tab" data-vtab="phrases">短语本 <span class="lc-tab-count" id="tab-phrase-count">0</span></button>
+            <button class="lc-tab" data-vtab="review">每日复习 <span class="lc-tab-count" id="tab-review-count">0</span></button>
+        </div>
+        <div id="vocab-words-panel">
+            <div style="display: flex; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; align-items: center;">
+                <input type="text" class="lc-input" id="vocab-search" placeholder="搜索单词..." style="flex: 1; min-width: 200px;">
+                <select class="lc-select" id="vocab-filter">
+                    <option value="all">全部状态</option>
+                    <option value="未开始">未开始</option>
+                    <option value="待复习">待复习</option>
+                    <option value="已掌握">已掌握</option>
+                </select>
+                <button class="lc-btn lc-btn-ghost lc-btn-sm" id="btn-export-vocab-word" style="margin-left:auto;"><i data-lucide="download" style="width:14px;height:14px;"></i> 导出Word</button>
+            </div>
+            <div class="lc-table-wrap">
+                <table class="lc-table" id="vocab-table">
+                    <thead><tr><th>单词</th><th>释义</th><th>来源</th><th>行号</th><th>状态</th><th>操作</th></tr></thead>
+                    <tbody id="vocab-tbody"></tbody>
+                </table>
+            </div>
+            <div class="lc-empty-hint" id="vocab-empty" style="display: none;"><i data-lucide="book-open"></i><p>暂无生词，请在训练台挖空单词</p></div>
+        </div>
+        <div id="vocab-phrases-panel" style="display: none;">
+            <div style="margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+                <div class="lc-cat-mgmt-bar" style="margin:0;flex:1;">
+                    <i data-lucide="tags" style="width:16px;height:16px;color:var(--lc-color-text-tertiary);"></i>
+                    <span>短语分类：可自由添加、重命名和更换颜色</span>
+                    <button class="lc-btn lc-btn-ghost lc-btn-sm" onclick="openColorPickerForNew()" style="margin-left:auto;"><i data-lucide="plus" style="width:14px;height:14px;"></i> 新建分类</button>
+                </div>
+                <button class="lc-btn lc-btn-ghost lc-btn-sm" id="btn-export-vocab-phrase"><i data-lucide="download" style="width:14px;height:14px;"></i> 导出短语Word</button>
+            </div>
+            <!-- Batch selection toolbar -->
+            <div id="phrase-batch-bar" style="display:none;margin-bottom:12px;padding:10px 16px;border-radius:8px;background:var(--lc-color-primary-tint);border:1px solid var(--lc-color-primary);align-items:center;gap:8px;flex-wrap:wrap;">
+                <i data-lucide="check-square" style="width:16px;height:16px;color:var(--lc-color-primary);"></i>
+                <span id="phrase-batch-count" style="font-size:13px;font-weight:600;color:var(--lc-color-primary);">已选 0 条</span>
+                <select id="phrase-batch-topic" class="lc-select" style="flex:1;min-width:140px;padding:4px 8px;font-size:13px;"></select>
+                <button class="lc-btn lc-btn-primary lc-btn-sm" id="btn-phrase-batch-assign"><i data-lucide="folder-input" style="width:14px;height:14px;"></i> 批量分组</button>
+                <button class="lc-btn lc-btn-ghost lc-btn-sm" id="btn-phrase-batch-delete" style="color:var(--lc-color-error,#ef4444);"><i data-lucide="trash-2" style="width:14px;height:14px;"></i> 批量删除</button>
+                <button class="lc-btn lc-btn-ghost lc-btn-sm" id="btn-phrase-batch-cancel"><i data-lucide="x" style="width:14px;height:14px;"></i> 取消</button>
+            </div>
+            <div style="margin-bottom:8px;display:flex;align-items:center;gap:8px;">
+                <button class="lc-btn lc-btn-ghost lc-btn-sm" id="btn-phrase-select-mode"><i data-lucide="square-dashed-mouse-pointer" style="width:14px;height:14px;"></i> 多选模式</button>
+                <button class="lc-btn lc-btn-ghost lc-btn-sm" id="btn-phrase-select-all"><i data-lucide="check-square" style="width:14px;height:14px;"></i> 全选</button>
+            </div>
+            <div class="lc-cat-mgmt-list" id="phrase-cat-chips"></div>
+            <div id="phrase-groups"></div>
+            <div class="lc-empty-hint" id="phrase-empty" style="display: none;"><i data-lucide="layers"></i><p>暂无短语，请在训练台长按拖动选择短语</p></div>
+        </div>
+        <div id="vocab-review-panel" style="display: none;">
+            <div id="review-start-screen">
+                <div class="lc-review-container" style="text-align:center;padding:48px 24px;">
+                    <i data-lucide="brain" style="width:48px;height:48px;color:var(--lc-color-primary);margin-bottom:16px;"></i>
+                    <h2 class="lc-h2" style="margin-bottom:8px;">艾宾浩斯记忆复习</h2>
+                    <p style="font-size:14px;color:var(--lc-color-text-secondary);margin-bottom:24px;">根据记忆曲线智能安排复习时间，巩固长期记忆</p>
+                    <div id="review-stats" style="display:flex;gap:24px;justify-content:center;margin-bottom:32px;"></div>
+                    <button class="lc-btn lc-btn-primary" id="btn-start-review" style="font-size:16px;padding:12px 32px;"><i data-lucide="play" style="width:18px;height:18px;"></i> 开始复习</button>
+                </div>
+            </div>
+            <div id="review-active-screen" style="display:none;">
+                <div class="lc-review-container">
+                    <div class="lc-review-progress">
+                        <span id="review-progress-text">进度: 0 / 0</span>
+                        <div class="lc-progress-bar"><div class="lc-progress-fill" id="review-progress-fill" style="width:0%"></div></div>
+                    </div>
+                    <div class="lc-flashcard" id="flashcard">
+                        <div class="lc-flashcard-front" id="flashcard-front">
+                            <div class="lc-flashcard-word" id="flashcard-word"></div>
+                            <div class="lc-flashcard-hint">点击查看释义</div>
+                            <button class="lc-flashcard-speak" id="flashcard-speak-front"><i data-lucide="volume-2"></i></button>
+                        </div>
+                        <div class="lc-flashcard-back" id="flashcard-back" style="display:none;">
+                            <div class="lc-flashcard-word" id="flashcard-word-back"></div>
+                            <div class="lc-flashcard-phonetic" id="flashcard-phonetic"></div>
+                            <div class="lc-flashcard-meaning" id="flashcard-meaning"></div>
+                            <div class="lc-flashcard-example" id="flashcard-example"></div>
+                            <button class="lc-flashcard-speak" id="flashcard-speak-back"><i data-lucide="volume-2"></i></button>
+                        </div>
+                    </div>
+                    <div class="lc-flashcard-actions" id="flashcard-actions" style="display:none;">
+                        <button class="lc-btn lc-btn-ghost lc-review-wrong" id="btn-review-wrong"><i data-lucide="x"></i> 不认识</button>
+                        <button class="lc-btn lc-btn-primary lc-review-right" id="btn-review-right"><i data-lucide="check"></i> 认识</button>
+                    </div>
+                </div>
+            </div>
+            <div id="review-complete-screen" style="display:none;">
+                <div class="lc-review-complete">
+                    <i data-lucide="party-popper"></i>
+                    <h2 class="lc-h2" style="margin-bottom:8px;">复习完成！</h2>
+                    <p id="review-complete-text" style="font-size:14px;color:var(--lc-color-text-secondary);margin-bottom:24px;"></p>
+                    <button class="lc-btn lc-btn-primary" id="btn-review-finish"><i data-lucide="check"></i> 完成</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== EXPORT VIEW ========== -->
+    <section id="view-export" class="lc-view">
+        <div class="lc-eyebrow">导出文档</div>
+        <h1 class="lc-h1">导出挖空练习</h1>
+        <p class="lc-subtitle">将生成的附带答案的挖空版导出为 PDF 或 Word 文档。</p>
+        <div class="lc-export-grid">
+            <div class="lc-card">
+                <div class="lc-option-group">
+                    <h3>选择格式</h3>
+                    <label class="lc-format-option selected"><input type="radio" name="format" value="pdf" checked><i data-lucide="file-text"></i><span>PDF 文档</span></label>
+                    <label class="lc-format-option"><input type="radio" name="format" value="word"><i data-lucide="file-type"></i><span>Word 文档</span></label>
+                </div>
+                <div class="lc-option-group">
+                    <h3>导出选项</h3>
+                    <div class="lc-toggle"><span class="lc-toggle-label">包含答案附录</span><label class="lc-switch"><input type="checkbox" id="export-answers" checked><span class="lc-switch-slider"></span></label></div>
+                    <div class="lc-toggle"><span class="lc-toggle-label">包含行号</span><label class="lc-switch"><input type="checkbox" id="export-line-numbers" checked><span class="lc-switch-slider"></span></label></div>
+                </div>
+                <button class="lc-btn lc-btn-primary" id="btn-do-export" style="width: 100%; justify-content: center; padding: 12px;"><i data-lucide="download" style="width:16px;height:16px;"></i> 导出文档</button>
+            </div>
+            <div>
+                <h3 class="lc-h3" style="margin-bottom: 12px;">预览</h3>
+                <div class="lc-preview-paper" id="export-preview"></div>
+            </div>
+        </div>
+    </section>
+
+    <section id="view-learning" class="lc-view">
+        <div class="lc-eyebrow">我的学习</div>
+        <h1 class="lc-h1">学习打卡</h1>
+        <p class="lc-subtitle">每天坚持学习，养成持续进步的习惯。</p>
+        <div style="max-width:560px;margin:0 auto;">
+            <div class="lc-streak-card" id="streak-card">
+                <div class="lc-streak-num" id="streak-num">0</div>
+                <div class="lc-streak-label">连续学习天数</div>
+            </div>
+            <button class="lc-checkin-btn" id="btn-checkin" onclick="doCheckin()"><i data-lucide="flame" style="width:20px;height:20px;vertical-align:middle;margin-right:6px;"></i>今日打卡</button>
+            <div style="margin-top:24px;">
+                <h3 class="lc-h3" style="margin-bottom:8px;">本周打卡</h3>
+                <div class="lc-checkin-grid" id="checkin-grid"></div>
+                <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--lc-color-text-tertiary);">
+                    <span>周一</span><span>周二</span><span>周三</span><span>周四</span><span>周五</span><span>周六</span><span>周日</span>
+                </div>
+            </div>
+            <div style="margin-top:32px;">
+                <h3 class="lc-h3" style="margin-bottom:12px;">学习提醒</h3>
+                <div class="lc-reminder-row">
+                    <label><input type="checkbox" id="reminder-daily" onchange="toggleReminder(this.checked)"> <span>每日学习提醒</span></label>
+                    <input type="time" class="lc-reminder-time" id="reminder-time" value="20:00" onchange="saveReminderTime(this.value)">
+                </div>
+                <div class="lc-reminder-row">
+                    <label><input type="checkbox" id="reminder-review" onchange="toggleReviewReminder(this.checked)"> <span>艾宾浩斯复习提醒</span></label>
+                    <span style="font-size:12px;color:var(--lc-color-text-tertiary);" id="review-count-label">今日待复习 0</span>
+                </div>
+                <p style="font-size:12px;color:var(--lc-color-text-tertiary);margin-top:8px;">提示：提醒功能通过浏览器通知实现，首次使用需授权通知权限。</p>
+            </div>
+            <div style="margin-top:24px;padding:16px;background:var(--lc-color-surface-sunken);border-radius:12px;">
+                <h3 class="lc-h3" style="margin-bottom:8px;">学习统计</h3>
+                <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;text-align:center;">
+                    <div><div style="font-size:24px;font-weight:700;color:var(--lc-color-primary);" id="stat-words">0</div><div style="font-size:12px;color:var(--lc-color-text-tertiary);">生词</div></div>
+                    <div><div style="font-size:24px;font-weight:700;color:var(--lc-state-info);" id="stat-phrases">0</div><div style="font-size:12px;color:var(--lc-color-text-tertiary);">短语</div></div>
+                    <div><div style="font-size:24px;font-weight:700;color:var(--lc-state-success);" id="stat-total-days">0</div><div style="font-size:12px;color:var(--lc-color-text-tertiary);">累计天数</div></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+</main>
+
+<!-- ===== Auth Modal ===== -->
+<div class="lc-modal-overlay" id="auth-modal">
+  <div class="lc-modal">
+    <div class="lc-modal-header">
+      <h3>登录 / 注册</h3>
+      <button class="lc-modal-close" onclick="closeAuthModal()">&times;</button>
+    </div>
+    <div class="lc-modal-body">
+      <div class="lc-auth-tabs">
+        <button class="lc-auth-tab active" data-mode="login">登录</button>
+        <button class="lc-auth-tab" data-mode="register">注册</button>
+      </div>
+      <input type="text" id="auth-username" placeholder="用户名（字母、数字、下划线、中文）" class="lc-input" style="width:100%;margin-bottom:12px;" autocomplete="username">
+      <div style="position:relative;margin-bottom:12px;">
+        <input type="password" id="auth-password" placeholder="密码（至少 4 位）" class="lc-input" style="width:100%;padding-right:40px;" autocomplete="current-password">
+        <button type="button" id="btn-toggle-pwd" class="lc-pwd-toggle" tabindex="-1" title="显示/隐藏密码"><i data-lucide="eye" style="width:18px;height:18px;"></i></button>
+      </div>
+      <div id="confirm-password-wrap" style="position:relative;margin-bottom:12px;display:none;">
+        <input type="password" id="auth-password-confirm" placeholder="确认密码" class="lc-input" style="width:100%;padding-right:40px;" autocomplete="new-password">
+        <button type="button" id="btn-toggle-pwd2" class="lc-pwd-toggle" tabindex="-1" title="显示/隐藏密码"><i data-lucide="eye" style="width:18px;height:18px;"></i></button>
+      </div>
+      <button class="lc-btn lc-btn-primary" id="btn-auth-submit" style="width:100%;justify-content:center;">登录</button>
+      <p class="lc-auth-hint">本地优先存储，云端同步支持跨设备登录 · <a href="javascript:void(0)" id="btn-view-auth-log" style="color:var(--lc-color-primary);text-decoration:underline;font-size:12px;">查看认证日志</a></p>
+    </div>
+  </div>
+</div>
+
+<!-- ===== Auth Log Modal ===== -->
+<div class="lc-modal-overlay" id="auth-log-modal">
+  <div class="lc-modal" style="max-width:480px;">
+    <div class="lc-modal-header">
+      <h3>认证日志</h3>
+      <button class="lc-modal-close" onclick="document.getElementById('auth-log-modal').classList.remove('show')">&times;</button>
+    </div>
+    <div class="lc-modal-body">
+      <div id="auth-log-list" style="max-height:360px;overflow-y:auto;font-size:13px;font-family:monospace;"></div>
+      <button class="lc-btn" id="btn-clear-auth-log" style="width:100%;justify-content:center;margin-top:12px;font-size:13px;">清空日志</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== Cloud Sync Settings Modal ===== -->
+<div class="lc-modal-overlay" id="cloud-sync-modal">
+  <div class="lc-modal" style="max-width:520px;">
+    <div class="lc-modal-header">
+      <h3>云端同步设置</h3>
+      <button class="lc-modal-close" onclick="document.getElementById('cloud-sync-modal').classList.remove('show')">&times;</button>
+    </div>
+    <div class="lc-modal-body">
+      <!-- Step 1: API Key -->
+      <div style="margin-bottom:16px;padding:12px;border-radius:8px;background:var(--lc-color-surface);font-size:13px;line-height:1.6;">
+        <strong style="color:var(--lc-color-primary);">第一步：获取 API Key</strong><br>
+        1. 注册 <a href="https://jsonbin.io/create-account" target="_blank" style="color:var(--lc-color-primary);">JSONBin.io</a> 免费账号（每月 10,000 次请求）<br>
+        2. 登录后在 <a href="https://jsonbin.io" target="_blank" style="color:var(--lc-color-primary);">控制台</a> 复制你的 <code style="background:var(--lc-color-surface-hover);padding:2px 6px;border-radius:4px;">X-Master-Key</code><br>
+        3. 粘贴到下方输入框并保存
+      </div>
+      <label style="font-size:13px;color:var(--lc-color-text-secondary);margin-bottom:6px;display:block;">JSONBin.io API Key (X-Master-Key)</label>
+      <div style="position:relative;margin-bottom:12px;">
+        <input type="password" id="cloud-api-key-input" placeholder="$2a$10$..." class="lc-input" style="width:100%;padding-right:40px;">
+        <button type="button" id="btn-toggle-apikey" class="lc-pwd-toggle" tabindex="-1" title="显示/隐藏"><i data-lucide="eye" style="width:18px;height:18px;"></i></button>
+      </div>
+      <div style="display:flex;gap:8px;margin-bottom:16px;">
+        <button class="lc-btn lc-btn-primary" id="btn-save-apikey" style="flex:1;justify-content:center;">保存 API Key</button>
+        <button class="lc-btn" id="btn-test-apikey" style="flex:1;justify-content:center;">测试连接</button>
+      </div>
+
+      <!-- Step 2: Sync Code -->
+      <div id="sync-code-section" style="display:none;">
+        <div style="margin-bottom:12px;padding:12px;border-radius:8px;background:var(--lc-color-surface);font-size:13px;line-height:1.6;">
+          <strong style="color:var(--lc-color-primary);">第二步：跨设备同步</strong><br>
+          <span id="sync-code-instruction-first">保存 API Key 后将自动生成同步码。在其他设备上输入相同的 API Key 和此同步码即可同步。</span>
+          <span id="sync-code-instruction-existing" style="display:none;">如果你已在其他设备上启用过云端同步，请输入该设备的同步码。否则留空将自动创建新的同步码。</span>
+        </div>
+        <label style="font-size:13px;color:var(--lc-color-text-secondary);margin-bottom:6px;display:block;">同步码（Sync Code）</label>
+        <div style="display:flex;gap:8px;margin-bottom:12px;">
+          <input type="text" id="cloud-sync-code-input" placeholder="留空自动创建，或输入已有同步码" class="lc-input" style="flex:1;">
+          <button class="lc-btn" id="btn-copy-synccode" style="flex-shrink:0;" title="复制同步码"><i data-lucide="copy" style="width:16px;height:16px;"></i></button>
+        </div>
+        <div style="display:flex;gap:8px;margin-bottom:12px;">
+          <button class="lc-btn lc-btn-primary" id="btn-save-synccode" style="flex:1;justify-content:center;">保存同步码</button>
+        </div>
+      </div>
+
+      <button class="lc-btn" id="btn-clear-apikey" style="width:100%;justify-content:center;font-size:13px;color:var(--lc-color-error,#ef4444);">清除所有云端设置（禁用同步）</button>
+      <div id="cloud-sync-status" style="margin-top:12px;font-size:13px;text-align:center;color:var(--lc-color-text-tertiary);"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== App Logic ===== -->
+<script>
+'use strict';
+
+function safeLucideIcons() {
+    if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
+    else setTimeout(safeLucideIcons, 200);
+}
+
+// Debounced icon refresh — batches multiple render calls into one createIcons pass
+var _iconRefreshTimer = null;
+function refreshIcons() {
+    if (_iconRefreshTimer) return; // already scheduled
+    _iconRefreshTimer = setTimeout(function() {
+        _iconRefreshTimer = null;
+        if (typeof lucide !== 'undefined' && lucide.createIcons) {
+            try { lucide.createIcons(); } catch(e) {}
+        }
+    }, 50);
+}
+
+// Debounce utility — delays function execution until calls stop for wait ms
+function debounce(fn, wait) {
+    var timer = null;
+    return function() {
+        var ctx = this, args = arguments;
+        if (timer) clearTimeout(timer);
+        timer = setTimeout(function() { timer = null; fn.apply(ctx, args); }, wait || 200);
+    };
+}
+
+const CDN = {
+    pdfjs: ['https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js', 'https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js'],
+    pdfjsWorker: ['https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js', 'https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.worker.min.js'],
+    mammoth: ['https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js', 'https://cdn.jsdelivr.net/npm/mammoth@1.6.0/mammoth.browser.min.js'],
+};
+const _scriptLoaded = {};
+function loadScript(urls) {
+    var urlList = Array.isArray(urls) ? urls : [urls];
+    var key = urlList[0];
+    if (_scriptLoaded[key]) return _scriptLoaded[key];
+    _scriptLoaded[key] = new Promise(function(resolve, reject) {
+        function tryLoad(idx) {
+            if (idx >= urlList.length) { reject(new Error('无法加载脚本，所有CDN均失败')); return; }
+            var s = document.createElement('script');
+            s.src = urlList[idx];
+            s.onload = resolve;
+            s.onerror = function() { tryLoad(idx + 1); };
+            document.head.appendChild(s);
+        }
+        tryLoad(0);
+    });
+    return _scriptLoaded[key];
+}
+
+const State = {
+    user: null,
+    corpus: null,
+    hiddenItems: [],
+    documents: [],
+    currentDocFilter: 'all',
+    customTopics: [],
+    topicNameOverrides: {},
+    vocabulary: { words: [], phrases: [] },
+    oral: { topic: 'education', part: 2, messages: [], qIndex: 0, started: false, aiConfig: { apiKey: '', baseUrl: '', model: 'gpt-4o-mini' }, testdafMode: false, testdafNum: 1, testdafTask: 1 },
+    review: { currentCard: null, reviewQueue: [], sessionStats: { correct: 0, wrong: 0, total: 0 } },
+    translationCollapsed: false,
+    editMode: false,
+    learning: { checkinDates: [], streak: 0, lastCheckin: null, dailyReminder: false, reminderTime: '20:00', reviewReminder: false, totalDays: 0 },
+    currentView: 'import',
+    lang: localStorage.getItem('lc-lang') || 'en',
+};
+
+// ===== Multi-Language Configuration =====
+const LANG_CONFIGS = {
+    en: {
+        name: '英语', flag: '🇬🇧', exam: 'IELTS',
+        topics: [
+            { id: 'education', name: '教育', icon: 'graduation-cap', color: '#B06A36', bg: '#F6ECDF' },
+            { id: 'technology', name: '科技', icon: 'cpu', color: '#6F8390', bg: '#DCE3E8' },
+            { id: 'environment', name: '环境', icon: 'leaf', color: '#6E8A5A', bg: '#E7EDDA' },
+            { id: 'society', name: '社会', icon: 'users', color: '#BE8A45', bg: '#F3E7D5' },
+            { id: 'culture', name: '文化', icon: 'palette', color: '#9B5C8F', bg: '#EFE0EC' },
+            { id: 'economy', name: '经济', icon: 'trending-up', color: '#5A7A9E', bg: '#DCE6F0' },
+        ],
+        oralParts: [
+            { part: 1, title: 'Part 1', desc: '个人问答' },
+            { part: 2, title: 'Part 2', desc: '话题卡' },
+            { part: 3, title: 'Part 3', desc: '深入讨论' },
+        ],
+        sampleTitle: '印刷术与教育普及',
+        sampleTopic: 'education',
+        sampleCorpus: `The invention of the printing press by Johannes Gutenberg in the fifteenth century transformed the way knowledge was shared across Europe.
+古腾堡在十五世纪发明的印刷机彻底改变了知识在欧洲传播的方式。
+Before this breakthrough, books were expensive and time-consuming to produce, as each copy had to be hand-written by scribes.
+在这一突破之前，书籍既昂贵又耗时，因为每份副本都必须由抄写员手写。
+The movable type system allowed texts to be reproduced quickly and at a fraction of the previous cost.
+活字印刷系统使文本能够快速复制，且成本仅为以前的一小部分。
+As a result, literacy rates began to rise, and ideas spread more rapidly than ever before.
+因此，识字率开始上升，思想传播比以往任何时候都更快。
+---
+Education has always been a cornerstone of human civilization.
+教育一直是人类文明的基石。
+From ancient academies to modern universities, the quest for knowledge has driven human progress.
+从古代书院到现代大学，对知识的追求推动了人类进步。
+Today, technology is transforming how we learn, making education more accessible than ever before.
+今天，技术正在改变我们的学习方式，使教育比以往任何时候都更加普及。`,
+        oralSubtitle: '语料按主题分类，每篇语料可生成雅思口语题目，模拟考官与用户交谈。支持文字输入与语音输入，考官回复自动朗读。',
+        corpusTitlePlaceholder: '例如：印刷术与教育普及',
+    },
+    de: {
+        name: '德语', flag: '🇩🇪', exam: 'TestDaF',
+        topics: [
+            { id: 'bildung', name: '教育', icon: 'graduation-cap', color: '#B06A36', bg: '#F6ECDF' },
+            { id: 'wissenschaft', name: '科学', icon: 'flask-conical', color: '#6F8390', bg: '#DCE3E8' },
+            { id: 'umwelt', name: '环境', icon: 'leaf', color: '#6E8A5A', bg: '#E7EDDA' },
+            { id: 'gesellschaft', name: '社会', icon: 'users', color: '#BE8A45', bg: '#F3E7D5' },
+            { id: 'wirtschaft', name: '经济', icon: 'trending-up', color: '#5A7A9E', bg: '#DCE6F0' },
+            { id: 'kultur', name: '文化', icon: 'palette', color: '#9B5C8F', bg: '#EFE0EC' },
+        ],
+        oralParts: [
+            { part: 1, title: 'Teil 1', desc: '信息表达' },
+            { part: 2, title: 'Teil 2', desc: '图表描述' },
+            { part: 3, title: 'Teil 3', desc: '观点论证' },
+        ],
+        sampleTitle: 'Erneuerbare Energien in Deutschland',
+        sampleTopic: 'umwelt',
+        sampleCorpus: `Deutschland hat in den letzten Jahrzehnten eine bemerkenswerte Entwicklung im Bereich der erneuerbaren Energien durchlaufen.
+在过去的几十年里，德国在可再生能源领域经历了显著的发展。
+Die Energiewende, also der Umbau der Energieversorgung hin zu nachhaltigen Quellen, ist eines der wichtigsten Projekte der deutschen Regierung.
+能源转型，即将能源供应转向可持续来源，是德国政府最重要的项目之一。
+Windkraft und Solarenergie spielen dabei eine zentrale Rolle, da sie zunehmend kostengünstiger und effizienter werden.
+风能和太阳能在此中扮演着核心角色，因为它们变得越来越便宜和高效。
+Bis 2030 strebt Deutschland an, mindestens 80 Prozent seines Strombedarfs aus erneuerbaren Quellen zu decken.
+到2030年，德国的目标是至少80%的电力需求来自可再生能源。
+---
+Das deutsche Universitätssystem ist weltweit für seine Qualität und Zugänglichkeit bekannt.
+德国的大学系统以其质量和可及性在全世界闻名。
+Die Bologna-Reform hat die Studienstrukturen vereinheitlicht und damit die internationale Mobilität der Studierenden erleichtert.
+博洛尼亚改革统一了学习结构，从而促进了学生的国际流动性。
+An vielen deutschen Hochschulen gibt es keine Studiengebühren, was das Studium für in- und ausländische Studierende gleichermaßen attraktiv macht.
+许多德国高校不收学费，这使得学习对国内外学生同样具有吸引力。`,
+        oralSubtitle: '德福口语模拟训练：10套模拟题(Modelltest 1-10)，每套7道题(Aufgabe 1-7)，AI考官模拟真实考试场景。支持文字输入与语音输入，考官回复自动朗读。',
+        corpusTitlePlaceholder: '例如：德国可再生能源转型',
+    },
+    ja: {
+        name: '日语', flag: '🇯🇵', exam: 'JLPT',
+        topics: [
+            { id: 'gakkou', name: '学校生活', icon: 'graduation-cap', color: '#B06A36', bg: '#F6ECDF' },
+            { id: 'shigoto', name: '工作', icon: 'briefcase', color: '#6F8390', bg: '#DCE3E8' },
+            { id: 'bunka', name: '文化', icon: 'palette', color: '#9B5C8F', bg: '#EFE0EC' },
+            { id: 'ryokou', name: '旅行', icon: 'map-pin', color: '#6E8A5A', bg: '#E7EDDA' },
+            { id: 'kagaku', name: '科技', icon: 'cpu', color: '#5A7A9E', bg: '#DCE6F0' },
+            { id: 'shakai', name: '社会', icon: 'users', color: '#BE8A45', bg: '#F3E7D5' },
+        ],
+        oralParts: [
+            { part: 1, title: '基礎会話', desc: '基础会话' },
+            { part: 2, title: 'テーマ別', desc: '主题会话' },
+            { part: 3, title: 'ディスカッション', desc: '深入讨论' },
+        ],
+        sampleTitle: '日本の四季と文化',
+        sampleTopic: 'bunka',
+        sampleCorpus: `日本には春、夏、秋、冬の四つの季節があり、それぞれ独自の美しさを持っています。
+日本有春、夏、秋、冬四个季节，每个季节都有其独特的美丽。
+春には桜の花が咲き、人々は花見を楽しみます。これは日本の最も代表的な文化の一つです。
+春天樱花盛开，人们享受赏花。这是日本最具代表性的文化之一。
+夏には祭りが各地で開催され、浴衣を着た人々が花火を楽しみます。
+夏天各地举办祭典，穿着浴衣的人们享受烟花。
+秋には紅葉が美しく色づき、冬には雪景色が人々の心を魅了します。
+秋天红叶美丽地染上色彩，冬天雪景迷人。
+---
+日本の交通システムは非常に発達しており、特に新幹線は世界でも有名です。
+日本的交通系统非常发达，特别是新干线在世界范围内都很有名。
+新幹線は時間通りに到着することで知られており、その正確さは世界トップレベルです。
+新干线以准点到达而闻名，其准确度为世界顶级水平。
+日本を訪れる観光客は、この便利な交通網を利用して全国各地を旅行することができます。
+访问日本的游客可以利用这个便利的交通网在全国各地旅行。`,
+        oralSubtitle: '语料按主题分类，每篇语料可生成JLPT口语题目，模拟考官与用户交谈。支持文字输入与语音输入，考官回复自动朗读。',
+        corpusTitlePlaceholder: '例如：日本的四季与文化',
+    },
+};
+
+function getCurrentLangConfig() {
+    return LANG_CONFIGS[State.lang] || LANG_CONFIGS.en;
+}
+
+function getTopicsForLang() {
+    return getCurrentLangConfig().topics;
+}
+
+function switchLanguage(lang) {
+    if (lang === State.lang) return;
+    State.lang = lang;
+    localStorage.setItem('lc-lang', lang);
+    var config = getCurrentLangConfig();
+    // Update oral topic to first topic of new language
+    if (config.topics.length > 0) State.oral.topic = config.topics[0].id;
+    State.oral.testdafMode = (lang === 'de');
+    // Update UI
+    updateLangSwitcherUI();
+    updateTopicSelect();
+    renderTopicList();
+    renderTopicFolders();
+    populateTopicSelect();
+    renderOralParts();
+    renderVocabulary();
+    // Update sample button and placeholder
+    var titleInput = document.getElementById('corpus-title');
+    if (titleInput) titleInput.placeholder = config.corpusTitlePlaceholder;
+    // Update oral subtitle
+    var oralSub = document.querySelector('#view-oral .lc-subtitle');
+    if (oralSub) oralSub.textContent = config.oralSubtitle;
+    refreshIcons();
+    showToast('已切换至' + config.name + '（' + config.exam + '）', 'info');
+}
+
+function updateLangSwitcherUI() {
+    var config = getCurrentLangConfig();
+    document.getElementById('lang-current-flag').textContent = config.flag;
+    document.getElementById('lang-current-name').textContent = config.name;
+    document.querySelectorAll('.lc-lang-option').forEach(function(opt) {
+        opt.classList.toggle('active', opt.dataset.lang === State.lang);
+    });
+}
+
+function updateTopicSelect() {
+    var select = document.getElementById('topic-select');
+    if (!select) return;
+    var topics = getTopicsForLang();
+    var currentVal = select.value;
+    select.innerHTML = '';
+    topics.forEach(function(t) {
+        var opt = document.createElement('option');
+        opt.value = t.id;
+        opt.textContent = t.name;
+        select.appendChild(opt);
+    });
+    // Try to keep selection, otherwise pick first
+    if (topics.some(function(t) { return t.id === currentVal; })) {
+        select.value = currentVal;
+    } else if (topics.length > 0) {
+        select.value = topics[0].id;
+    }
+}
+
+function renderOralParts() {
+    var container = document.getElementById('part-cards');
+    if (!container) return;
+    var config = getCurrentLangConfig();
+    var testdafBar = document.getElementById('testdaf-bar');
+    if (State.lang === 'de') {
+        // Show TestDaF mode for German
+        if (testdafBar) testdafBar.style.display = 'block';
+        container.innerHTML = '';
+        TESTDAF_TASK_TYPES.forEach(function(p) {
+            var div = document.createElement('div');
+            div.className = 'lc-part-card' + (p.num === State.oral.testdafTask ? ' active' : '');
+            div.dataset.part = p.num;
+            var icons = ['phone', 'message-circle', 'bar-chart-3', 'scale', 'lightbulb', 'presentation', 'vote'];
+            div.innerHTML = '<i data-lucide="' + (icons[p.num-1] || 'circle') + '"></i><h4>' + p.type + '</h4><p>' + p.desc + '</p>';
+            container.appendChild(div);
+        });
+        refreshIcons();
+        renderTestDaFTasks();
+        return;
+    }
+    if (testdafBar) testdafBar.style.display = 'none';
+    container.innerHTML = '';
+    config.oralParts.forEach(function(p, idx) {
+        var div = document.createElement('div');
+        div.className = 'lc-part-card' + (p.part === State.oral.part ? ' active' : '');
+        div.dataset.part = p.part;
+        var icon = idx === 0 ? 'message-circle' : (idx === 1 ? 'clipboard-list' : 'messages-square');
+        div.innerHTML = '<i data-lucide="' + icon + '"></i><h4>' + p.title + '</h4><p>' + p.desc + '</p>';
+        container.appendChild(div);
+    });
+    refreshIcons();
+}
+
+const TOPICS = [
+    { id: 'education', name: '教育', icon: 'graduation-cap', color: '#B06A36', bg: '#F6ECDF' },
+    { id: 'technology', name: '科技', icon: 'cpu', color: '#6F8390', bg: '#DCE3E8' },
+    { id: 'environment', name: '环境', icon: 'leaf', color: '#6E8A5A', bg: '#E7EDDA' },
+    { id: 'society', name: '社会', icon: 'users', color: '#BE8A45', bg: '#F3E7D5' },
+    { id: 'culture', name: '文化', icon: 'palette', color: '#9B5C8F', bg: '#EFE0EC' },
+    { id: 'economy', name: '经济', icon: 'trending-up', color: '#5A7A9E', bg: '#DCE6F0' },
+];
+
+// Cached topic lookups — invalidated when lang/customTopics change
+var _topicCache = { lang: null, customKey: null, all: null };
+function getAllTopics() {
+    var customKey = JSON.stringify(State.customTopics || []);
+    var overrideKey = JSON.stringify(State.topicNameOverrides || {});
+    if (_topicCache.lang === State.lang && _topicCache.customKey === customKey && _topicCache.overrideKey === overrideKey && _topicCache.all) {
+        return _topicCache.all;
+    }
+    var defaults = getTopicsForLang().map(function(t) {
+        var override = State.topicNameOverrides ? State.topicNameOverrides[t.id] : null;
+        return { id: t.id, name: override || t.name, icon: t.icon, color: t.color, bg: t.bg, isDefault: true };
+    });
+    var customs = (State.customTopics || []).map(function(t) {
+        return { id: t.id, name: t.name, icon: t.icon || 'folder', color: t.color || '#837868', bg: t.bg || '#EFE7D6', isDefault: false };
+    });
+    _topicCache.lang = State.lang;
+    _topicCache.customKey = customKey;
+    _topicCache.overrideKey = overrideKey;
+    _topicCache.all = defaults.concat(customs);
+    return _topicCache.all;
+}
+
+function findTopicById(id) {
+    return getAllTopics().find(function(t) { return t.id === id; });
+}
+
+var CUSTOM_TOPIC_COLORS = ['#B06A36', '#6F8390', '#6E8A5A', '#BE8A45', '#9B5C8F', '#5A7A9E', '#8B5E3C', '#4A6B7C', '#7A6B8B', '#5C8A6E'];
+
+const REVIEW_INTERVALS = [
+    60000, 600000, 3600000, 86400000, 172800000, 345600000, 604800000, 1296000000, 2592000000,
+];
+
+const FALLBACK_RESPONSES = {
+    de: {
+        positive: [
+            'Das ist ein interessanter Punkt. Können Sie das näher erläutern?',
+            'Ich sehe. Könnten Sie dazu ein Beispiel geben?',
+            'Danke für Ihre Antwort. Warum denken Sie so?',
+            'Das ist eine gute Überlegung. Wie passt das zu Ihren persönlichen Erfahrungen?',
+            'Ich verstehe. Können Sie das etwas genauer ausführen?',
+        ],
+        probing: [
+            'Das ist eine interessante Sichtweise. Glauben Sie, dass andere auch so denken?',
+            'Können Sie sich Situationen vorstellen, in denen das nicht gilt?',
+            'Wie unterscheidet sich das von anderen Ländern oder Kulturen?',
+            'Was denken Sie sind die Hauptgründe dafür?',
+            'Wie könnte sich das in Zukunft verändern, meinen Sie?',
+        ],
+    },
+    positive: [
+        "That's a fascinating perspective. Could you tell me more about that?",
+        "I see. That's quite interesting. Can you give me a specific example?",
+        "Thank you for sharing that. Why do you think that is the case?",
+        "Good point. How does this relate to your personal experience?",
+        "I understand. Could you elaborate a bit further on that?",
+    ],
+    probing: [
+        "That's an interesting viewpoint. Do you think others would agree?",
+        "Can you think of any situations where that might not be the case?",
+        "How do you think this compares to other countries or cultures?",
+        "What do you think are the main reasons behind this?",
+        "How might this change in the future, do you think?",
+    ],
+};
+
+const ORAL_BANK = {
+    education: {
+        1: [
+            'What is your major? Why did you choose it?',
+            'Do you think education is important? Why?',
+            'How do you prefer to study: alone or with others?',
+            'What was your favorite subject in school? Why?',
+            'Do you think teachers should be strict or friendly?',
+            'What kind of school did you go to when you were young?',
+            'Do you think children should start learning English at an early age?',
+            'Would you like to be a teacher in the future? Why or why not?',
+            'What is the most memorable thing about your school days?',
+            'Do you think homework is necessary for students?',
+            'How has your education shaped who you are today?',
+            'Are there any subjects you wish you had studied?',
+        ],
+        2: [
+            'Describe a teacher who has influenced you. You should say: who this person is, what they are like, how they helped you, and explain why they influenced you.',
+            'Describe a course you took that was particularly useful. You should say: what the course was, what you learned, how you used it, and explain why it was useful.',
+            'Describe a skill you learned in school. You should say: what the skill was, how you learned it, who taught you, and explain why it was important.',
+            'Describe a time when you had difficulty learning something. You should say: what it was, why it was difficult, how you overcame it, and how you felt afterwards.',
+            'Describe an educational trip you went on. You should say: where you went, what you learned, who you went with, and explain how it affected your understanding.',
+            'Describe a subject you did not enjoy at school. You should say: what the subject was, why you disliked it, how you dealt with it, and whether your opinion has changed since then.',
+        ],
+        3: [
+            'How has technology changed education in your country?',
+            'Do you think online learning will replace traditional classrooms? Why or why not?',
+            'What role should the government play in education?',
+            'How might education change in the next 20 years?',
+            'Should university education be free for everyone? Discuss.',
+            'What are the advantages and disadvantages of studying abroad?',
+            'How can schools better prepare students for the real world?',
+            'Do you think exams are an effective way to assess students? Why or why not?',
+            'What is the difference between education and schooling?',
+            'How does the quality of education affect a country\'s development?',
+            'Should parents be more involved in their children\'s education? How?',
+            'Do you think creativity is as important as academic knowledge?',
+        ],
+    },
+    technology: {
+        1: [
+            'Do you use technology often? What devices do you use?',
+            'How has technology changed your daily life?',
+            'What technology do you find most useful?',
+            'Do you think people spend too much time on their phones?',
+            'What is the most recent piece of technology you bought?',
+            'Do you prefer using a computer or a smartphone? Why?',
+            'How do you feel about artificial intelligence?',
+            'What technology would you like to have in the future?',
+            'Do you think technology makes life easier or more complicated?',
+            'How often do you use social media? What for?',
+            'Do you think children should be limited in their screen time?',
+            'What app on your phone do you use the most?',
+        ],
+        2: [
+            'Describe a piece of technology you find useful. You should say: what it is, how you use it, when you use it, and explain why it is useful.',
+            'Describe a time when technology helped you solve a problem. You should say: what the problem was, what technology you used, how it helped, and explain how you felt about it.',
+            'Describe an app you use regularly. You should say: what the app is, how often you use it, what features it has, and explain why you like it.',
+            'Describe a time when you could not use technology. You should say: when and where it happened, what you needed to do, how you managed without it, and explain how you felt.',
+            'Describe a gadget you would like to buy. You should say: what it is, what it does, why you want it, and explain how it would improve your life.',
+            'Describe how you learned to use a piece of technology. You should say: what it was, who taught you, how long it took, and explain whether you found it easy or difficult.',
+        ],
+        3: [
+            'Do you think technology makes people more or less connected?',
+            'What are the drawbacks of relying too much on technology?',
+            'How might AI change the way we work in the future?',
+            'Should there be regulations on technology companies? Why?',
+            'How has technology affected the way people communicate?',
+            'What are the potential risks of artificial intelligence?',
+            'Do you think technology has made our lives more stressful?',
+            'How can older people adapt to new technology?',
+            'What role should technology play in healthcare?',
+            'Do you think virtual reality will become mainstream? Why or why not?',
+            'How has technology changed the way we access information?',
+            'What are the environmental impacts of technological advancement?',
+        ],
+    },
+    environment: {
+        1: [
+            'Do you think the environment is important? Why?',
+            'What do you do to protect the environment?',
+            'Are there any environmental problems in your hometown?',
+            'Do you think climate change is a serious issue?',
+            'Do you recycle? Why or why not?',
+            'How do you feel about pollution in your city?',
+            'Do you prefer living in the city or the countryside? Why?',
+            'What is the weather like in your country?',
+            'Do you think people should use public transport more?',
+            'Have you ever participated in any environmental activities?',
+            'Do you think plastic bags should be banned?',
+            'What do you do to reduce your carbon footprint?',
+        ],
+        2: [
+            'Describe an environmental problem that concerns you. You should say: what the problem is, what causes it, what effects it has, and explain what can be done about it.',
+            'Describe a place in nature that you like to visit. You should say: where it is, what it looks like, what you do there, and explain why you like it.',
+            'Describe a time when you did something to help the environment. You should say: what you did, why you did it, how you felt about it, and explain what the result was.',
+            'Describe a park or garden you enjoy visiting. You should say: where it is, how often you go there, what you like about it, and explain how it makes you feel.',
+            'Describe a season you enjoy. You should say: what season it is, what the weather is like, what people typically do, and explain why you enjoy it.',
+            'Describe a time when the weather affected your plans. You should say: what you were planning, what the weather was like, how you adapted, and explain how you felt about it.',
+        ],
+        3: [
+            'Who do you think is more responsible for environmental protection: individuals or governments?',
+            'Do you think economic growth and environmental protection can coexist?',
+            'What are the most serious environmental problems facing your country?',
+            'How can education help raise environmental awareness?',
+            'Do you think international cooperation is necessary to solve environmental problems?',
+            'What role should businesses play in protecting the environment?',
+            'How might climate change affect future generations?',
+            'Do you think renewable energy will eventually replace fossil fuels?',
+            'What are the challenges of implementing environmental policies?',
+            'How does urbanization affect the natural environment?',
+            'Should people be fined for not recycling? Discuss.',
+            'What can individuals do to reduce their environmental impact?',
+        ],
+    },
+    society: {
+        1: [
+            'Do you think social media has a positive or negative effect on society?',
+            'How has society changed in your country in recent years?',
+            'Do you enjoy socializing? Why or why not?',
+            'What do you usually do with your friends?',
+            'Do you think people are more lonely nowadays? Why?',
+            'How important is family to you?',
+            'Do you think it is important to follow the news?',
+            'What social issues are you most concerned about?',
+            'Do you think people should do volunteer work? Why?',
+            'How do you feel about the generation gap?',
+            'Do you think gender equality has improved in your country?',
+            'What makes a good neighbor?',
+        ],
+        2: [
+            'Describe a social issue that you care about. You should say: what the issue is, why it matters, how it affects people, and explain what can be done.',
+            'Describe a person you admire for their contribution to society. You should say: who they are, what they did, why you admire them, and explain what impact they have had.',
+            'Describe a community event you participated in. You should say: what the event was, when and where it took place, what you did, and explain how you felt about it.',
+            'Describe a time when you helped someone. You should say: who you helped, how you helped them, why you helped them, and explain how you felt afterwards.',
+            'Describe a law in your country that you think is important. You should say: what the law is, why it was introduced, how it affects people, and explain whether you think it is effective.',
+            'Describe a charity or organization you support or know about. You should say: what it does, how it helps people, why it is important, and explain whether you would like to be involved.',
+        ],
+        3: [
+            'What are the biggest challenges facing society today?',
+            'How can individuals contribute to social change?',
+            'Do you think social media has changed the way people form opinions?',
+            'Should the government provide more support for disadvantaged groups?',
+            'How has the concept of family changed in modern society?',
+            'Do you think people are becoming more individualistic? Why?',
+            'What role does education play in reducing social inequality?',
+            'How can communities become more inclusive and diverse?',
+            'Do you think consumerism is a problem in modern society? Why?',
+            'What are the effects of an aging population on society?',
+            'How important is cultural diversity in a society?',
+            'Should there be limits on freedom of speech? Discuss.',
+        ],
+    },
+    culture: {
+        1: [
+            'How important is culture to you?',
+            'Do you think traditional culture is disappearing? Why?',
+            'What is your favorite traditional festival? Why?',
+            'Do you enjoy learning about other cultures?',
+            'What aspects of your culture are you most proud of?',
+            'Do you think food is an important part of culture? Why?',
+            'How often do you visit museums or art galleries?',
+            'Do you think traditional music is still relevant today?',
+            'What traditional skills or crafts are common in your country?',
+            'Do you think globalization is threatening local cultures?',
+            'What cultural differences have you noticed between your country and others?',
+            'Do you think young people appreciate traditional culture?',
+        ],
+        2: [
+            'Describe a cultural event you attended. You should say: what the event was, where and when it took place, what you did there, and explain how you felt about it.',
+            'Describe a traditional food from your country. You should say: what it is, how it is made, when people eat it, and explain why it is special.',
+            'Describe a museum or historical site you visited. You should say: where it is, what you saw there, what you learned, and explain how you felt about the experience.',
+            'Describe a cultural difference you found interesting. You should say: what the difference is, where you experienced it, how you reacted, and explain what you learned from it.',
+            'Describe a piece of traditional art or craft from your country. You should say: what it is, how it is made, its cultural significance, and explain whether you think it will survive.',
+            'Describe a festival or celebration in your country. You should say: what the festival is about, when it takes place, how people celebrate it, and explain what you enjoy most about it.',
+        ],
+        3: [
+            'How does globalization affect local cultures?',
+            'Should young people learn more about their traditional culture?',
+            'Do you think cultural heritage should be preserved at any cost?',
+            'How has technology affected the way culture is shared?',
+            'What role does language play in preserving culture?',
+            'Do you think tourism helps or harms local cultures?',
+            'How can we balance modernization with cultural preservation?',
+            'Should cultural artifacts be returned to their countries of origin?',
+            'What are the benefits of a multicultural society?',
+            'Do you think pop culture is replacing traditional culture?',
+            'How does religion influence culture in your country?',
+            'What can governments do to support traditional arts and crafts?',
+        ],
+    },
+    economy: {
+        1: [
+            'Do you follow economic news? Why or why not?',
+            'How has the economy changed in your country recently?',
+            'Do you think it is important to save money? Why?',
+            'Do you prefer shopping online or in physical stores? Why?',
+            'How do you feel about the cost of living in your city?',
+            'Do you think people are too materialistic nowadays?',
+            'What do you spend most of your money on?',
+            'Do you think advertising influences people\'s buying habits?',
+            'Would you like to start your own business? Why or why not?',
+            'How do you think the economy affects young people?',
+            'Do you think the gap between rich and poor is growing? Why?',
+            'What is your attitude towards second-hand goods?',
+        ],
+        2: [
+            'Describe a business you admire. You should say: what the business does, how you learned about it, why you admire it, and explain what makes it successful.',
+            'Describe something expensive you bought. You should say: what it was, where you bought it, why you bought it, and explain whether you think it was worth the money.',
+            'Describe a job you think is very important to society. You should say: what the job is, what the person does, why it is important, and explain what qualities a person needs for this job.',
+            'Describe a time when you had to manage your money carefully. You should say: what the situation was, how you managed, what you learned, and explain how you felt about the experience.',
+            'Describe a product from your country that is popular internationally. You should say: what the product is, where it comes from, why it is popular, and explain how it represents your country.',
+            'Describe a market or shopping area you like to visit. You should say: where it is, what you can buy there, how often you go, and explain why you enjoy going there.',
+        ],
+        3: [
+            'What are the key factors for a strong economy?',
+            'How does the economy affect ordinary people\'s lives?',
+            'Do you think globalization has benefited or harmed your country\'s economy?',
+            'Should the government provide free healthcare and education? Discuss.',
+            'How might automation and AI affect employment in the future?',
+            'Do you think consumerism is sustainable in the long term?',
+            'What are the advantages and disadvantages of a cashless society?',
+            'How can small businesses compete with large corporations?',
+            'Do you think the wealth gap is a serious problem? What can be done?',
+            'How does international trade affect local economies?',
+            'Should there be a minimum wage? Why or why not?',
+            'What economic challenges do you think your country will face in the next decade?',
+        ],
+    },
+};
+
+/**
+ * TestDaF (德福) Oral Exam Question Bank
+ * Based on "德福考前必备 口语" (徐立华编著)
+ * 10 Modelltests, each with 7 Aufgaben
+ */
+
+var TESTDAF_TASK_TYPES = [
+    { num: 1, type: 'Telefonieren', desc: '电话咨询', level: 'TDN 3', formality: 'formell', prepTime: 30, speakTime: 60 },
+    { num: 2, type: 'Informieren', desc: '信息表达', level: 'TDN 3', formality: 'informell', prepTime: 60, speakTime: 60 },
+    { num: 3, type: 'Grafikbeschreibung', desc: '图表描述', level: 'TDN 4', formality: 'formell', prepTime: 60, speakTime: 120 },
+    { num: 4, type: 'Argumentieren', desc: '观点论证', level: 'TDN 5', formality: 'formell', prepTime: 180, speakTime: 120 },
+    { num: 5, type: 'Ratschlag geben', desc: '建议给朋友', level: 'TDN 3', formality: 'informell', prepTime: 60, speakTime: 90 },
+    { num: 6, type: 'Vortrag halten', desc: '图表论述', level: 'TDN 5', formality: 'formell', prepTime: 120, speakTime: 120 },
+    { num: 7, type: 'Stellung nehmen', desc: '表态建议', level: 'TDN 3', formality: 'informell', prepTime: 30, speakTime: 60 },
+];
+
+var TESTDAF_BANK = {
+
+    1: {
+        title: 'Modelltest 1',
+        tasks: {
+            1: {
+                title: 'Aufgabe 1',
+                type: 'Telefonieren',
+                desc: '电话咨询',
+                situation: 'Sie haben eine Jobchance für den Vormittag gefunden. Aber vormittags sollten Sie Ihren Deutschkurs besuchen, deshalb rufen Sie beim akademischen Auslandsamt an, um nachzufragen, ob es noch alternative Deutschkurse am Nachmittag gibt.',
+                requirements: 'Stellen Sie sich vor.\nSagen Sie, warum Sie anrufen.\nFragen Sie nach Einzelheiten zu den Formalitäten.',
+                prepTime: 30,
+                speakTime: 60,
+                level: 'TDN 3',
+                formality: 'formell'
+            },
+            2: {
+                title: 'Aufgabe 2',
+                type: 'Informieren',
+                desc: '信息表达',
+                situation: 'Bei einer Einführungsveranstaltung an der Uni treffen Sie den Kommilitonen Hans, einen älteren Studenten. Er ist schon 28 Jahre alt und schreibt bald seine Abschlussarbeit. Er interessiert sich für Studienmöglichkeiten in Ihrer Heimat und fragt Sie danach.',
+                requirements: 'Erklären Sie Hans, welche Studienmöglichkeiten es in Ihrem Heimatland gibt;\nwelche Abschlussprüfungen es gibt;\nwie das Studium finanziert wird.',
+                prepTime: 60,
+                speakTime: 60,
+                level: 'TDN 3',
+                formality: 'informell'
+            },
+            3: {
+                title: 'Aufgabe 3',
+                type: 'Grafikbeschreibung',
+                desc: '图表描述',
+                situation: 'In Ihrem Landeskundekurs geht es heute um die Wohnungssituation von deutschen Familien. Ihr Dozent hat eine Grafik ausgeteilt, die die monatliche Miete nach Familientyp darstellt.',
+                requirements: 'Beschreiben Sie die Grafik.',
+                prepTime: 60,
+                speakTime: 120,
+                level: 'TDN 4',
+                formality: 'formell'
+            },
+            4: {
+                title: 'Aufgabe 4',
+                type: 'Argumentieren',
+                desc: '观点论证',
+                situation: 'In Ihrem pädagogischen Seminar diskutieren Sie über den Sprachlernprozess von Ausländern. Ein Kommilitone meint, dass viele ausländische Studenten zu viel Zeit für das Deutschlernen aufwenden. Die Ausländer könnten doch auch während der Studienzeit Fachdeutschkenntnisse erwerben.',
+                requirements: 'Wägen Sie Vorteile und Nachteile ab.\nBegründen Sie Ihre eigene Meinung.',
+                prepTime: 180,
+                speakTime: 120,
+                level: 'TDN 5',
+                formality: 'formell'
+            },
+            5: {
+                title: 'Aufgabe 5',
+                type: 'Ratschlag geben',
+                desc: '建议给朋友',
+                situation: 'Ihre Freundin Anna hat in diesem Semester das Fach Europäische Geschichte belegt. Für den Schein kann sie entweder innerhalb von zwei Wochen eine Seminararbeit verfassen oder eine Klausur nach den Ferien schreiben.',
+                requirements: 'Sagen Sie Anna, was Sie an ihrer Stelle tun würden.\nBegründen Sie Ihre Meinung.',
+                prepTime: 60,
+                speakTime: 90,
+                level: 'TDN 3',
+                formality: 'informell'
+            },
+            6: {
+                title: 'Aufgabe 6',
+                type: 'Vortrag halten',
+                desc: '图表论述',
+                situation: 'In Ihrem Soziologieseminar diskutieren Sie heute über den weltweiten Absatz von Flaschenwasser. Ihr Dozent hat eine Grafik ausgeteilt, die die Entwicklung des weltweiten Verkaufs von Flaschenwasser zeigt.',
+                requirements: 'Nennen Sie Gründe für die dargestellte Entwicklung.\nStellen Sie dar, welche Folgen Sie für die Zukunft sehen.',
+                prepTime: 120,
+                speakTime: 120,
+                level: 'TDN 5',
+                formality: 'formell'
+            },
+            7: {
+                title: 'Aufgabe 7',
+                type: 'Stellung nehmen',
+                desc: '表态建议',
+                situation: 'Ihr Freund Markus möchte in der Freizeit etwas lesen, weiß aber nicht, was er abonnieren soll: eine Wochenzeitschrift mit vielen internationalen Kommentaren oder eine lokale Tageszeitung. Er braucht Ihren Rat.',
+                requirements: 'Sagen Sie Markus, wozu Sie ihm raten.\nBegründen Sie Ihre Meinung.',
+                prepTime: 30,
+                speakTime: 60,
+                level: 'TDN 3',
+                formality: 'informell'
+            }
+        }
+    },
+
+    2: {
+        title: 'Modelltest 2',
+        tasks: {
+            1: {
+                title: 'Aufgabe 1',
+                type: 'Telefonieren',
+                desc: '电话咨询',
+                situation: 'Ihre Universität veranstaltet eine Exkursion für Geologiestudenten nach Marokko. Sie möchten an dieser Exkursion teilnehmen und rufen beim Sekretariat an.',
+                requirements: 'Stellen Sie sich vor.\nSagen Sie, warum Sie anrufen.\nFragen Sie nach Einzelheiten zu den Formalitäten.',
+                prepTime: 30,
+                speakTime: 60,
+                level: 'TDN 3',
+                formality: 'formell'
+            },
+            2: {
+                title: 'Aufgabe 2',
+                type: 'Informieren',
+                desc: '信息表达',
+                situation: 'Ihr Freund Thomas möchte am Karnevalsumzug in Köln teilnehmen und hat sich gut verkleidet. Er interessiert sich für die Feiertage in Ihrer Heimat und fragt Sie danach.',
+                requirements: 'Erklären Sie Thomas, ob in Ihrem Heimatland ein solches Kostümfest gibt;\nwie man sich verkleidet;\nwie die Stimmung dabei ist.',
+                prepTime: 60,
+                speakTime: 60,
+                level: 'TDN 3',
+                formality: 'informell'
+            },
+            3: {
+                title: 'Aufgabe 3',
+                type: 'Grafikbeschreibung',
+                desc: '图表描述',
+                situation: 'In Ihrem Landeskundekurs geht es heute um die Verkehrsmittelnutzung bei Urlaubsreisen. Ihr Dozent hat eine Grafik ausgeteilt, die die Nutzung verschiedener Verkehrsmittel bei Urlaubsreisen der Jahre 1998 und 2008 vergleicht.',
+                requirements: 'Beschreiben Sie die Grafik.',
+                prepTime: 60,
+                speakTime: 120,
+                level: 'TDN 4',
+                formality: 'formell'
+            },
+            4: {
+                title: 'Aufgabe 4',
+                type: 'Argumentieren',
+                desc: '观点论证',
+                situation: 'Dieses Semester sind viele gefragte Vorlesungen schon überfüllt. Manche Kursteilnehmer können dem Professor schwer folgen. Deshalb hat Ihre Uni geplant, dass diese Vorlesungen gleichzeitig über das Internet übertragen werden.',
+                requirements: 'Wägen Sie Vorteile und Nachteile ab.\nBegründen Sie Ihre eigene Meinung.',
+                prepTime: 180,
+                speakTime: 120,
+                level: 'TDN 5',
+                formality: 'formell'
+            },
+            5: {
+                title: 'Aufgabe 5',
+                type: 'Ratschlag geben',
+                desc: '建议给朋友',
+                situation: 'Ihr Freund Peter arbeitet als Tutor am Campus. Die Arbeit macht ihm Spaß, aber seine Noten werden immer schlechter. Er überlegt, den Job aufzugeben.',
+                requirements: 'Sagen Sie Peter, was Sie an seiner Stelle tun würden.\nBegründen Sie Ihre Meinung.',
+                prepTime: 60,
+                speakTime: 90,
+                level: 'TDN 3',
+                formality: 'informell'
+            },
+            6: {
+                title: 'Aufgabe 6',
+                type: 'Vortrag halten',
+                desc: '图表论述',
+                situation: 'In Ihrem Soziologieseminar diskutieren Sie heute über die Entwicklung des Tourismus in Europa. Ihr Dozent hat eine Grafik ausgeteilt, die die Anzahl der nach Europa ankommenden Reisenden (in Millionen) von 1950 bis 2020 zeigt.',
+                requirements: 'Nennen Sie Gründe für die dargestellte Entwicklung.\nStellen Sie dar, welche Folgen Sie für die Zukunft sehen.',
+                prepTime: 120,
+                speakTime: 120,
+                level: 'TDN 5',
+                formality: 'formell'
+            },
+            7: {
+                title: 'Aufgabe 7',
+                type: 'Stellung nehmen',
+                desc: '表态建议',
+                situation: 'Ihr Freund Alex bekommt eine Jobchance: Er soll eine Nebenrolle in einem Film spielen. Gerade schreibt er eine Seminararbeit über Schauspieler. Dieser Job dauert sechs Wochen während der Vorlesungszeit.',
+                requirements: 'Sagen Sie Alex, wozu Sie ihm raten.\nBegründen Sie Ihre Meinung.',
+                prepTime: 30,
+                speakTime: 60,
+                level: 'TDN 3',
+                formality: 'informell'
+            }
+        }
+    },
+
+    3: {
+        title: 'Modelltest 3',
+        tasks: {
+            1: {
+                title: 'Aufgabe 1',
+                type: 'Telefonieren',
+                desc: '电话咨询',
+                situation: 'Sie haben gerade Ihre Universität gewechselt und müssen nach Berlin umziehen. Sie brauchen günstige Tickets für Verkehrsmittel, z. B. für Bus oder für S-Bahn. Deshalb rufen Sie das Verkehrsbüro der Stadt an.',
+                requirements: 'Stellen Sie sich vor.\nSagen Sie, warum Sie anrufen.\nFragen Sie nach Einzelheiten zu den Formalitäten.',
+                prepTime: 30,
+                speakTime: 60,
+                level: 'TDN 3',
+                formality: 'formell'
+            },
+            2: {
+                title: 'Aufgabe 2',
+                type: 'Informieren',
+                desc: '信息表达',
+                situation: 'Ihr Freund Ben ist schon verheiratet und hat bereits zwei Kinder. Seine Frau muss arbeiten, solange Ben noch studieren muss. Er fragt Sie nach der Heiratssituation in Ihrer Heimat.',
+                requirements: 'Erklären Sie Ben, mit welchem Alter die Leute in Ihrer Heimat heiraten;\nob und wie sie ihre Karriere planen;\nwie die Rolle der Frau in Ihrer Kultur ist.',
+                prepTime: 60,
+                speakTime: 60,
+                level: 'TDN 3',
+                formality: 'informell'
+            },
+            3: {
+                title: 'Aufgabe 3',
+                type: 'Grafikbeschreibung',
+                desc: '图表描述',
+                situation: 'In Ihrem Landeskundekurs geht es heute um den Energieverbrauch in Deutschland. Ihr Dozent hat eine Grafik ausgeteilt, die den wahrgenommenen und den tatsächlichen Energieverbrauch in deutschen Haushalten gegenüberstellt.',
+                requirements: 'Beschreiben Sie die Grafik.',
+                prepTime: 60,
+                speakTime: 120,
+                level: 'TDN 4',
+                formality: 'formell'
+            },
+            4: {
+                title: 'Aufgabe 4',
+                type: 'Argumentieren',
+                desc: '观点论证',
+                situation: 'In Ihrem pädagogischen Seminar diskutieren Sie über den Wandel von Bildung. Mit dem digitalen Zeitalter werden immer seltener Papier und Stifte beim Lernen benutzt. Deshalb schlagen manche Kommilitonen vor, dass die Schüler sich mit Laptops ausstatten sollten.',
+                requirements: 'Wägen Sie Vorteile und Nachteile ab.\nBegründen Sie Ihre eigene Meinung.',
+                prepTime: 180,
+                speakTime: 120,
+                level: 'TDN 5',
+                formality: 'formell'
+            },
+            5: {
+                title: 'Aufgabe 5',
+                type: 'Ratschlag geben',
+                desc: '建议给朋友',
+                situation: 'Ihr Freund Klaus hat jetzt sein Studium abgeschlossen. Während der Studienzeit hatte er schon einen Nebenjob. Er könnte nach dem Abschluss diesen Job weiterhin ausüben und viel Geld verdienen. Aber er möchte eine Arbeitsstelle suchen, die seinen Fachkenntnissen entspricht.',
+                requirements: 'Sagen Sie Klaus, was Sie an seiner Stelle tun würden.\nBegründen Sie Ihre Meinung.',
+                prepTime: 60,
+                speakTime: 90,
+                level: 'TDN 3',
+                formality: 'informell'
+            },
+            6: {
+                title: 'Aufgabe 6',
+                type: 'Vortrag halten',
+                desc: '图表论述',
+                situation: 'In Ihrem Seminar geht es heute um die Entwicklung der Anzahl der Studienberechtigten in Deutschland. Ihr Dozent hat eine Grafik ausgeteilt, die den Anteil der 18- bis 25-jährigen Studienberechtigten in Deutschland von 1980 bis 2008 zeigt.',
+                requirements: 'Nennen Sie Gründe für die dargestellte Entwicklung.\nStellen Sie dar, welche Folgen Sie für die Zukunft sehen.',
+                prepTime: 120,
+                speakTime: 120,
+                level: 'TDN 5',
+                formality: 'formell'
+            },
+            7: {
+                title: 'Aufgabe 7',
+                type: 'Stellung nehmen',
+                desc: '表态建议',
+                situation: 'Ihre Freundin Julia studiert Russisch und Geschichte. In den Semesterferien möchte sie ihre Brieffreundin in Russland besuchen, um ihre Sprachkenntnisse zu verbessern. Aber ihre Eltern möchten mit ihr in Rom Urlaub machen.',
+                requirements: 'Sagen Sie Julia, wozu Sie ihr raten.\nBegründen Sie Ihre Meinung.',
+                prepTime: 30,
+                speakTime: 60,
+                level: 'TDN 3',
+                formality: 'informell'
+            }
+        }
+    },
+
+    4: {
+        title: 'Modelltest 4',
+        tasks: {
+            1: {
+                title: 'Aufgabe 1',
+                type: 'Telefonieren',
+                desc: '电话咨询',
+                situation: 'Ihre Universität organisiert ein Sportturnier und braucht einige Studenten als Aushilfen. Sie haben daran Interesse und rufen beim Studentenwerk an.',
+                requirements: 'Stellen Sie sich vor.\nSagen Sie, warum Sie anrufen.\nFragen Sie nach Einzelheiten zu den Formalitäten.',
+                prepTime: 30,
+                speakTime: 60,
+                level: 'TDN 3',
+                formality: 'formell'
+            },
+            2: {
+                title: 'Aufgabe 2',
+                type: 'Informieren',
+                desc: '信息表达',
+                situation: 'Sie treffen Dirk, einen deutschen Freund, auf dem Weg zur Uni. Dirk fährt gern mit dem Fahrrad statt mit dem Bus. Er fragt Sie nach dem Radfahren in Ihrer Heimat.',
+                requirements: 'Sagen Sie Dirk, wie viele Studenten in Ihrem Heimatland mit dem Rad zur Uni fahren;\nwie viel ein Fahrrad kostet;\nob das Radfahren sicher ist.',
+                prepTime: 60,
+                speakTime: 60,
+                level: 'TDN 3',
+                formality: 'informell'
+            },
+            3: {
+                title: 'Aufgabe 3',
+                type: 'Grafikbeschreibung',
+                desc: '图表描述',
+                situation: 'In Ihrem Seminar sprechen Sie über das Thema Rauchen bei Jugendlichen. Ihr Dozent hat eine Grafik ausgeteilt, die das Rauchverhalten von Jugendlichen nach Schulform in den Jahren 2001 bis 2008 darstellt.',
+                requirements: 'Beschreiben Sie die Grafik.',
+                prepTime: 60,
+                speakTime: 120,
+                level: 'TDN 4',
+                formality: 'formell'
+            },
+            4: {
+                title: 'Aufgabe 4',
+                type: 'Argumentieren',
+                desc: '观点论证',
+                situation: 'Seit Jahrzehnten studieren immer mehr Ausländer in Deutschland. Aber viele davon haben noch sprachliche Schwierigkeiten in den Vorlesungen. Ein Kommilitone schlägt vor, dass die ausländischen Studenten vor dem Fachstudium einen Deutschkurs besuchen sollen.',
+                requirements: 'Wägen Sie Vorteile und Nachteile ab.\nBegründen Sie Ihre eigene Meinung.',
+                prepTime: 180,
+                speakTime: 120,
+                level: 'TDN 5',
+                formality: 'formell'
+            },
+            5: {
+                title: 'Aufgabe 5',
+                type: 'Ratschlag geben',
+                desc: '建议给朋友',
+                situation: 'Ihre Freundin Susanne arbeitet schon drei Jahre als Lehrerin an einer Realschule. Neuerdings hat sie die Chance erhalten, bei einem Biologie-Professor an der Uni mitzuarbeiten.',
+                requirements: 'Sagen Sie Susanne, was Sie an ihrer Stelle tun würden.\nBegründen Sie Ihre Meinung.',
+                prepTime: 60,
+                speakTime: 90,
+                level: 'TDN 3',
+                formality: 'informell'
+            },
+            6: {
+                title: 'Aufgabe 6',
+                type: 'Vortrag halten',
+                desc: '图表论述',
+                situation: 'In Ihrem Soziologieseminar befasst man sich heute mit dem Thema der Arbeitssituation von Jugendlichen. Ihr Dozent hat eine Grafik ausgeteilt, die die Arbeitssituation von Jugendlichen unter 30 Jahren darstellt.',
+                requirements: 'Nennen Sie Gründe für die dargestellte Entwicklung.\nStellen Sie dar, welche Folgen Sie für die Zukunft sehen.',
+                prepTime: 120,
+                speakTime: 120,
+                level: 'TDN 5',
+                formality: 'formell'
+            },
+            7: {
+                title: 'Aufgabe 7',
+                type: 'Stellung nehmen',
+                desc: '表态建议',
+                situation: 'Ihr Freund Martin hat im Lotto 5000 Euro gewonnen. Er erzählt Ihnen, dass er neue Möbel für sein Zimmer im Studentenwohnheim kaufen möchte. Dafür müsste er aber sein ganzes Erspartes ausgeben.',
+                requirements: 'Sagen Sie Martin, wozu Sie ihm raten.\nBegründen Sie Ihre Meinung.',
+                prepTime: 30,
+                speakTime: 60,
+                level: 'TDN 3',
+                formality: 'informell'
+            }
+        }
+    },
+
+    5: {
+        title: 'Modelltest 5',
+        tasks: {
+            1: {
+                title: 'Aufgabe 1',
+                type: 'Telefonieren',
+                desc: '电话咨询',
+                situation: 'Sie sind gerade ins Studentenwohnheim eingezogen und möchten Ihren Laptop ans Internet anschließen. Sie wissen nicht, wie das geht, und rufen beim Studentenwerk an.',
+                requirements: 'Stellen Sie sich vor.\nSagen Sie, warum Sie anrufen.\nFragen Sie nach Einzelheiten zu den Formalitäten.',
+                prepTime: 30,
+                speakTime: 60,
+                level: 'TDN 3',
+                formality: 'formell'
+            },
+            2: {
+                title: 'Aufgabe 2',
+                type: 'Informieren',
+                desc: '信息表达',
+                situation: 'Sie haben mit Ihrer Freundin Simona einen Film über europäische Kultur und Sitten gesehen. Simona interessiert sich für das höfliche Benehmen in Ihrer Heimat.',
+                requirements: 'Erklären Sie Simona, wie man sich bei Ihnen höflich verhält;\nwelche Begrüßungsformen es gibt;\nwelche Tischsitten gelten.',
+                prepTime: 60,
+                speakTime: 60,
+                level: 'TDN 3',
+                formality: 'informell'
+            },
+            3: {
+                title: 'Aufgabe 3',
+                type: 'Grafikbeschreibung',
+                desc: '图表描述',
+                situation: 'In Ihrem Landeskundekurs geht es heute um das Auslandsstudium deutscher Studenten. Ihr Dozent hat eine Grafik ausgeteilt, die die Anzahl der deutschen Studierenden im Ausland von 1996 bis 2010 darstellt.',
+                requirements: 'Beschreiben Sie die Grafik.',
+                prepTime: 60,
+                speakTime: 120,
+                level: 'TDN 4',
+                formality: 'formell'
+            },
+            4: {
+                title: 'Aufgabe 4',
+                type: 'Argumentieren',
+                desc: '观点论证',
+                situation: 'Immer mehr Firmen wollen ihre Mitarbeiter motivieren. Aber wie kann man die Arbeitskompetenz beurteilen? Dazu sind die Kriterien noch umstritten. Ein Kommilitone schlägt vor, dass das Verkaufspersonal nur nach Umsatzleistung entlohnt werden soll.',
+                requirements: 'Wägen Sie Vorteile und Nachteile ab.\nBegründen Sie Ihre eigene Meinung.',
+                prepTime: 180,
+                speakTime: 120,
+                level: 'TDN 5',
+                formality: 'formell'
+            },
+            5: {
+                title: 'Aufgabe 5',
+                type: 'Ratschlag geben',
+                desc: '建议给朋友',
+                situation: 'Ihr Freund Alex hat neulich ein Vortragsthema durch Verlosung erhalten. Dieses Thema hat er im letzten Semester schon mit seinen Kommilitonen oft besprochen. Er überlegt, ob er ein neues Thema wählen soll.',
+                requirements: 'Sagen Sie Alex, was Sie an seiner Stelle tun würden.\nBegründen Sie Ihre Meinung.',
+                prepTime: 60,
+                speakTime: 90,
+                level: 'TDN 3',
+                formality: 'informell'
+            },
+            6: {
+                title: 'Aufgabe 6',
+                type: 'Vortrag halten',
+                desc: '图表论述',
+                situation: 'In Ihrem Wirtschaftsseminar sprechen Sie über die Verbreitung von Online-Banking. Ihr Dozent hat eine Grafik ausgeteilt, die die Anzahl der Online-Konten in Deutschland (in Millionen) von 2006 bis 2011 zeigt.',
+                requirements: 'Nennen Sie Gründe für die dargestellte Entwicklung.\nStellen Sie dar, welche Folgen Sie für die Zukunft sehen.',
+                prepTime: 120,
+                speakTime: 120,
+                level: 'TDN 5',
+                formality: 'formell'
+            },
+            7: {
+                title: 'Aufgabe 7',
+                type: 'Stellung nehmen',
+                desc: '表态建议',
+                situation: 'Ihr Freund Ole hat sich von seiner Freundin Kathrin getrennt. Aber er liebt sie noch sehr und kann seit einigen Tagen nicht gut schlafen. Er muss bald seine Abschlussprüfung schreiben.',
+                requirements: 'Sagen Sie Ole, wozu Sie ihm raten.\nBegründen Sie Ihre Meinung.',
+                prepTime: 30,
+                speakTime: 60,
+                level: 'TDN 3',
+                formality: 'informell'
+            }
+        }
+    },
+
+    6: {
+        title: 'Modelltest 6',
+        tasks: {
+            1: {
+                title: 'Aufgabe 1',
+                type: 'Telefonieren',
+                desc: '电话咨询',
+                situation: 'Sie studieren an einer deutschen Hochschule und wollen in Ihrer Freizeit eine Fremdsprache lernen. Sie wollen einen Online-Kurs der Uni besuchen und rufen beim Sprachzentrum an.',
+                requirements: 'Stellen Sie sich vor.\nSagen Sie, warum Sie anrufen.\nFragen Sie nach Einzelheiten zu den Formalitäten.',
+                prepTime: 30,
+                speakTime: 60,
+                level: 'TDN 3',
+                formality: 'formell'
+            },
+            2: {
+                title: 'Aufgabe 2',
+                type: 'Informieren',
+                desc: '信息表达',
+                situation: 'Sie gehen zu den Informationstagen der Uni. Dort treffen Sie Ihren Freund Wolfgang. Er interessiert sich für die Studienwahl der Schulabgänger in Ihrer Heimat.',
+                requirements: 'Erzählen Sie Wolfgang, welche Kriterien für junge Leute bei der Hochschulwahl wichtig sind;\nwelche Studienfächer beliebt sind;\nwie die Zulassung geregelt ist.',
+                prepTime: 60,
+                speakTime: 60,
+                level: 'TDN 3',
+                formality: 'informell'
+            },
+            3: {
+                title: 'Aufgabe 3',
+                type: 'Grafikbeschreibung',
+                desc: '图表描述',
+                situation: 'In Ihrem Landeskundekurs geht es heute um die Wohnsituation deutscher Studenten. Ihr Dozent hat eine Grafik ausgeteilt, die zeigt, wo Studenten in Deutschland wohnen und wie sie gerne wohnen möchten.',
+                requirements: 'Beschreiben Sie die Grafik.',
+                prepTime: 60,
+                speakTime: 120,
+                level: 'TDN 4',
+                formality: 'formell'
+            },
+            4: {
+                title: 'Aufgabe 4',
+                type: 'Argumentieren',
+                desc: '观点论证',
+                situation: 'In vielen EU-Ländern wird gesetzlich geregelt, dass die Geschäfte an den Wochentagen spätestens um 22 Uhr schließen und an den Sonntagen sowie den Feiertagen geschlossen bleiben. Ein Kommilitone schlägt vor, dass diese Regelung auch in Deutschland gelten soll.',
+                requirements: 'Wägen Sie Vorteile und Nachteile ab.\nBegründen Sie Ihre eigene Meinung.',
+                prepTime: 180,
+                speakTime: 120,
+                level: 'TDN 5',
+                formality: 'formell'
+            },
+            5: {
+                title: 'Aufgabe 5',
+                type: 'Ratschlag geben',
+                desc: '建议给朋友',
+                situation: 'Ihre Freundin Simone hat schon drei Jahre lang Geologie studiert und bekommt jetzt eine Exkursionschance in die Antarktis. Diese Forschungsreise findet im nächsten Semester statt, sodass Simone ein Urlaubssemester einlegen müsste.',
+                requirements: 'Sagen Sie Simone, was Sie an ihrer Stelle tun würden.\nBegründen Sie Ihre Meinung.',
+                prepTime: 60,
+                speakTime: 90,
+                level: 'TDN 3',
+                formality: 'informell'
+            },
+            6: {
+                title: 'Aufgabe 6',
+                type: 'Vortrag halten',
+                desc: '图表论述',
+                situation: 'In Ihrem Seminar sprechen Sie heute über das Thema Übergewicht in Deutschland. Ihr Dozent hat eine Grafik ausgeteilt, die den Anteil von Frauen und Männern mit Übergewicht nach Alter in Deutschland im Jahr 2003 zeigt.',
+                requirements: 'Nennen Sie Gründe für die dargestellte Entwicklung.\nStellen Sie dar, welche Folgen Sie für die Zukunft sehen.',
+                prepTime: 120,
+                speakTime: 120,
+                level: 'TDN 5',
+                formality: 'formell'
+            },
+            7: {
+                title: 'Aufgabe 7',
+                type: 'Stellung nehmen',
+                desc: '表态建议',
+                situation: 'Zum Semesterbeginn treffen Sie Ihren Freund Jürgen vor dem schwarzen Brett. Er möchte einen Computer kaufen und liest gerade eine Anzeige, auf der ein sehr günstiges Angebot steht. Er weiß nicht, ob er diesen Computer kaufen soll.',
+                requirements: 'Sagen Sie Jürgen, wozu Sie ihm raten.\nBegründen Sie Ihre Meinung.',
+                prepTime: 30,
+                speakTime: 60,
+                level: 'TDN 3',
+                formality: 'informell'
+            }
+        }
+    },
+
+    7: {
+        title: 'Modelltest 7',
+        tasks: {
+            1: {
+                title: 'Aufgabe 1',
+                type: 'Telefonieren',
+                desc: '电话咨询',
+                situation: 'Sie haben eine Jobchance für den Vormittag gefunden, aber vormittags haben Sie Deutschkurs. Sie rufen beim akademischen Auslandsamt an, um nachzufragen, ob es alternative Deutschkurse am Nachmittag gibt.',
+                requirements: 'Stellen Sie sich vor.\nSagen Sie, warum Sie anrufen.\nFragen Sie nach Einzelheiten zu den Formalitäten.',
+                prepTime: 30,
+                speakTime: 60,
+                level: 'TDN 3',
+                formality: 'formell'
+            },
+            2: {
+                title: 'Aufgabe 2',
+                type: 'Informieren',
+                desc: '信息表达',
+                situation: 'Sie treffen Hans, einen älteren Studenten, der sich für Studienmöglichkeiten in Ihrer Heimat interessiert.',
+                requirements: 'Erklären Sie Hans, welche Studienmöglichkeiten es in Ihrem Heimatland gibt;\nwelche Abschlussprüfungen es gibt;\nwie das Studium finanziert wird.',
+                prepTime: 60,
+                speakTime: 60,
+                level: 'TDN 3',
+                formality: 'informell'
+            },
+            3: {
+                title: 'Aufgabe 3',
+                type: 'Grafikbeschreibung',
+                desc: '图表描述',
+                situation: 'In Ihrem Landeskundekurs geht es heute um die Auswanderung deutscher Staatsbürger. Ihr Dozent hat eine Grafik ausgeteilt, die die Entwicklung der Anzahl deutscher Auswanderer seit 1991 darstellt.',
+                requirements: 'Beschreiben Sie die Grafik.',
+                prepTime: 60,
+                speakTime: 120,
+                level: 'TDN 4',
+                formality: 'formell'
+            },
+            4: {
+                title: 'Aufgabe 4',
+                type: 'Argumentieren',
+                desc: '观点论证',
+                situation: 'Neue Untersuchungen haben ergeben, dass die Konzentrationsfähigkeit von Schülern täglich nach 10 Uhr morgens am höchsten ist. Deshalb schlägt ein Kommilitone vor, dass die Schulen erst um 10 Uhr beginnen sollten.',
+                requirements: 'Wägen Sie Vorteile und Nachteile ab.\nBegründen Sie Ihre eigene Meinung.',
+                prepTime: 180,
+                speakTime: 120,
+                level: 'TDN 5',
+                formality: 'formell'
+            },
+            5: {
+                title: 'Aufgabe 5',
+                type: 'Ratschlag geben',
+                desc: '建议给朋友',
+                situation: 'Ein Freund von Ihrem Freund Jochen wird bald heiraten. Er hat Jochen zu seiner Hochzeit eingeladen. Aber an demselben Tag muss Jochen eine Prüfung nachholen. Es ist bereits die letzte Chance.',
+                requirements: 'Sagen Sie Jochen, was Sie an seiner Stelle tun würden.\nBegründen Sie Ihre Meinung.',
+                prepTime: 60,
+                speakTime: 90,
+                level: 'TDN 3',
+                formality: 'informell'
+            },
+            6: {
+                title: 'Aufgabe 6',
+                type: 'Vortrag halten',
+                desc: '图表论述',
+                situation: 'In einem Seminar sprechen Sie heute über die Entwicklung der Atomenergie in Deutschland. Ihr Dozent hat eine Grafik ausgeteilt, die die Entwicklung der Kraftwerke in Deutschland von 1950 bis 2010 zeigt.',
+                requirements: 'Nennen Sie Gründe für die dargestellte Entwicklung.\nStellen Sie dar, welche Folgen Sie für die Zukunft sehen.',
+                prepTime: 120,
+                speakTime: 120,
+                level: 'TDN 5',
+                formality: 'formell'
+            },
+            7: {
+                title: 'Aufgabe 7',
+                type: 'Stellung nehmen',
+                desc: '表态建议',
+                situation: 'Ihre Freundin Sabine lernt jetzt Französisch in einem Sprachkurs. Die Lehrbücher sind sehr teuer. Sie möchte die Bücher nicht kaufen, sondern in der Bibliothek ausleihen. Aber die Ausleihfrist ist zu kurz.',
+                requirements: 'Sagen Sie Sabine, wozu Sie ihr raten.\nBegründen Sie Ihre Meinung.',
+                prepTime: 30,
+                speakTime: 60,
+                level: 'TDN 3',
+                formality: 'informell'
+            }
+        }
+    },
+
+    8: {
+        title: 'Modelltest 8',
+        tasks: {
+            1: {
+                title: 'Aufgabe 1',
+                type: 'Telefonieren',
+                desc: '电话咨询',
+                situation: 'Sie studieren Maschinenbau an der Uni. Vor einigen Tagen haben Sie auf einem Aushang gelesen, dass das Studentenwerk einen Design-Wettbewerb für Studierende veranstaltet. Sie rufen beim Studentenwerk an.',
+                requirements: 'Stellen Sie sich vor.\nSagen Sie, warum Sie anrufen.\nFragen Sie nach Einzelheiten zu den Formalitäten.',
+                prepTime: 30,
+                speakTime: 60,
+                level: 'TDN 3',
+                formality: 'formell'
+            },
+            2: {
+                title: 'Aufgabe 2',
+                type: 'Informieren',
+                desc: '信息表达',
+                situation: 'Ihr Freund Simon steht kurz vor dem Abschluss. Er bewirbt sich für Festanstellungen in großen Firmen. In der Küche unterhalten Sie sich über die Berufswahl. Er fragt Sie nach der Situation in Ihrem Heimatland.',
+                requirements: 'Erklären Sie Simon, wann man in Ihrem Heimatland mit der Arbeitssuche beginnt;\nwelche Bewerbungsunterlagen wichtig sind;\nwie Vorstellungsgespräche ablaufen.',
+                prepTime: 60,
+                speakTime: 60,
+                level: 'TDN 3',
+                formality: 'informell'
+            },
+            3: {
+                title: 'Aufgabe 3',
+                type: 'Grafikbeschreibung',
+                desc: '图表描述',
+                situation: 'In Ihrem Seminar sprechen Sie über die Entwicklung des Frauenanteils im Lehrberuf. Ihr Dozent hat eine Grafik ausgeteilt, die den Anteil der Lehrerinnen in Allgemeinbildung von 1998 bis 2007 darstellt.',
+                requirements: 'Beschreiben Sie die Grafik.',
+                prepTime: 60,
+                speakTime: 120,
+                level: 'TDN 4',
+                formality: 'formell'
+            },
+            4: {
+                title: 'Aufgabe 4',
+                type: 'Argumentieren',
+                desc: '观点论证',
+                situation: 'In Deutschland haben Bürger ab 18 Jahren das Wahlrecht. Viele Jugendliche können ihr politisches Bewusstsein schon früh in der Schule entwickeln. Ein Kommilitone schlägt vor, dass das Wahlalter auf 16 Jahre gesenkt werden soll.',
+                requirements: 'Wägen Sie Vorteile und Nachteile ab.\nBegründen Sie Ihre eigene Meinung.',
+                prepTime: 180,
+                speakTime: 120,
+                level: 'TDN 5',
+                formality: 'formell'
+            },
+            5: {
+                title: 'Aufgabe 5',
+                type: 'Ratschlag geben',
+                desc: '建议给朋友',
+                situation: 'Ihre Freundin Jasmin ist schon verheiratet. Sie und ihr Mann studieren zusammen Medizin und leiden jetzt unter Geldmangel. Deshalb möchte Jasmin das Studium unterbrechen und arbeiten gehen.',
+                requirements: 'Sagen Sie Jasmin, was Sie an ihrer Stelle tun würden.\nBegründen Sie Ihre Meinung.',
+                prepTime: 60,
+                speakTime: 90,
+                level: 'TDN 3',
+                formality: 'informell'
+            },
+            6: {
+                title: 'Aufgabe 6',
+                type: 'Vortrag halten',
+                desc: '图表论述',
+                situation: 'In einem Seminar sprechen Sie heute über das Phänomen Einwanderung in Deutschland. Ihr Dozent hat eine Grafik ausgeteilt, die die Verteilung der Einwanderer in Deutschland darstellt.',
+                requirements: 'Nennen Sie Gründe für die dargestellte Entwicklung.\nStellen Sie dar, welche Folgen Sie für die Zukunft sehen.',
+                prepTime: 120,
+                speakTime: 120,
+                level: 'TDN 5',
+                formality: 'formell'
+            },
+            7: {
+                title: 'Aufgabe 7',
+                type: 'Stellung nehmen',
+                desc: '表态建议',
+                situation: 'Ihr Freund Steffen sollte einen DAAD-Stipendiaten aus Indien vom Bahnhof abholen. Er hat sich verspätet und ihn verpasst. Steffen hat von ihm auch keine Handynummer.',
+                requirements: 'Sagen Sie Steffen, wozu Sie ihm raten.\nBegründen Sie Ihre Meinung.',
+                prepTime: 30,
+                speakTime: 60,
+                level: 'TDN 3',
+                formality: 'informell'
+            }
+        }
+    },
+
+    9: {
+        title: 'Modelltest 9',
+        tasks: {
+            1: {
+                title: 'Aufgabe 1',
+                type: 'Telefonieren',
+                desc: '电话咨询',
+                situation: 'Ihre Hochschule organisiert ein Tutorprogramm, um den ausländischen Studienanfängern zu helfen. Sie interessieren sich dafür und rufen beim akademischen Auslandsamt an.',
+                requirements: 'Stellen Sie sich vor.\nSagen Sie, warum Sie anrufen.\nFragen Sie nach Einzelheiten zu den Formalitäten.',
+                prepTime: 30,
+                speakTime: 60,
+                level: 'TDN 3',
+                formality: 'formell'
+            },
+            2: {
+                title: 'Aufgabe 2',
+                type: 'Informieren',
+                desc: '信息表达',
+                situation: 'Ihre Hochschule veranstaltet eine Party für die Neulinge. Ihr Freund Peter interessiert sich für die Situation der Auslandsstudenten aus Ihrer Heimat.',
+                requirements: 'Erklären Sie Peter, wie ausländische Studenten in Ihrem Heimatland aufgenommen werden;\nwelche Schwierigkeiten sie haben;\nwelche Unterstützung sie bekommen.',
+                prepTime: 60,
+                speakTime: 60,
+                level: 'TDN 3',
+                formality: 'informell'
+            },
+            3: {
+                title: 'Aufgabe 3',
+                type: 'Grafikbeschreibung',
+                desc: '图表描述',
+                situation: 'In Ihrem Seminar sprechen Sie über die Beurteilung deutscher Unternehmen durch Studenten. Ihr Dozent hat eine Grafik ausgeteilt, die zeigt, wie Studenten die Wettbewerbsfähigkeit deutscher Unternehmen in den Jahren 2005 bis 2007 einschätzen.',
+                requirements: 'Beschreiben Sie die Grafik.',
+                prepTime: 60,
+                speakTime: 120,
+                level: 'TDN 4',
+                formality: 'formell'
+            },
+            4: {
+                title: 'Aufgabe 4',
+                type: 'Argumentieren',
+                desc: '观点论证',
+                situation: 'In einer Veranstaltung der Universität wird darüber diskutiert, wie die Bibliothek Geld sparen kann. Ein Diskussionsteilnehmer schlägt vor, dass die Bibliothek nur noch E-Books anschaffen soll, keine gedruckten Bücher mehr.',
+                requirements: 'Wägen Sie Vorteile und Nachteile ab.\nBegründen Sie Ihre eigene Meinung.',
+                prepTime: 180,
+                speakTime: 120,
+                level: 'TDN 5',
+                formality: 'formell'
+            },
+            5: {
+                title: 'Aufgabe 5',
+                type: 'Ratschlag geben',
+                desc: '建议给朋友',
+                situation: 'Ihr Freund Markus studiert Chemie. Er hat ein Seminar gefunden, das ein kompliziertes Computerprogramm in Bezug auf Chemie vorstellt. Er kann somit praktische Erfahrungen sammeln, aber das Seminar findet zur gleichen Zeit wie sein Hauptseminar statt.',
+                requirements: 'Sagen Sie Markus, was Sie an seiner Stelle tun würden.\nBegründen Sie Ihre Meinung.',
+                prepTime: 60,
+                speakTime: 90,
+                level: 'TDN 3',
+                formality: 'informell'
+            },
+            6: {
+                title: 'Aufgabe 6',
+                type: 'Vortrag halten',
+                desc: '图表论述',
+                situation: 'In Ihrem Seminar wird das Thema der Erwerbstätigkeit von Frauen in Deutschland diskutiert. Ihr Dozent hat eine Grafik ausgeteilt, die die Erwerbstätigenquoten von Frauen darstellt.',
+                requirements: 'Nennen Sie Gründe für die dargestellte Entwicklung.\nStellen Sie dar, welche Folgen Sie für die Zukunft sehen.',
+                prepTime: 120,
+                speakTime: 120,
+                level: 'TDN 5',
+                formality: 'formell'
+            },
+            7: {
+                title: 'Aufgabe 7',
+                type: 'Stellung nehmen',
+                desc: '表态建议',
+                situation: 'Ihre Freundin Heidi wohnt mit der ausländischen Studentin Elena aus Spanien zusammen. Elena möchte ihr Deutsch verbessern und spricht mit Heidi immer Deutsch. Aber Heidi lernt jetzt Spanisch und möchte sich mit Elena auf Spanisch unterhalten.',
+                requirements: 'Sagen Sie Heidi, wozu Sie ihr raten.\nBegründen Sie Ihre Meinung.',
+                prepTime: 30,
+                speakTime: 60,
+                level: 'TDN 3',
+                formality: 'informell'
+            }
+        }
+    },
+
+    10: {
+        title: 'Modelltest 10',
+        tasks: {
+            1: {
+                title: 'Aufgabe 1',
+                type: 'Telefonieren',
+                desc: '电话咨询',
+                situation: 'An Ihrer Hochschule findet bald ein Sommerfest statt. Sie sind Mitglied einer Jugendrockband und interessieren sich für eine Aufführungschance beim Sommerfest. Sie rufen beim Studentenwerk an.',
+                requirements: 'Stellen Sie sich vor.\nSagen Sie, warum Sie anrufen.\nFragen Sie nach Einzelheiten zu den Formalitäten.',
+                prepTime: 30,
+                speakTime: 60,
+                level: 'TDN 3',
+                formality: 'formell'
+            },
+            2: {
+                title: 'Aufgabe 2',
+                type: 'Informieren',
+                desc: '信息表达',
+                situation: 'Sie treffen Ihre Freundin Susanne bei der Geburtstagsfeier eines Freundes. Susanne interessiert sich für solche Aktivitäten in Ihrer Heimat.',
+                requirements: 'Sagen Sie Susanne, wie man in Ihrem Heimatland Geburtstage feiert;\nwelche Geschenke üblich sind;\nwelche Rolle die Familie dabei spielt.',
+                prepTime: 60,
+                speakTime: 60,
+                level: 'TDN 3',
+                formality: 'informell'
+            },
+            3: {
+                title: 'Aufgabe 3',
+                type: 'Grafikbeschreibung',
+                desc: '图表描述',
+                situation: 'In Ihrem Landeskundekurs geht es heute um die Ausgaben deutscher Studenten. Ihr Dozent hat eine Grafik ausgeteilt, die die Ausgaben der Studenten in Deutschland darstellt.',
+                requirements: 'Beschreiben Sie die Grafik.',
+                prepTime: 60,
+                speakTime: 120,
+                level: 'TDN 4',
+                formality: 'formell'
+            },
+            4: {
+                title: 'Aufgabe 4',
+                type: 'Argumentieren',
+                desc: '观点论证',
+                situation: 'Zurzeit wollen viele Jugendliche auch an Privathochschulen in Deutschland studieren. Bei einer Diskussionsveranstaltung schlägt ein Kommilitone vor, dass alle Hochschulen privatisiert werden sollen.',
+                requirements: 'Wägen Sie Vorteile und Nachteile ab.\nBegründen Sie Ihre eigene Meinung.',
+                prepTime: 180,
+                speakTime: 120,
+                level: 'TDN 5',
+                formality: 'formell'
+            },
+            5: {
+                title: 'Aufgabe 5',
+                type: 'Ratschlag geben',
+                desc: '建议给朋友',
+                situation: 'Ihre Freundin Sabine hat das Abitur gemacht und möchte Zahnmedizin studieren. Aber die Zulassungsvoraussetzungen für Medizin sind sehr hoch. Wenn sie nicht sofort einen Studienplatz bekommt, muss sie ein Jahr warten.',
+                requirements: 'Sagen Sie Sabine, was Sie an ihrer Stelle tun würden.\nBegründen Sie Ihre Meinung.',
+                prepTime: 60,
+                speakTime: 90,
+                level: 'TDN 3',
+                formality: 'informell'
+            },
+            6: {
+                title: 'Aufgabe 6',
+                type: 'Vortrag halten',
+                desc: '图表论述',
+                situation: 'In Ihrem Seminar sprechen Sie heute über die Entwicklung von Naturkatastrophen weltweit. Ihr Dozent hat eine Grafik ausgeteilt, die die Anzahl der Naturkatastrophen pro Jahr in der Welt darstellt.',
+                requirements: 'Nennen Sie Gründe für die dargestellte Entwicklung.\nStellen Sie dar, welche Folgen Sie für die Zukunft sehen.',
+                prepTime: 120,
+                speakTime: 120,
+                level: 'TDN 5',
+                formality: 'formell'
+            },
+            7: {
+                title: 'Aufgabe 7',
+                type: 'Stellung nehmen',
+                desc: '表态建议',
+                situation: 'Ihr Freund Jochen hat einen Job im Café gefunden. Er soll drei Tage pro Woche dort arbeiten, und der Job dauert abends von neun bis ein Uhr nachts. Jochen überlegt, ob er den Job annehmen soll.',
+                requirements: 'Sagen Sie Jochen, wozu Sie ihm raten.\nBegründen Sie Ihre Meinung.',
+                prepTime: 30,
+                speakTime: 60,
+                level: 'TDN 3',
+                formality: 'informell'
+            }
+        }
+    }
+
+};
+
+/**
+ * Retrieve a specific task from a given mock test.
+ * @param {number} testNum - The test number (1-10)
+ * @param {number} taskNum - The task number (1-7)
+ * @returns {object|null} The task object, or null if not found
+ */
+function getTestDaFTask(testNum, taskNum) {
+    var test = TESTDAF_BANK[testNum];
+    if (!test) return null;
+    return test.tasks[taskNum] || null;
+}
+
+/**
+ * Retrieve the array of task type metadata.
+ * @returns {array} Array of task type objects
+ */
+function getTestDaFTaskTypes() {
+    return TESTDAF_TASK_TYPES;
+}
+
+
+
+const SAMPLE_CORPUS = `The invention of the printing press by Johannes Gutenberg in the fifteenth century transformed the way knowledge was shared across Europe.
+古腾堡在十五世纪发明的印刷机彻底改变了知识在欧洲传播的方式。
+Before this breakthrough, books were expensive and time-consuming to produce, as each copy had to be hand-written by scribes.
+在这一突破之前，书籍既昂贵又耗时，因为每份副本都必须由抄写员手写。
+The movable type system allowed texts to be reproduced quickly and at a fraction of the previous cost.
+活字印刷系统使文本能够快速复制，且成本仅为以前的一小部分。
+As a result, literacy rates began to rise, and ideas spread more rapidly than ever before.
+因此，识字率开始上升，思想传播比以往任何时候都更快。
+---
+Education has always been a cornerstone of human civilization.
+教育一直是人类文明的基石。
+From ancient academies to modern universities, the quest for knowledge has driven human progress.
+从古代书院到现代大学，对知识的追求推动了人类进步。
+Today, technology is transforming how we learn, making education more accessible than ever before.
+今天，技术正在改变我们的学习方式，使教育比以往任何时候都更加普及。`;
+
+function genId() { return 'id-' + Date.now() + '-' + Math.random().toString(36).substr(2, 6); }
+function escapeHtml(s) { const d = document.createElement('div'); d.textContent = s == null ? '' : String(s); return d.innerHTML; }
+function showToast(msg, type) {
+    type = type || 'info';
+    var t = document.createElement('div');
+    t.className = 'lc-toast lc-toast-' + type;
+    t.textContent = msg;
+    document.body.appendChild(t);
+    requestAnimationFrame(function() { t.classList.add('show'); });
+    setTimeout(function() { t.classList.remove('show'); setTimeout(function() { t.remove(); }, 300); }, 2800);
+}
+
+function swapLucideIcon(container, iconName, size) {
+    if (!container) return;
+    var old = container.querySelector('svg, i');
+    if (old) {
+        var ni = document.createElement('i');
+        ni.setAttribute('data-lucide', iconName);
+        if (size) { ni.style.width = size + 'px'; ni.style.height = size + 'px'; }
+        old.replaceWith(ni);
+    }
+    refreshIcons();
+}
+
+function isChineseLine(line) {
+    var targetLang = State.lang || 'en';
+    if (targetLang === 'ja') {
+        // For Japanese: distinguish Chinese (translation) from Japanese (target)
+        // Japanese has hiragana/katakana; Chinese doesn't
+        var chineseChars = (line.match(/[\u4e00-\u9fff]/g) || []).length;
+        var japaneseKana = (line.match(/[\u3040-\u309f\u30a0-\u30ff]/g) || []).length;
+        var totalChars = line.replace(/\s/g, '').length;
+        return totalChars > 0 && chineseChars / totalChars > 0.3 && japaneseKana === 0;
+    }
+    // For English/German: Chinese chars without latin = translation
+    var chineseChars = (line.match(/[\u4e00-\u9fff]/g) || []).length;
+    var totalChars = line.replace(/\s/g, '').length;
+    return totalChars > 0 && chineseChars / totalChars > 0.4;
+}
+
+function switchView(name) {
+    if (State.editMode) {
+        if (State.corpus) {
+            collectAndProcessEdits();
+            syncCurrentDocProgress();
+        }
+        State.editMode = false;
+        updateEditModeUI();
+    }
+    State.currentView = name;
+    document.querySelectorAll('.lc-view').forEach(function(v) { v.classList.remove('active'); });
+    var el = document.getElementById('view-' + name);
+    if (el) el.classList.add('active');
+    document.querySelectorAll('.lc-nav-item').forEach(function(b) { b.classList.toggle('active', b.dataset.view === name); });
+    if (name === 'vocabulary') renderVocabulary();
+    if (name === 'export') renderExportPreview();
+    if (name === 'oral') { renderTopicList(); renderVocabHint(); }
+    if (name === 'import') renderTopicFolders();
+    if (name === 'learning') renderLearning();
+    saveUserData();
+    window.scrollTo(0, 0);
+}
+
+function toggleTheme() {
+    var html = document.documentElement;
+    html.classList.toggle('dark');
+    html.classList.toggle('light');
+    var isDark = html.classList.contains('dark');
+    var themeBtn = document.getElementById('toggle-theme');
+    if (themeBtn) swapLucideIcon(themeBtn, isDark ? 'sun' : 'moon', 18);
+    try { localStorage.setItem('lc-theme', isDark ? 'dark' : 'light'); } catch(e) {}
+}
+
+// ===== AUTH =====
+var _saveTimer = null;
+var _authMode = 'login';
+
+async function hashPassword(password) {
+    // Use SubtleCrypto if available (HTTPS), otherwise fallback to simple hash
+    if (window.crypto && window.crypto.subtle && window.crypto.subtle.digest) {
+        var encoder = new TextEncoder();
+        var data = encoder.encode(password + '_listencloze_salt_');
+        var hash = await crypto.subtle.digest('SHA-256', data);
+        return Array.from(new Uint8Array(hash)).map(function(b) { return b.toString(16).padStart(2, '0'); }).join('');
+    }
+    // Fallback: djb2 + simple mixing for non-HTTPS contexts
+    var h1 = 5381, h2 = 52711;
+    var str = password + '_listencloze_salt_';
+    for (var i = 0; i < str.length; i++) {
+        h1 = ((h1 << 5) + h1 + str.charCodeAt(i)) & 0xFFFFFFFF;
+        h2 = ((h2 << 5) + h2 + str.charCodeAt(i)) & 0xFFFFFFFF;
+    }
+    return ((h1 >>> 0).toString(16).padStart(8, '0')) + ((h2 >>> 0).toString(16).padStart(8, '0'));
+}
+
+// ===== Cloud Storage (JSONBin.io — supports CORS) =====
+var JSONBIN_BASE = 'https://api.jsonbin.io/v3/b';
+var CLOUD_TIMEOUT = 12000;
+var CLOUD_RETRIES = 2;
+var _cloudRegistryId = null;
+
+function getApiKey() { try { return localStorage.getItem('lc-jsonbin-key') || ''; } catch(e) { return ''; } }
+function getSyncCode() { try { return localStorage.getItem('lc-sync-code') || ''; } catch(e) { return ''; } }
+function hasCloudSync() { return !!getApiKey(); }
+function hasCloudRegistry() { return !!getApiKey() && !!getSyncCode(); }
+
+// ===== Sync State =====
+var _syncState = { status: 'idle', lastSync: 0, error: null };
+var _syncTimer = null;
+var _cloudPullTimer = null;
+
+function fetchWithTimeout(url, options, timeout) {
+    return Promise.race([
+        fetch(url, options),
+        new Promise(function(_, reject) { setTimeout(function() { reject(new Error('请求超时')); }, timeout || CLOUD_TIMEOUT); })
+    ]);
+}
+
+function jsonbinHeaders() {
+    var h = { 'Content-Type': 'application/json' };
+    var key = getApiKey();
+    if (key) h['X-Master-Key'] = key;
+    return h;
+}
+
+function cloudGet(binId) {
+    return retryFetch(function() {
+        return fetchWithTimeout(JSONBIN_BASE + '/' + binId + '/latest', { headers: jsonbinHeaders() }).then(function(r) {
+            if (!r.ok) throw new Error('Cloud fetch failed: ' + r.status);
+            return r.json();
+        }).then(function(data) {
+            // jsonbin.io wraps data in { record: {...}, metadata: {...} }
+            return data.record || data;
+        });
+    }, CLOUD_RETRIES);
+}
+
+function cloudCreate(data) {
+    return retryFetch(function() {
+        return fetchWithTimeout(JSONBIN_BASE, {
+            method: 'POST',
+            headers: jsonbinHeaders(),
+            body: JSON.stringify(data)
+        }).then(function(r) {
+            if (!r.ok) throw new Error('Cloud create failed: ' + r.status);
+            return r.json();
+        }).then(function(data) {
+            // Returns the bin ID from metadata
+            var id = data.metadata ? data.metadata.id : null;
+            if (!id) throw new Error('No bin ID in response');
+            return id;
+        });
+    }, CLOUD_RETRIES);
+}
+
+function cloudUpdate(binId, data) {
+    return retryFetch(function() {
+        return fetchWithTimeout(JSONBIN_BASE + '/' + binId, {
+            method: 'PUT',
+            headers: jsonbinHeaders(),
+            body: JSON.stringify(data)
+        }).then(function(r) {
+            if (!r.ok) {
+                var status = r.status;
+                if (status === 422) throw new Error('Cloud update failed: 422 (data too large for JSONBin free tier — 100KB limit)');
+                throw new Error('Cloud update failed: ' + status);
+            }
+            return true;
+        });
+    }, CLOUD_RETRIES);
+}
+
+function retryFetch(fn, retries) {
+    return fn().catch(function(e) {
+        if (retries > 0) {
+            return new Promise(function(res) { setTimeout(res, 1000); }).then(function() { return retryFetch(fn, retries - 1); });
+        }
+        throw e;
+    });
+}
+
+async function getCloudRegistry() {
+    if (!hasCloudSync()) return { type: 'listencloze-registry', users: {}, createdAt: Date.now() };
+    _cloudRegistryId = getSyncCode();
+    if (_cloudRegistryId) {
+        try {
+            var data = await cloudGet(_cloudRegistryId);
+            if (data && data.type === 'listencloze-registry') return data;
+        } catch(e) { }
+    }
+    // No sync code or fetch failed — create new registry (first device)
+    var newRegistry = { type: 'listencloze-registry', users: {}, createdAt: Date.now() };
+    try {
+        var newId = await cloudCreate(newRegistry);
+        _cloudRegistryId = newId;
+        localStorage.setItem('lc-sync-code', newId);
+        logAuthEvent('registry_created', { id: newId });
+        return newRegistry;
+    } catch(e) {
+        updateSyncStatus('error', e.message);
+        return newRegistry;
+    }
+}
+
+async function updateCloudRegistry(registry) {
+    if (!_cloudRegistryId || !hasCloudSync()) return;
+    try {
+        await cloudUpdate(_cloudRegistryId, registry);
+    } catch(e) {
+        logAuthEvent('registry_update_fail', { error: e.message });
+    }
+}
+
+function getUsers() { try { return JSON.parse(localStorage.getItem('lc-users') || '{}'); } catch(e) { return {}; } }
+function saveUsers(users) { try { localStorage.setItem('lc-users', JSON.stringify(users)); } catch(e) {} }
+
+// ===== Auth Logging =====
+var _authLog = null;
+function getAuthLog() {
+    if (_authLog) return _authLog;
+    try { _authLog = JSON.parse(localStorage.getItem('lc-auth-log') || '[]'); } catch(e) { _authLog = []; }
+    return _authLog;
+}
+function logAuthEvent(action, details) {
+    var entry = { t: Date.now(), action: action, details: details || {} };
+    var log = getAuthLog();
+    log.unshift(entry);
+    if (log.length > 50) log = log.slice(0, 50); // Keep last 50 events
+    _authLog = log;
+    try { localStorage.setItem('lc-auth-log', JSON.stringify(log)); } catch(e) {}
+}
+
+// ===== Session Token =====
+function generateSessionToken(username) {
+    var token = username + '_' + Date.now() + '_' + Math.random().toString(36).slice(2, 10);
+    var session = { token: token, username: username, createdAt: Date.now(), expiresAt: Date.now() + 7 * 24 * 60 * 60 * 1000 };
+    try { localStorage.setItem('lc-session', JSON.stringify(session)); } catch(e) {}
+    return session;
+}
+function getSession() {
+    try { return JSON.parse(localStorage.getItem('lc-session') || 'null'); } catch(e) { return null; }
+}
+function clearSession() { try { localStorage.removeItem('lc-session'); } catch(e) {} }
+
+// ===== Login Attempt Throttling =====
+function getLoginAttempts(username) {
+    try {
+        var data = JSON.parse(localStorage.getItem('lc-login-attempts') || '{}');
+        return data[username] || { count: 0, lockedUntil: 0 };
+    } catch(e) { return { count: 0, lockedUntil: 0 }; }
+}
+function recordLoginAttempt(username, success) {
+    try {
+        var data = JSON.parse(localStorage.getItem('lc-login-attempts') || '{}');
+        var entry = data[username] || { count: 0, lockedUntil: 0 };
+        if (success) {
+            entry = { count: 0, lockedUntil: 0 };
+        } else {
+            entry.count++;
+            if (entry.count >= 5) {
+                entry.lockedUntil = Date.now() + 60000; // Lock 60s after 5 failures
+                entry.count = 0;
+            }
+        }
+        data[username] = entry;
+        localStorage.setItem('lc-login-attempts', JSON.stringify(data));
+        return entry;
+    } catch(e) { return { count: 0, lockedUntil: 0 }; }
+}
+function isLoginLocked(username) {
+    var entry = getLoginAttempts(username);
+    if (entry.lockedUntil && entry.lockedUntil > Date.now()) return entry.lockedUntil;
+    return 0;
+}
+
+async function doAuth() {
+    var username = document.getElementById('auth-username').value.trim();
+    var password = document.getElementById('auth-password').value;
+    if (!username || !password) { showToast('请输入用户名和密码', 'error'); return; }
+    if (username.length < 2) { showToast('用户名至少 2 个字符', 'error'); return; }
+    if (username.length > 20) { showToast('用户名最多 20 个字符', 'error'); return; }
+    if (!/^[a-zA-Z0-9_\u4e00-\u9fa5]+$/.test(username)) { showToast('用户名只能包含字母、数字、下划线、中文', 'error'); return; }
+    if (password.length < 4) { showToast('密码至少 4 个字符', 'error'); return; }
+
+    var btn = document.getElementById('btn-auth-submit');
+    btn.disabled = true;
+    try {
+        var hash = await hashPassword(password);
+        var localUsers = getUsers();
+
+        if (_authMode === 'register') {
+            btn.textContent = '注册中...';
+            // Password confirmation
+            var confirmPwd = document.getElementById('auth-password-confirm');
+            if (confirmPwd && confirmPwd.value !== password) {
+                showToast('两次输入的密码不一致', 'error'); return;
+            }
+            // LOCAL FIRST: check local users
+            if (localUsers[username]) { showToast('该用户名已被注册', 'error'); return; }
+            logAuthEvent('register_start', { username: username });
+            // Save locally first (primary storage)
+            localUsers[username] = { passwordHash: hash, cloudBlobId: '', createdAt: Date.now() };
+            saveUsers(localUsers);
+            // Save empty user data locally
+            var initData = {
+                corpus: null, documents: [], hiddenItems: [], customTopics: [],
+                topicNameOverrides: {}, vocabulary: { words: [], phrases: [] },
+                oral: { topic: 'education', part: 2, aiConfig: { apiKey: '', baseUrl: '', model: 'gpt-4o-mini' } },
+                translationCollapsed: false, learning: { checkinDates: [], streak: 0, lastCheckin: null, dailyReminder: false, reminderTime: '20:00', reviewReminder: false, totalDays: 0 }
+            };
+            localStorage.setItem('lc-data-' + username, JSON.stringify(initData));
+            State.user = { username: username, cloudBlobId: '' };
+            localStorage.setItem('lc-current-user', username);
+            generateSessionToken(username);
+            logAuthEvent('register_success', { username: username });
+            showToast('注册成功', 'success');
+            closeAuthModal();
+            updateUserUI();
+            loadUserData();
+            // Cloud sync in background (optional, don't block)
+            syncUserToCloud(username, hash, initData);
+        } else {
+            // Login throttling
+            var lockedUntil = isLoginLocked(username);
+            if (lockedUntil) {
+                var waitSec = Math.ceil((lockedUntil - Date.now()) / 1000);
+                showToast('登录尝试过多，请 ' + waitSec + ' 秒后重试', 'error');
+                return;
+            }
+            btn.textContent = '登录中...';
+            logAuthEvent('login_start', { username: username });
+            // LOCAL FIRST: check local users
+            var localInfo = localUsers[username];
+            if (localInfo) {
+                // Verify password locally
+                if (localInfo.passwordHash !== hash) {
+                    recordLoginAttempt(username, false);
+                    logAuthEvent('login_fail', { username: username, reason: 'wrong_password', source: 'local' });
+                    showToast('账号或密码错误', 'error'); return;
+                }
+                // Login success from local
+                State.user = { username: username, cloudBlobId: localInfo.cloudBlobId || '' };
+                localStorage.setItem('lc-current-user', username);
+                generateSessionToken(username);
+                recordLoginAttempt(username, true);
+                if (localInfo.cloudBlobId) localStorage.setItem('lc-cloud-blob-' + username, localInfo.cloudBlobId);
+                logAuthEvent('login_success', { username: username, source: 'local' });
+                showToast('登录成功', 'success');
+                closeAuthModal();
+                updateUserUI();
+                loadUserData();
+                // Try cloud sync in background (optional)
+                syncCloudInBackground(username, hash);
+                return;
+            }
+            // No local user - try cloud as fallback (only if cloud sync is enabled)
+            if (!hasCloudSync()) {
+                recordLoginAttempt(username, false);
+                logAuthEvent('login_fail', { username: username, reason: 'not_found', source: 'local_no_cloud' });
+                showToast('账号或密码错误', 'error'); return;
+            }
+            btn.textContent = '连接云端...';
+            try {
+                var registry = await getCloudRegistry();
+                var cloudUserInfo = registry.users[username];
+                if (cloudUserInfo) {
+                    var userBlob = await cloudGet(cloudUserInfo.blobId);
+                    if (userBlob.passwordHash !== hash) {
+                        recordLoginAttempt(username, false);
+                        logAuthEvent('login_fail', { username: username, reason: 'wrong_password', source: 'cloud' });
+                        showToast('账号或密码错误', 'error'); return;
+                    }
+                    // Save to local for future logins
+                    localUsers[username] = { passwordHash: hash, cloudBlobId: cloudUserInfo.blobId, createdAt: Date.now() };
+                    saveUsers(localUsers);
+                    State.user = { username: username, cloudBlobId: cloudUserInfo.blobId };
+                    localStorage.setItem('lc-current-user', username);
+                    localStorage.setItem('lc-cloud-blob-' + username, cloudUserInfo.blobId);
+                    generateSessionToken(username);
+                    recordLoginAttempt(username, true);
+                    logAuthEvent('login_success', { username: username, source: 'cloud' });
+                    showToast('登录成功（已从云端同步）', 'success');
+                    closeAuthModal();
+                    updateUserUI();
+                    loadUserData();
+                    return;
+                }
+            } catch(cloudErr) {
+                logAuthEvent('login_error', { username: username, error: cloudErr.message });
+            }
+            // Security: don't reveal whether user exists — use generic message
+            recordLoginAttempt(username, false);
+            logAuthEvent('login_fail', { username: username, reason: 'not_found' });
+            showToast('账号或密码错误', 'error');
+        }
+    } catch(e) {
+        console.error('Auth error:', e);
+        logAuthEvent('auth_error', { error: e.message });
+        var msg = '操作失败';
+        if (e.message && e.message.includes('Failed to fetch')) msg = '网络错误，请检查网络连接后重试';
+        else if (e.message) msg = e.message;
+        showToast(msg, 'error');
+    } finally {
+        btn.disabled = false; btn.textContent = _authMode === 'register' ? '注册' : '登录';
+    }
+}
+
+// Background cloud sync - never blocks UI, now also pulls cloud data
+function syncCloudInBackground(username, hash) {
+    if (!hasCloudSync()) return;
+    getCloudRegistry().then(function(registry) {
+        if (registry.users[username] && registry.users[username].blobId) {
+            var blobId = registry.users[username].blobId;
+            State.user.cloudBlobId = blobId;
+            localStorage.setItem('lc-cloud-blob-' + username, blobId);
+            var lu = getUsers();
+            if (lu[username]) { lu[username].cloudBlobId = blobId; saveUsers(lu); }
+            updateUserUI();
+            // Pull latest cloud data and merge
+            return pullCloudData(blobId);
+        } else {
+            // User not in cloud registry yet — upload local data
+            var localRaw = localStorage.getItem('lc-data-' + username);
+            var localData = localRaw ? JSON.parse(localRaw) : null;
+            if (localData) {
+                return syncUserToCloud(username, hash, localData);
+            }
+        }
+    }).catch(function(e) { });
+}
+
+function syncUserToCloud(username, hash, data) {
+    if (!hasCloudSync()) return;
+    getCloudRegistry().then(function(registry) {
+        if (registry.users[username]) {
+            logAuthEvent('cloud_sync_skip', { username: username, reason: 'already_exists' });
+            // User already in registry — pull their data
+            var existingBlobId = registry.users[username].blobId;
+            State.user.cloudBlobId = existingBlobId;
+            localStorage.setItem('lc-cloud-blob-' + username, existingBlobId);
+            var lu = getUsers();
+            if (lu[username]) { lu[username].cloudBlobId = existingBlobId; saveUsers(lu); }
+            return pullCloudData(existingBlobId);
+        }
+        var ts = Date.now();
+        var userData = { type: 'listencloze-user', username: username, passwordHash: hash, createdAt: ts, updatedAt: ts, data: data };
+        return cloudCreate(userData).then(function(blobId) {
+            registry.users[username] = { blobId: blobId, createdAt: ts };
+            return updateCloudRegistry(registry).then(function() {
+                State.user.cloudBlobId = blobId;
+                localStorage.setItem('lc-cloud-blob-' + username, blobId);
+                var lu = getUsers();
+                if (lu[username]) { lu[username].cloudBlobId = blobId; saveUsers(lu); }
+                logAuthEvent('cloud_sync_success', { username: username, blobId: blobId });
+                updateSyncStatus('synced');
+            });
+        });
+    }).catch(function(e) {
+        logAuthEvent('cloud_sync_fail', { username: username, error: e.message });
+        updateSyncStatus('error', e.message);
+    });
+}
+
+// ===== Data Versioning & Sync =====
+function getLocalDataTimestamp() {
+    try {
+        var raw = localStorage.getItem('lc-data-' + State.user.username);
+        if (raw) {
+            var data = JSON.parse(raw);
+            return data._updatedAt || data._timestamp || 0;
+        }
+    } catch(e) {}
+    return 0;
+}
+
+function collectCurrentData() {
+    syncCurrentDocProgress();
+    return {
+        corpus: State.corpus,
+        documents: State.documents,
+        hiddenItems: State.hiddenItems,
+        customTopics: State.customTopics,
+        topicNameOverrides: State.topicNameOverrides,
+        vocabulary: State.vocabulary,
+        oral: { topic: State.oral.topic, part: State.oral.part, aiConfig: State.oral.aiConfig },
+        translationCollapsed: State.translationCollapsed,
+        learning: State.learning,
+        _updatedAt: Date.now(),
+    };
+}
+
+// ===== Smart Merge: combine local + cloud data without losing either side =====
+function mergeData(localData, cloudData) {
+    if (!localData && !cloudData) return null;
+    if (!localData) return cloudData;
+    if (!cloudData) return localData;
+
+    var merged = {};
+    var localTs = localData._updatedAt || 0;
+    var cloudTs = cloudData._updatedAt || 0;
+    var cloudNewer = cloudTs > localTs;
+
+    // --- Documents: merge by ID, preserve hiddenItems from both, take newer metadata ---
+    var docMap = {};
+    (localData.documents || []).forEach(function(d) { docMap[d.id] = JSON.parse(JSON.stringify(d)); });
+    (cloudData.documents || []).forEach(function(d) {
+        if (!docMap[d.id]) {
+            docMap[d.id] = JSON.parse(JSON.stringify(d));
+        } else {
+            var localDoc = docMap[d.id];
+            // Merge hiddenItems from both (union by id)
+            var hideSet = {};
+            (localDoc.hiddenItems || []).forEach(function(h) { hideSet[h.id] = h; });
+            (d.hiddenItems || []).forEach(function(h) { if (!hideSet[h.id]) hideSet[h.id] = h; });
+            // Take the newer document as base (by updatedAt or hiddenItems length as proxy)
+            var localDocTs = localDoc._updatedAt || (localDoc.hiddenItems ? localDoc.hiddenItems.length : 0);
+            var cloudDocTs = d._updatedAt || (d.hiddenItems ? d.hiddenItems.length : 0);
+            var baseDoc = cloudDocTs > localDocTs ? JSON.parse(JSON.stringify(d)) : JSON.parse(JSON.stringify(localDoc));
+            baseDoc.hiddenItems = Object.keys(hideSet).map(function(k) { return hideSet[k]; });
+            // Also merge readPages — take the higher value (furthest reading progress)
+            baseDoc.readPages = Math.max(localDoc.readPages || 0, d.readPages || 0);
+            docMap[d.id] = baseDoc;
+        }
+    });
+    merged.documents = Object.keys(docMap).map(function(k) { return docMap[k]; });
+
+    // --- hiddenItems: merge by id (union), take newer on conflict ---
+    var hideMap = {};
+    (localData.hiddenItems || []).forEach(function(h) { if (h.id) hideMap[h.id] = h; });
+    (cloudData.hiddenItems || []).forEach(function(h) {
+        if (h.id) {
+            if (!hideMap[h.id]) {
+                hideMap[h.id] = h;
+            } else {
+                // Keep the one with the newer addedAt timestamp
+                var localH = hideMap[h.id];
+                var localHts = localH.addedAt || 0;
+                var cloudHts = h.addedAt || 0;
+                if (cloudHts > localHts) hideMap[h.id] = h;
+            }
+        }
+    });
+    merged.hiddenItems = Object.keys(hideMap).map(function(k) { return hideMap[k]; });
+
+    // --- vocabulary: merge words and phrases by id, UPDATE existing with newer version ---
+    var vocab = { words: [], phrases: [] };
+    var wordMap = {};
+    (localData.vocabulary && localData.vocabulary.words || []).forEach(function(w) { if (w.id) wordMap[w.id] = w; });
+    (cloudData.vocabulary && cloudData.vocabulary.words || []).forEach(function(w) {
+        if (w.id) {
+            if (!wordMap[w.id]) {
+                wordMap[w.id] = w;
+            } else {
+                // Take the newer version (by addedAt or lastModified)
+                var localW = wordMap[w.id];
+                var localWts = localW.addedAt || localW.lastModified || 0;
+                var cloudWts = w.addedAt || w.lastModified || 0;
+                if (cloudWts > localWts) wordMap[w.id] = w;
+            }
+        }
+    });
+    vocab.words = Object.keys(wordMap).map(function(k) { return wordMap[k]; });
+    var phraseMap = {};
+    (localData.vocabulary && localData.vocabulary.phrases || []).forEach(function(p) { if (p.id) phraseMap[p.id] = p; });
+    (cloudData.vocabulary && cloudData.vocabulary.phrases || []).forEach(function(p) {
+        if (p.id) {
+            if (!phraseMap[p.id]) {
+                phraseMap[p.id] = p;
+            } else {
+                // Take the newer version
+                var localP = phraseMap[p.id];
+                var localPts = localP.addedAt || localP.lastModified || 0;
+                var cloudPts = p.addedAt || p.lastModified || 0;
+                if (cloudPts > localPts) phraseMap[p.id] = p;
+            }
+        }
+    });
+    vocab.phrases = Object.keys(phraseMap).map(function(k) { return phraseMap[k]; });
+    merged.vocabulary = vocab;
+
+    // --- customTopics: merge by id (union) ---
+    var topicMap = {};
+    (localData.customTopics || []).forEach(function(t) { if (t.id) topicMap[t.id] = t; });
+    (cloudData.customTopics || []).forEach(function(t) { if (t.id && !topicMap[t.id]) topicMap[t.id] = t; });
+    merged.customTopics = Object.keys(topicMap).map(function(k) { return topicMap[k]; });
+
+    // --- topicNameOverrides: merge (cloud takes priority on conflict) ---
+    merged.topicNameOverrides = Object.assign({}, localData.topicNameOverrides || {}, cloudData.topicNameOverrides || {});
+
+    // --- corpus: take the newer one (so cross-device edits propagate) ---
+    // If cloud is newer and has a different corpus, use it; otherwise keep local
+    if (cloudNewer && cloudData.corpus && (!localData.corpus || cloudData.corpus._updatedAt > (localData.corpus._updatedAt || 0))) {
+        merged.corpus = cloudData.corpus;
+    } else {
+        merged.corpus = localData.corpus || cloudData.corpus;
+    }
+
+    // --- oral: take the newer one ---
+    merged.oral = cloudNewer ? (cloudData.oral || localData.oral) : (localData.oral || cloudData.oral);
+    if (!merged.oral) merged.oral = { topic: 'education', part: 2, aiConfig: { apiKey: '', baseUrl: '', model: 'gpt-4o-mini' } };
+
+    // --- learning: take the newer one ---
+    merged.learning = cloudNewer ? (cloudData.learning || localData.learning) : (localData.learning || cloudData.learning);
+
+    // --- translationCollapsed: take the newer one ---
+    merged.translationCollapsed = cloudNewer ? cloudData.translationCollapsed : localData.translationCollapsed;
+
+    merged._updatedAt = Date.now();
+    return merged;
+}
+
+// Pull cloud data and smart-merge with local
+var _isSyncing = false; // prevent sync loops
+function pullCloudData(blobId) {
+    if (!blobId || _isSyncing) return Promise.resolve();
+    _isSyncing = true;
+    updateSyncStatus('syncing');
+    return cloudGet(blobId).then(function(blob) {
+        if (blob && blob.data) {
+            // Get current local data
+            var localData = null;
+            try {
+                var raw = localStorage.getItem('lc-data-' + State.user.username);
+                if (raw) localData = JSON.parse(raw);
+            } catch(e) {}
+
+            // Smart merge: combine local + cloud without losing either
+            var mergedData = mergeData(localData, blob.data);
+            mergedData._updatedAt = Date.now();
+
+            // Detect if cloud has genuinely different/newer data (not just count — also check content timestamps)
+            var cloudHasNewDocs = (blob.data.documents || []).length > (localData && localData.documents ? localData.documents.length : 0);
+            // Also detect if cloud has updated docs (same count but different hiddenItems or readPages)
+            if (!cloudHasNewDocs && localData && localData.documents && blob.data.documents) {
+                cloudHasNewDocs = blob.data.documents.some(function(cd) {
+                    var ld = localData.documents.find(function(d) { return d.id === cd.id; });
+                    if (!ld) return true; // cloud has a doc we don't
+                    // Check if cloud doc has more hiddenItems or higher readPages
+                    var cdHide = (cd.hiddenItems || []).length;
+                    var ldHide = (ld.hiddenItems || []).length;
+                    var cdRead = cd.readPages || 0;
+                    var ldRead = ld.readPages || 0;
+                    return cdHide > ldHide || cdRead > ldRead;
+                });
+            }
+            var cloudHasNewVocab = (blob.data.vocabulary && blob.data.vocabulary.words ? blob.data.vocabulary.words.length : 0) > (localData && localData.vocabulary && localData.vocabulary.words ? localData.vocabulary.words.length : 0) ||
+                                   (blob.data.vocabulary && blob.data.vocabulary.phrases ? blob.data.vocabulary.phrases.length : 0) > (localData && localData.vocabulary && localData.vocabulary.phrases ? localData.vocabulary.phrases.length : 0);
+            // Also check if cloud vocabulary has same count but different content (newer addedAt)
+            if (!cloudHasNewVocab && localData && localData.vocabulary && blob.data.vocabulary) {
+                var cloudWords = blob.data.vocabulary.words || [];
+                var localWords = (localData.vocabulary.words || []);
+                cloudHasNewVocab = cloudWords.some(function(cw) {
+                    var lw = localWords.find(function(w) { return w.id === cw.id; });
+                    if (!lw) return true;
+                    var cwTs = cw.addedAt || cw.lastModified || 0;
+                    var lwTs = lw.addedAt || lw.lastModified || 0;
+                    return cwTs > lwTs;
+                });
+                if (!cloudHasNewVocab) {
+                    var cloudPhrases = blob.data.vocabulary.phrases || [];
+                    var localPhrases = (localData.vocabulary.phrases || []);
+                    cloudHasNewVocab = cloudPhrases.some(function(cp) {
+                        var lp = localPhrases.find(function(p) { return p.id === cp.id; });
+                        if (!lp) return true;
+                        var cpTs = cp.addedAt || cp.lastModified || 0;
+                        var lpTs = lp.addedAt || lp.lastModified || 0;
+                        return cpTs > lpTs;
+                    });
+                }
+            }
+            var cloudHasNewHidden = (blob.data.hiddenItems || []).length > (localData && localData.hiddenItems ? localData.hiddenItems.length : 0);
+            
+            // Only apply + re-render if cloud has genuinely new/changed data, OR this is the initial load
+            // This prevents the workbench from being re-rendered (and clearing挖空 state) during routine syncs
+            if (cloudHasNewDocs || cloudHasNewVocab || cloudHasNewHidden || !localData) {
+                applyUserData(mergedData);
+            } else {
+                // Silently update State data without re-rendering (preserve current UI state)
+                if (mergedData.documents) State.documents = mergedData.documents;
+                if (mergedData.hiddenItems) State.hiddenItems = mergedData.hiddenItems;
+                if (mergedData.vocabulary) State.vocabulary = mergedData.vocabulary;
+                if (mergedData.customTopics) State.customTopics = mergedData.customTopics;
+                if (mergedData.topicNameOverrides) State.topicNameOverrides = mergedData.topicNameOverrides;
+            }
+            
+            // Save merged data locally
+            localStorage.setItem('lc-data-' + State.user.username, JSON.stringify(mergedData));
+
+            var localDocCount = (localData && localData.documents) ? localData.documents.length : 0;
+            var cloudDocCount = (blob.data.documents) ? blob.data.documents.length : 0;
+            var mergedDocCount = (mergedData.documents) ? mergedData.documents.length : 0;
+            logAuthEvent('sync_merge', { localDocs: localDocCount, cloudDocs: cloudDocCount, mergedDocs: mergedDocCount });
+            updateSyncStatus('synced');
+
+            // Push merged data back to cloud so other devices get the union
+            _isSyncing = false; // allow push
+            pushLocalData(blobId);
+        } else {
+            _isSyncing = false;
+        }
+    }).catch(function(e) {
+        _isSyncing = false;
+        updateSyncStatus('error', e.message);
+    });
+}
+
+// Push local data to cloud (with size detection)
+var JSONBIN_MAX_BYTES = 95000; // jsonbin.io free tier limit is ~100KB
+var _lastPushTs = 0;
+
+function pushLocalData(blobId) {
+    if (!blobId || !State.user) return;
+    var data = collectCurrentData();
+    updateSyncStatus('syncing');
+
+    // Build payload
+    var payload = {
+        type: 'listencloze-user',
+        username: State.user.username,
+        updatedAt: data._updatedAt,
+        data: data
+    };
+
+    // Get existing blob: MERGE with cloud data before pushing to prevent cross-device data loss
+    cloudGet(blobId).then(function(existing) {
+        payload.passwordHash = existing.passwordHash;
+        payload.createdAt = existing.createdAt;
+        // CRITICAL: Merge cloud data with local data before pushing
+        // This prevents A device from overwriting B device's changes
+        if (existing.data) {
+            var merged = mergeData(data, existing.data);
+            merged._updatedAt = Date.now();
+            payload.data = merged;
+            payload.updatedAt = merged._updatedAt;
+            // Update local State with merged data too
+            applyUserDataSilent(merged);
+            localStorage.setItem('lc-data-' + State.user.username, JSON.stringify(merged));
+        }
+        return doCloudPush(blobId, payload);
+    }).catch(function() {
+        // If get fails, just push without preserved fields
+        return doCloudPush(blobId, payload);
+    }).then(function() {
+        _lastPushTs = Date.now();
+        updateSyncStatus('synced');
+    }).catch(function(e) {
+        updateSyncStatus('error', e.message);
+        // Show user-visible error for size limit
+        if (e.message.indexOf('422') >= 0 || e.message.indexOf('size') >= 0 || e.message.indexOf('large') >= 0) {
+            showToast('数据过大，部分文档可能无法同步（JSONBin 免费版限制 100KB/bin）', 'error');
+        }
+    });
+}
+
+function doCloudPush(blobId, payload) {
+    var jsonStr = JSON.stringify(payload);
+    var sizeBytes = new Blob([jsonStr]).size;
+    if (sizeBytes > JSONBIN_MAX_BYTES) {
+        // Data too large — try compressing by removing redundant whitespace
+        // If still too large, reject with clear error
+        return Promise.reject(new Error('数据大小 ' + Math.round(sizeBytes/1024) + 'KB 超过云端限制（100KB），请减少文档数量或使用更短的语料'));
+    }
+    return cloudUpdate(blobId, payload);
+}
+
+// Full bidirectional sync — called on login and periodically
+function fullCloudSync() {
+    if (!State.user || !State.user.cloudBlobId || State.user.username === '__guest__' || !hasCloudSync()) return;
+    // Skip if we just pushed less than 10s ago (avoid unnecessary traffic)
+    if (_lastPushTs && (Date.now() - _lastPushTs < 10000)) return;
+    pullCloudData(State.user.cloudBlobId);
+}
+
+// Update sync status indicator
+function updateSyncStatus(status, error) {
+    _syncState.status = status;
+    _syncState.lastSync = Date.now();
+    _syncState.error = error || null;
+    var indicator = document.getElementById('sync-indicator');
+    if (!indicator) return;
+    var iconMap = { idle: 'refresh-cw', syncing: 'loader', synced: 'check-circle', error: 'alert-circle' };
+    var colorMap = { idle: 'var(--lc-color-text-tertiary)', syncing: 'var(--lc-color-primary)', synced: '#22c55e', error: '#ef4444' };
+    var labelMap = { idle: '未同步', syncing: '同步中...', synced: '已同步', error: '同步失败' };
+    indicator.style.color = colorMap[status] || colorMap.idle;
+    indicator.title = labelMap[status] + (error ? ': ' + error : '');
+    swapLucideIcon(indicator, iconMap[status] || iconMap.idle, 14);
+    if (status === 'syncing') indicator.classList.add('lc-spin');
+    else indicator.classList.remove('lc-spin');
+}
+
+// Manual sync trigger
+window.manualSync = function() {
+    if (!State.user || State.user.username === '__guest__') { showToast('请先登录', 'error'); return; }
+    if (!hasCloudSync()) { showToast('请先在设置中配置云端同步', 'info'); openCloudSyncModal(); return; }
+    if (!State.user.cloudBlobId) { showToast('当前账号无云端存储，请稍后重试', 'error'); return; }
+    showToast('正在同步...', 'info');
+    // Save current state first
+    saveUserData();
+    // Then pull cloud
+    setTimeout(function() { fullCloudSync(); }, 600);
+};
+
+function logout() {
+    if (State.user) logAuthEvent('logout', { username: State.user.username });
+    try { localStorage.removeItem('lc-current-user'); } catch(e) {}
+    clearSession();
+    State.user = null;
+    showToast('已退出登录', 'info');
+    location.reload();
+}
+
+function saveUserData() {
+    if (!State.user) return;
+    if (_saveTimer) clearTimeout(_saveTimer);
+    _saveTimer = setTimeout(function() {
+        try {
+            var data = collectCurrentData();
+            // Local save with timestamp
+            localStorage.setItem('lc-data-' + State.user.username, JSON.stringify(data));
+            // Cloud push (versioned, fire-and-forget)
+            if (State.user.cloudBlobId && hasCloudSync()) {
+                pushLocalData(State.user.cloudBlobId);
+            }
+        } catch(e) { console.error('Save failed:', e); }
+    }, 500);
+}
+
+async function loadUserData() {
+    if (!State.user) return;
+    try {
+        var data = null;
+        // LOCAL FIRST: load from localStorage
+        var raw = localStorage.getItem('lc-data-' + State.user.username);
+        if (raw) data = JSON.parse(raw);
+        if (data) applyUserData(data);
+        // CLOUD PULL: fetch cloud data and merge if newer
+        if (hasCloudSync() && State.user.cloudBlobId) {
+            pullCloudData(State.user.cloudBlobId);
+        } else if (hasCloudSync() && State.user.username !== '__guest__') {
+            // Try to discover cloud blob from registry
+            getCloudRegistry().then(function(registry) {
+                if (registry.users[State.user.username] && registry.users[State.user.username].blobId) {
+                    var blobId = registry.users[State.user.username].blobId;
+                    State.user.cloudBlobId = blobId;
+                    localStorage.setItem('lc-cloud-blob-' + State.user.username, blobId);
+                    var lu = getUsers();
+                    if (lu[State.user.username]) { lu[State.user.username].cloudBlobId = blobId; saveUsers(lu); }
+                    pullCloudData(blobId);
+                }
+            }).catch(function(e) { });
+        }
+    } catch(e) { console.error('Load failed:', e); }
+}
+
+function applyUserData(data) {
+    applyUserDataSilent(data);
+    renderWorkbench();
+    renderAnswerRail();
+    updateHiddenCount();
+    updateTranslationToggleUI();
+    renderVocabulary();
+    renderTopicFolders();
+    populateTopicSelect();
+    renderTopicList();
+}
+
+// Apply data to State WITHOUT re-rendering (used during push to avoid UI flicker)
+function applyUserDataSilent(data) {
+    if (data.corpus) State.corpus = data.corpus;
+    if (data.documents) State.documents = data.documents;
+    if (data.hiddenItems) State.hiddenItems = data.hiddenItems;
+    if (data.customTopics) State.customTopics = data.customTopics;
+    if (data.topicNameOverrides) State.topicNameOverrides = data.topicNameOverrides;
+    if (data.vocabulary) State.vocabulary = data.vocabulary;
+    if (data.oral) {
+        State.oral.topic = data.oral.topic || State.oral.topic;
+        State.oral.part = data.oral.part || State.oral.part;
+        if (data.oral.aiConfig) State.oral.aiConfig = data.oral.aiConfig;
+    }
+    if (typeof data.translationCollapsed === 'boolean') State.translationCollapsed = data.translationCollapsed;
+    if (data.learning) { State.learning = Object.assign({ checkinDates: [], streak: 0, lastCheckin: null, dailyReminder: false, reminderTime: '20:00', reviewReminder: false, totalDays: 0 }, data.learning); }
+}
+
+function exportBackup() {
+    if (!State.user) { showToast('请先登录', 'error'); return; }
+    var data = {
+        user: State.user, corpus: State.corpus, documents: State.documents,
+        hiddenItems: State.hiddenItems, customTopics: State.customTopics, topicNameOverrides: State.topicNameOverrides,
+        vocabulary: State.vocabulary, oral: { topic: State.oral.topic, part: State.oral.part, aiConfig: State.oral.aiConfig },
+        exportDate: new Date().toISOString(),
+    };
+    var blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url; a.download = 'listencloze-backup-' + State.user.username + '-' + Date.now() + '.json';
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    showToast('备份已导出', 'success');
+}
+
+function importBackup(file) {
+    var reader = new FileReader();
+    reader.onload = function(e) {
+        try {
+            var data = JSON.parse(e.target.result);
+            if (data.corpus) State.corpus = data.corpus;
+            if (data.documents) State.documents = data.documents;
+            if (data.hiddenItems) State.hiddenItems = data.hiddenItems;
+            if (data.customTopics) State.customTopics = data.customTopics;
+            if (data.topicNameOverrides) State.topicNameOverrides = data.topicNameOverrides;
+            if (data.vocabulary) State.vocabulary = data.vocabulary;
+            if (data.oral) {
+                if (data.oral.topic) State.oral.topic = data.oral.topic;
+                if (data.oral.part) State.oral.part = data.oral.part;
+                if (data.oral.aiConfig) State.oral.aiConfig = data.oral.aiConfig;
+            }
+            saveUserData();
+            renderWorkbench(); renderAnswerRail(); updateHiddenCount(); renderVocabulary();
+            showToast('备份导入成功', 'success');
+        } catch(err) { showToast('备份文件格式错误', 'error'); }
+    };
+    reader.readAsText(file);
+}
+
+function updateUserUI() {
+    var label = document.getElementById('user-account-label');
+    var btn = document.getElementById('user-account-btn');
+    var dropdown = document.getElementById('user-dropdown');
+    var logoutBtn = document.getElementById('btn-logout');
+    var loginBtn = document.getElementById('btn-login');
+    var syncIndicator = document.getElementById('sync-indicator');
+    var syncBtn = document.getElementById('btn-sync-now');
+    var isGuest = !State.user || State.user.username === '__guest__';
+    if (State.user && !isGuest) {
+        label.textContent = State.user.username;
+        if (btn) swapLucideIcon(btn, 'user-check', 18);
+        if (logoutBtn) logoutBtn.style.display = '';
+        if (loginBtn) loginBtn.style.display = 'none';
+        // Show sync indicator for logged-in users with cloud sync enabled
+        var showSync = hasCloudSync() && State.user.cloudBlobId;
+        if (syncIndicator) syncIndicator.style.display = showSync ? '' : 'none';
+        if (syncBtn) syncBtn.style.display = showSync ? '' : 'none';
+        updateSyncStatus(_syncState.status);
+    } else {
+        label.textContent = '我的';
+        if (btn) swapLucideIcon(btn, 'user', 18);
+        if (dropdown) dropdown.classList.remove('show');
+        if (logoutBtn) logoutBtn.style.display = 'none';
+        if (loginBtn) loginBtn.style.display = '';
+        if (syncIndicator) syncIndicator.style.display = 'none';
+        if (syncBtn) syncBtn.style.display = 'none';
+    }
+}
+
+window.openAuthModal = function() { document.getElementById('auth-modal').classList.add('show'); document.getElementById('auth-username').focus(); };
+window.closeAuthModal = function() { document.getElementById('auth-modal').classList.remove('show'); };
+
+// ===== Cloud Sync Modal =====
+window.openCloudSyncModal = function() {
+    var modal = document.getElementById('cloud-sync-modal');
+    var keyInput = document.getElementById('cloud-api-key-input');
+    var syncCodeInput = document.getElementById('cloud-sync-code-input');
+    var syncCodeSection = document.getElementById('sync-code-section');
+    var status = document.getElementById('cloud-sync-status');
+    // Pre-fill current values
+    if (keyInput) keyInput.value = getApiKey();
+    if (syncCodeInput) syncCodeInput.value = getSyncCode();
+    // Show sync code section if API key exists
+    if (syncCodeSection) syncCodeSection.style.display = hasCloudSync() ? '' : 'none';
+    if (status) status.textContent = hasCloudSync() ? (getSyncCode() ? '云端同步已启用' : 'API Key 已保存，同步码待生成') : '云端同步未启用';
+    modal.classList.add('show');
+    safeLucideIcons();
+};
+window.closeCloudSyncModal = function() { document.getElementById('cloud-sync-modal').classList.remove('show'); };
+
+window.showAuthLog = function() {
+    var log = getAuthLog();
+    var container = document.getElementById('auth-log-list');
+    if (!log.length) {
+        container.innerHTML = '<p style="text-align:center;color:var(--lc-color-text-tertiary);padding:24px;">暂无认证日志</p>';
+    } else {
+        var html = log.map(function(entry) {
+            var d = new Date(entry.t);
+            var timeStr = (d.getMonth()+1) + '/' + d.getDate() + ' ' + String(d.getHours()).padStart(2,'0') + ':' + String(d.getMinutes()).padStart(2,'0');
+            var actionLabel = entry.action;
+            var actionClass = 'info';
+            if (entry.action.indexOf('success') >= 0 || entry.action === 'session_restore' || entry.action === 'logout') actionClass = 'success';
+            else if (entry.action.indexOf('fail') >= 0 || entry.action.indexOf('error') >= 0 || entry.action.indexOf('expired') >= 0) actionClass = 'fail';
+            var detailStr = '';
+            if (entry.details) {
+                var parts = [];
+                for (var k in entry.details) { parts.push(k + '=' + entry.details[k]); }
+                detailStr = parts.join(', ');
+            }
+            return '<div class="lc-auth-log-entry"><span class="lc-auth-log-time">' + timeStr + '</span><span class="lc-auth-log-action ' + actionClass + '">' + actionLabel + '</span><span class="lc-auth-log-detail">' + detailStr + '</span></div>';
+        }).join('');
+        container.innerHTML = html;
+    }
+    document.getElementById('auth-log-modal').classList.add('show');
+};
+
+window.clearAuthLog = function() {
+    _authLog = [];
+    try { localStorage.removeItem('lc-auth-log'); } catch(e) {}
+    showAuthLog();
+    showToast('认证日志已清空', 'info');
+};
+
+// ===== IMPORT =====
+async function handleFile(file) {
+    exitEditModeAndSave();
+    var ext = file.name.split('.').pop().toLowerCase();
+    var status = document.getElementById('parse-status');
+    status.className = 'lc-parse-status show loading';
+    status.innerHTML = '<i data-lucide="loader-2" class="lc-spin" style="width:16px;height:16px;"></i> 正在解析文档...';
+    refreshIcons();
+    try {
+        var pages = [];
+        if (ext === 'pdf') {
+            status.innerHTML = '<i data-lucide="loader-2" class="lc-spin" style="width:16px;height:16px;"></i> 正在加载 PDF 解析库...';
+            refreshIcons();
+            await loadScript(CDN.pdfjs);
+            if (typeof pdfjsLib === 'undefined') throw new Error('PDF 解析库加载失败');
+            pdfjsLib.GlobalWorkerOptions.workerSrc = CDN.pdfjsWorker[0];
+            status.innerHTML = '<i data-lucide="loader-2" class="lc-spin" style="width:16px;height:16px;"></i> 正在解析文档...';
+            refreshIcons();
+            pages = await extractPdfPages(file);
+        } else if (ext === 'docx') {
+            status.innerHTML = '<i data-lucide="loader-2" class="lc-spin" style="width:16px;height:16px;"></i> 正在加载 Word 解析库...';
+            refreshIcons();
+            await loadScript(CDN.mammoth);
+            if (typeof mammoth === 'undefined') throw new Error('Word 解析库加载失败');
+            status.innerHTML = '<i data-lucide="loader-2" class="lc-spin" style="width:16px;height:16px;"></i> 正在解析文档...';
+            refreshIcons();
+            var text = await extractDocxText(file);
+            pages = parseTextToPages(text);
+        } else if (ext === 'txt') {
+            var text2 = await file.text();
+            pages = parseTextToPages(text2);
+        } else { throw new Error('不支持的文件格式: ' + ext); }
+        if (pages.length === 0 || pages.every(function(p) { return p.lines.length === 0; })) throw new Error('未能从文档中提取到文本');
+        var title = document.getElementById('corpus-title').value || file.name.replace(/\.[^.]+$/, '');
+        var topic = document.getElementById('topic-select').value;
+        var docId = genId();
+        State.corpus = { docId: docId, title: title, topic: topic, pages: pages };
+        State.hiddenItems = [];
+        if (!State.documents) State.documents = [];
+        State.documents.push({ id: docId, title: title, topic: topic, pages: pages, hiddenItems: [], pageCount: pages.length, createdAt: Date.now() });
+        saveUserData();
+        status.className = 'lc-parse-status show success';
+        status.innerHTML = '<i data-lucide="check-circle" style="width:16px;height:16px;"></i> 解析成功！共 ' + pages.length + ' 页，' + pages.reduce(function(s, p) { return s + p.lines.length; }, 0) + ' 行';
+        refreshIcons();
+        showToast('文档解析成功', 'success');
+        renderWorkbench();
+        renderTopicFolders();
+        setTimeout(function() { switchView('workbench'); }, 800);
+    } catch (err) {
+        console.error('Parse error:', err);
+        status.className = 'lc-parse-status show error';
+        status.innerHTML = '<i data-lucide="alert-circle" style="width:16px;height:16px;"></i> ' + err.message;
+        refreshIcons();
+        showToast('解析失败: ' + err.message, 'error');
+    }
+}
+
+async function extractPdfPages(file) {
+    var arrayBuffer = await file.arrayBuffer();
+    var pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+    var pages = [];
+    for (var i = 1; i <= pdf.numPages; i++) {
+        var page = await pdf.getPage(i);
+        var content = await page.getTextContent();
+        var lineMap = new Map();
+        for (var j = 0; j < content.items.length; j++) {
+            var item = content.items[j];
+            if (!item.str || !item.str.trim()) continue;
+            var y = Math.round(item.transform[5] / 3) * 3;
+            if (!lineMap.has(y)) lineMap.set(y, []);
+            lineMap.get(y).push({ str: item.str, x: item.transform[4] });
+        }
+        var sortedYs = Array.from(lineMap.keys()).sort(function(a, b) { return b - a; });
+        var rawLines = sortedYs.map(function(y) {
+            return lineMap.get(y).sort(function(a, b) { return a.x - b.x; }).map(function(it) { return it.str; }).join('');
+        }).filter(function(l) { return l.trim(); });
+        var lines = rawLines.map(function(l) { return { text: l, isTranslation: isChineseLine(l) }; });
+        pages.push({ pageNum: i, lines: lines });
+    }
+    return pages;
+}
+
+async function extractDocxText(file) {
+    var arrayBuffer = await file.arrayBuffer();
+    var result = await mammoth.extractRawText({ arrayBuffer: arrayBuffer });
+    return result.value;
+}
+
+function parseTextToPages(text) {
+    // Pre-cleanup: normalize whitespace and encoding artifacts from PDF/Word extraction
+    text = preprocessCorpusText(text);
+    // Spell check: split concatenated words using dictionary validation (like Word's spell check)
+    text = spellCheckText(text);
+    
+    var sep = '---';
+    if (text.includes(sep)) {
+        return text.split(sep).map(function(pageText, i) {
+            var lines = pageText.trim().split('\n').map(function(l) { return l.trim(); }).filter(function(l) { return l; });
+            lines = mergeBrokenLines(lines);
+            return { pageNum: i + 1, lines: lines.map(function(l) { return { text: l, isTranslation: isChineseLine(l) }; }) };
+        }).filter(function(p) { return p.lines.length > 0; });
+    }
+    var allLines = text.trim().split('\n').map(function(l) { return l.trim(); }).filter(function(l) { return l; });
+    allLines = mergeBrokenLines(allLines);
+    allLines = allLines.map(function(l) { return { text: l, isTranslation: isChineseLine(l) }; });
+    var pages = [];
+    for (var i = 0; i < allLines.length; i += 15) pages.push({ pageNum: pages.length + 1, lines: allLines.slice(i, i + 15) });
+    return pages.length > 0 ? pages : [{ pageNum: 1, lines: [] }];
+}
+
+// Preprocess raw text from PDF/Word extraction to fix common issues
+// Compact English dictionary — top ~2000 most common words for spell-check splitting
+// Used to detect and split concatenated words (e.g. "theway" → "the way")
+var _EN_DICT = null;
+function getEnDict() {
+    if (_EN_DICT) return _EN_DICT;
+    _EN_DICT = new Set();
+    var words = ('a an the and or but if when while where which who whom whose what why how ' +
+        'is are was were be been being am do does did doing have has had having ' +
+        'will would shall should can could may might must need dare ought ' +
+        'i you he she it we they me him her us them my your his its our their ' +
+        'this that these those there here now then today tomorrow yesterday ' +
+        'of to in on at by for with from into onto upon over under above below ' +
+        'between among through across along around about before after during ' +
+        'until since without within against toward towards behind beyond ' +
+        'not no nor so too very more most much many few less least ' +
+        'some any all none each every both either neither other another ' +
+        'same different new old first last next previous only just still ' +
+        'also even already yet again once twice always never often sometimes ' +
+        'usually rarely seldom ever quite rather almost enough indeed perhaps ' +
+        'maybe certainly probably possibly actually really truly surely ' +
+        'because although though unless while whereas whether than as like ' +
+        'up down out off away back near far here there everywhere nowhere ' +
+        'one two three four five six seven eight nine ten hundred thousand ' +
+        'first second third fourth fifth sixth seventh eighth ninth tenth ' +
+        'man woman child boy girl person people men women children boys girls ' +
+        'family friend father mother son daughter brother sister husband wife ' +
+        'home house room door window table chair bed kitchen bathroom ' +
+        'food water milk bread meat fish fruit rice egg tea coffee sugar ' +
+        'eat drink cook make do go come see know think say tell ask hear ' +
+        'read write play work live give take get put bring buy sell pay ' +
+        'find lose win lose open close start stop begin end finish continue ' +
+        'move walk run fly drive ride swim climb fall rise stand sit lie ' +
+        'speak talk listen look watch show hide meet wait leave stay return ' +
+        'try help use need want wish hope believe remember forget learn ' +
+        'teach study work play sing dance sleep wake dream grow change ' +
+        'become seem appear happen exist remain mean matter cause create ' +
+        'build break fix repair cut tie push pull carry throw catch ' +
+        'send receive offer accept refuse agree disagree answer reply ' +
+        'love hate like enjoy prefer miss fear trust doubt wonder ' +
+        'good bad great small big large little long short high low ' +
+        'old new young early late quick slow fast hard easy simple ' +
+        'hot cold warm cool dry wet clean dirty full empty open closed ' +
+        'right wrong true false real fake same different important ' +
+        'beautiful ugly happy sad angry afraid bored excited tired ' +
+        'strong weak rich poor safe dangerous free busy ready ' +
+        'able unable possible impossible common rare special normal ' +
+        'public private general specific local international national ' +
+        'political economic social cultural historical natural ' +
+        'technical scientific medical educational environmental legal ' +
+        'time day night morning evening week month year hour minute ' +
+        'season spring summer autumn winter monday tuesday wednesday ' +
+        'thursday friday saturday sunday january february march april ' +
+        'may june july august september october november december ' +
+        'world country city town village street road building place ' +
+        'school university college hospital church bank store shop ' +
+        'office factory station airport park garden farm forest ' +
+        'mountain river lake sea ocean island valley desert beach ' +
+        'car bus train plane ship boat bike truck road path way ' +
+        'book page word letter number story poem article chapter ' +
+        'music song movie film show game sport team player ' +
+        'money price cost tax bill profit loss business company ' +
+        'job work career success failure effort plan goal dream ' +
+        'law rule order peace war power force energy light dark ' +
+        'sun moon star sky cloud rain snow wind storm fire earth ' +
+        'land water air space nature animal plant tree flower ' +
+        'dog cat bird fish horse cow sheep chicken mouse ' +
+        'head face eye ear nose mouth hand arm leg foot ' +
+        'heart body mind soul life death health illness ' +
+        'name title age color size shape sound voice ' +
+        'idea thought question answer problem solution ' +
+        'reason result effect cause purpose method way ' +
+        'art science history geography language math ' +
+        'english german french spanish chinese japanese ' +
+        'king queen president leader minister government ' +
+        'army police court judge lawyer doctor nurse teacher ' +
+        'student worker farmer artist musician writer ' +
+        'soldier engineer scientist inventor merchant ' +
+        'press media news paper radio television phone ' +
+        'computer internet email website data information ' +
+        'machine engine tool equipment material metal ' +
+        'wood stone glass plastic paper cloth leather ' +
+        'oil gas coal electricity battery wire cable ' +
+        'wall floor ceiling roof stairs window door ' +
+        'key lock clock watch phone camera radio ' +
+        'cup plate knife fork spoon bowl bottle ' +
+        'shirt pants dress shoe sock hat coat ' +
+        'box bag basket bottle jar tube can ' +
+        'line circle square triangle point angle ' +
+        'part section piece half whole group set ' +
+        'amount number quantity level degree rate ' +
+        'form type kind sort class level grade ' +
+        'end side top bottom front back left right ' +
+        'center middle edge border surface inside ' +
+        'north south east west center direction ' +
+        'mile foot inch yard meter kilometer pound ' +
+        'gram kilogram liter gallon degree percent ' +
+        'about above across after against along among around at before behind ' +
+        'below beside between beyond by down during except for from in inside ' +
+        'into near of off on onto out outside over past since through throughout ' +
+        'till to toward under underneath until up upon with within without ' +
+        'able absent according account act action active activity actual add address ' +
+        'admit advance advantage advice afraid after afternoon again against age ago ' +
+        'agree ahead aid aim air alike alive all allow almost alone along already ' +
+        'also although always am among amount and anger angry animal another answer ' +
+        'any anyone anything anyway apart apologize appeal appear apply appoint ' +
+        'approach approve area argue argument arm army around arrive art article ' +
+        'artist as ask asleep aspect assist assume assure at attack attempt attend ' +
+        'attention attitude attract audience author authority autumn available ' +
+        'avenue average avoid awake award aware away awful baby back background ' +
+        'bad bag balance ball band bank base basic basis bath battle bay be beach ' +
+        'bear beat beautiful because become bed bedroom bee beef before begin ' +
+        'behind belief believe bell belong below belt bench bend beneath benefit ' +
+        'beside best bet better between beyond big bike bill biology bird birth ' +
+        'birthday bit bite black blame blank blood blow blue board boat body boil ' +
+        'bone book border born borrow boss both bottle bottom box boy brain branch ' +
+        'brave bread break breakfast breath breathe brick bridge brief bright bring ' +
+        'broad brother brown brush build building burn bus business busy but butter ' +
+        'buy by cabin cake call calm camera camp can cancel cancer candidate candle ' +
+        'cap capital captain capture car card care career careful carry case cash ' +
+        'cast castle cat catch cause ceiling celebrate cell center central century ' +
+        'ceremony certain certainly chain chair chance change channel chapter ' +
+        'character charge charm chart cheap check cheek cheese chemical chest ' +
+        'chicken chief child childhood choose church circle citizen city civil ' +
+        'claim class classic clean clear clerk clever click client climb clock ' +
+        'close cloth clothes cloud club coach coal coast coat code coffee coin ' +
+        'cold collect college color comb come comfort command comment common ' +
+        'community company compare compete competition complain complete computer ' +
+        'concern condition conference confirm connect consider contact contain ' +
+        'content contest continue contract control conversation cook cool copy ' +
+        'corner correct cost could council count country couple course court ' +
+        'cover cow create credit crew crime crisis critic cross crowd crown ' +
+        'cry culture cup curious current curtain cut daily damage dance danger ' +
+        'dare dark data date daughter day dead deal dear death debate debt decade ' +
+        'decide deck declare decline deep deer defend define degree delay deliver ' +
+        'demand deny depart depend depth describe desert design desire desk ' +
+        'destroy detail develop device dial die diet differ difference different ' +
+        'difficult dig dinner direct direction director dirty disagree disappear ' +
+        'disappoint discover discuss disease dish display distance divide divorce ' +
+        'do doctor document dog dollar door double doubt down draft drag drama ' +
+        'draw dream dress drink drive drop drug dry due during dust duty each ear ' +
+        'early earn earth east easy eat economic economy edge edit education ' +
+        'effect effort egg eight either elder elect election element else email ' +
+        'embarrass emergency emotion employ empty enable end enemy energy engage ' +
+        'engine enjoy enough enter entire envelope environment equal equipment ' +
+        'error escape especially establish even evening event ever every evidence ' +
+        'evil exact examine example excellent except exchange excite excuse ' +
+        'exercise exist expect expense experience experiment expert explain ' +
+        'explore export express extend extra eye face fact factor factory fail ' +
+        'fair fall false familiar family famous fan fancy far farm farmer ' +
+        'fashion fast father fault favor fear feature fee feed feel fellow ' +
+        'female fence few field fight figure file fill film final find fine ' +
+        'finger finish fire firm first fish fit five fix flag flame flat ' +
+        'flee flesh flight float flood floor flour flow flower fly focus folk ' +
+        'follow food fool foot for force forest forget form fortune forward ' +
+        'found four free freedom freeze fresh friend friendly frighten from ' +
+        'front fruit fuel full fun fund funny furniture future gain game garden ' +
+        'gas gate gather general generation gentleman gift girl give glad glass ' +
+        'global glove go goal god gold golden good goodbye govern grab grade ' +
+        'graduate grain grand grass grateful gray great green greet ground ' +
+        'group grow growth guard guess guest guide gun habit hair half hand ' +
+        'handle hang happen happy hard hardly harm hat hate have he head health ' +
+        'healthy hear heart heat heaven heavy heel height help her here hero ' +
+        'hide high highway hill him hire his history hit hold hole holiday home ' +
+        'honest honey honor hope horse hospital hot hotel hour house how however ' +
+        'huge human hundred hung hungry hunt hurry hurt husband ice idea identify ' +
+        'ill image imagine immediately import important impossible impress ' +
+        'improve include income increase indeed independent indicate individual ' +
+        'industry influence information injury inside instance instead institution ' +
+        'instruction interest internet interview into introduce invade invest ' +
+        'invite involve iron island issue it item jam job join joint joke journey ' +
+        'joy judge juice jump junior just keep key kick kid kill kind king kiss ' +
+        'kitchen knee knife knock know knowledge lab label labor lack ladder ' +
+        'lady lake land language large last late laugh launch law lawn lawyer ' +
+        'lay layer lazy lead leader leaf learn least leave left leg legal legend ' +
+        'lemon lend length less lesson let letter level library license lie life ' +
+        'lift light like limit line link lip list listen little live lock long ' +
+        'look loose lose loss lot loud love low luck lucky lunch machine mad ' +
+        'magazine mail main maintain major make male mall man manage management ' +
+        'manner many map march mark market marriage marry mass master match ' +
+        'material matter may maybe meal mean meaning meanwhile measure meat ' +
+        'medical medicine meet member memory mention menu merchant mere merit ' +
+        'merry message metal method middle might mild mile military milk mind ' +
+        'mine minister minor minute miss mission mistake mix mode model modern ' +
+        'moment money monitor month mood moon more morning most mother motion ' +
+        'mountain mouse mouth move movie much music must mystery name nation ' +
+        'national natural nature near nearly necessary neck need needle negative ' +
+        'neighbor neither nervous net never new news next nice night nine no ' +
+        'nobody none nor normal north nose not note nothing notice novel now ' +
+        'nowhere number nurse object obtain occasion occur ocean odd of off ' +
+        'offer office officer official often oh oil okay old once one only ' +
+        'onto open operation opinion opportunity opposite option or orange ' +
+        'order organize origin other otherwise ought our out outcome outdoor ' +
+        'outer outside over own owner pace pack package page pain paint pair ' +
+        'palace pan paper parent park part participate particular partner ' +
+        'party pass past path patient pattern pause pay peace peach peak pen ' +
+        'pencil people pepper per perfect perform period permit person personal ' +
+        'persuade phase phone photo phrase physical piano pick picture piece ' +
+        'pin pink pipe place plan plane planet plant plastic plate play player ' +
+        'please plenty plot plus poem poet poetry point pole police policy ' +
+        'polite political politics pool poor pop popular position positive ' +
+        'possible post pot potato pound pour power practical practice prefer ' +
+        'prepare present pressure pretend pretty prevent price pride print ' +
+        'prior private prize probably problem process produce product profit ' +
+        'program project promise promote proof proper protect proud prove ' +
+        'provide public publish pull purchase pure purpose push put quality ' +
+        'quarter queen question quick quiet quit quite quote race radio rail ' +
+        'rain raise range rank rapid rare rate rather raw reach react read ' +
+        'ready real realize reason receive recent recipe record red reduce ' +
+        'refer reflect refuse region register regret regular reject relate ' +
+        'relax release remain remember remind remove rent repair repeat reply ' +
+        'report represent require research reserve resist respect respond ' +
+        'rest result retain return reveal review reward rhythm rice rich ride ' +
+        'right ring rise risk river road rock role roll roof room root rope ' +
+        'rose round route row royal rub rule run rush sad safe safety sail ' +
+        'salary sale salt same sand save say scale scared scene school science ' +
+        'score sea search season seat second secret section secure see seed ' +
+        'seek seem sell send senior sense sentence series serious serve service ' +
+        'session set settle seven several severe shade shadow shake shall ' +
+        'shame shape share sharp she sheet shelf shell shelter shield shift ' +
+        'shine ship shirt shock shoe shoot shop shore short should shoulder ' +
+        'shout show shut sick side sign signal silence silent silver similar ' +
+        'simple since sing single sister sit site situation six size skill ' +
+        'skin sky sleep slow small smart smell smile smooth snap snow so social ' +
+        'society soft soil soldier solid solution solve some son song soon ' +
+        'sorry sort soul sound source south space speak special speed spell ' +
+        'spend spirit sport spread spring square stable staff stage stair ' +
+        'stamp stand standard star stare start state station stay steady ' +
+        'steam steel step stick still stone stop store storm story straight ' +
+        'strange strategy street strength stress stretch strict strike string ' +
+        'strong structure struggle student study stupid style subject submit ' +
+        'substance succeed success such sudden suffer sugar suggest summer ' +
+        'sun support suppose sure surface surprise sweet swim sword table ' +
+        'tail take tale talk tall tank tape target task taste tax tea teach ' +
+        'team tear technology teen telephone television tell temperature ten ' +
+        'tend term terrible test text than thank that the their them then ' +
+        'theory there these they thick thin thing think third this those ' +
+        'though thought thousand threat three throat through throw thus ticket ' +
+        'tie tight time tiny tip tired title to today together tomorrow tone ' +
+        'tongue tonight too tool tooth top topic total touch tough tour ' +
+        'toward town track trade tradition traffic train training travel ' +
+        'tray treat tree trial trick trip trouble truck true trust truth ' +
+        'try tube turn twelve twenty twice two type typical ugly under ' +
+        'understand uniform union unique unit unite university until up upon ' +
+        'upper urban use used user usual valley value variety various vast ' +
+        'vegetable vehicle version very vessel victory video view village ' +
+        'violence visit voice volume vote wait wake walk wall want war warm ' +
+        'warn wash watch water wave way we weak wealth wear weather web ' +
+        'wedding week weight welcome well west western what wheat wheel ' +
+        'when where whether which while white who whole whose why wide wife ' +
+        'wild will win wind window wine wing winter wire wise wish with ' +
+        'within without woman wonder wood word work world worry worth would ' +
+        'wound wrap write wrong yard year yellow yes yesterday yet you young ' +
+        'your youth zero zone').split(/\s+/);
+    words.forEach(function(w) { _EN_DICT.add(w.toLowerCase()); });
+    return _EN_DICT;
+}
+
+// Spell-check a full text: split concatenated words that aren't in the dictionary
+// Like Word's spell check — finds unknown words and tries to split them into known words
+/**
+ * German Spell-Check & Word-Splitting
+ * ===================================
+ * Companion to the English spell-check path (getEnDict / spellCheckWord /
+ * findBestSplit) found in the host app. German is tricky because compound
+ * words (Komposita) are legitimate single tokens — e.g. "Kraftwerk",
+ * "Hochschule", "Studentenwohnheim". We must therefore NOT blindly split
+ * any unknown long word the way the English path does.
+ *
+ * This module only splits concatenated tokens when a *function word*
+ * (article / pronoun / preposition / conjunction / modal) is glued to
+ * another word — the classic PDF-extraction artefact, e.g.:
+ *     "dieMiete"  -> "die Miete"
+ *     "unddie"    -> "und die"
+ *     "undder"    -> "und der"
+ *     "inderSchule" -> "in der Schule"
+ *
+ * Rules implemented:
+ *   1. Words already present in the dictionary are never split.
+ *   2. Words whose only valid split would be Noun + Noun (both parts
+ *      capitalized, neither a function word) are treated as compounds
+ *      and left intact.
+ *   3. A split is only accepted when at least one resulting part is a
+ *      function word (case-insensitive, so sentence-initial "Der"/"Und"
+ *      are recognized).
+ *   4. Otherwise the word is returned unchanged (conservative: when in
+ *      doubt, don't split).
+ *
+ * Public API:
+ *   getDeDict()                 -> Set<string>   (~3000+ common German words)
+ *   spellCheckGermanText(text)  -> string        (line-aware; skips Chinese)
+ *   spellCheckGermanWord(word, dict) -> string   (single token)
+ *   findBestGermanSplit(word, dict)  -> string[] | null  (best split parts)
+ *   DE_FUNCTION_WORDS           -> Set<string>   (function-word lookup)
+ */
+
+/* ===========================================================================
+ * 0. isChineseLine — reuse the host's helper if present, else a fallback so
+ *    this file is usable standalone.
+ * ========================================================================= */
+var isChineseLine = (typeof isChineseLine === 'function')
+    ? isChineseLine
+    : function (line) {
+        if (!line) return false;
+        var chineseChars = (line.match(/[\u4e00-\u9fff]/g) || []).length;
+        var totalChars = line.replace(/\s/g, '').length;
+        return totalChars > 0 && chineseChars / totalChars > 0.4;
+    };
+
+/* ===========================================================================
+ * 1. German function words — recognised case-insensitively when splitting,
+ *    so that sentence-initial "Der" / "Und" / "In" are still detected.
+ * ========================================================================= */
+var DE_FUNCTION_WORDS = new Set([
+    // articles / determiners
+    'der', 'die', 'das', 'den', 'dem', 'des',
+    'ein', 'eine', 'einen', 'einem', 'einer', 'eines',
+    'kein', 'keine', 'keinen', 'keinem', 'keiner', 'keines',
+    'mein', 'meine', 'meinen', 'meinem', 'meiner', 'meines',
+    'dein', 'deine', 'deinen', 'deinem', 'deiner', 'deines',
+    'sein', 'seine', 'seinen', 'seinem', 'seiner', 'seines',
+    'unser', 'unsere', 'unseren', 'unserem', 'unserer', 'unseres',
+    'euer', 'eure', 'euren', 'eurem', 'eurer', 'eures',
+    'ihr', 'ihre', 'ihren', 'ihrem', 'ihrer', 'ihres',
+    'dieser', 'diese', 'dieses', 'diesen', 'diesem', 'dieser',
+    'jener', 'jene', 'jenes', 'jenen', 'jenem',
+    'welcher', 'welche', 'welches', 'welchen', 'welchem',
+    'jeder', 'jede', 'jedes', 'jedem', 'jeden',
+    'mancher', 'manche', 'manches', 'manchen', 'manchem',
+    'alle', 'allen', 'allem', 'aller', 'alles',
+    'einige', 'etliche', 'mehrere', 'wenige', 'viele', 'solche',
+    // personal / reflexive / demonstrative pronouns
+    'ich', 'du', 'er', 'sie', 'es', 'wir', 'ihr', 'Sie',
+    'mich', 'dich', 'sich', 'uns', 'euch',
+    'mir', 'dir', 'ihm', 'ihnen',
+    'man', 'jemand', 'niemand', 'etwas', 'nichts', 'alles', 'jeder',
+    'wer', 'was', 'wessen', 'wen', 'wem',
+    'dieser', 'diese', 'dieses', 'jener', 'jene', 'jenes',
+    'selber', 'selbst',
+    // interrogative / relative adverbs (function-like)
+    'wo', 'wann', 'warum', 'wie', 'wohin', 'woher', 'weshalb', 'wieso', 'weswegen',
+    // prepositions
+    'in', 'an', 'auf', 'mit', 'von', 'zu', 'bei', 'nach', 'vor',
+    'ueber', 'unter', 'durch', 'fuer', 'gegen', 'ohne', 'um', 'aus',
+    'seit', 'trotz', 'waehrend', 'wegen', 'bis', 'ab', 'gegenueber',
+    'innerhalb', 'außerhalb', 'statt', 'anstatt', 'binnen', 'außer',
+    'oberhalb', 'unterhalb', 'diesseits', 'jenseits', 'dank', 'zufolge',
+    'aufgrund', 'infolge', 'zwecks', 'mittels', 'laut', 'gemäß',
+    'entlang', 'neben', 'hinter', 'zwischen',
+    'ueber', 'fuer', 'ueber',
+    // conjunctions
+    'und', 'oder', 'aber', 'denn', 'weil', 'dass', 'daß', 'wenn', 'als',
+    'sobald', 'sowie', 'entweder', 'weder', 'sondern', 'sowohl',
+    'ob', 'obwohl', 'obschon', 'während', 'damit', 'bevor', 'nachdem',
+    'solange', 'falls', 'sodass', 'indem', 'sooft',
+    // modal / auxiliary verbs (inflected forms)
+    'ist', 'sind', 'seid', 'war', 'waren', 'bin', 'bist', 'sei', 'seien',
+    'hat', 'hatte', 'haben', 'hatten',
+    'wird', 'werden', 'wurde', 'wurden',
+    'kann', 'kannst', 'können', 'mag', 'magst', 'mögen',
+    'muss', 'musst', 'müssen', 'soll', 'sollst', 'sollen',
+    'will', 'willst', 'wollen', 'darf', 'darfst', 'dürfen',
+    'möchte', 'möchten', 'würde', 'würden', 'sollte', 'sollten',
+    'könnte', 'könnten', 'müsste', 'müssten',
+    'nicht', 'kein', 'keine',
+    // common adverbs that glue to neighbours
+    'auch', 'noch', 'schon', 'immer', 'nie', 'manchmal', 'oft', 'selten',
+    'meistens', 'meist', 'sehr', 'mehr', 'ganz', 'völlig', 'gar', 'sogar',
+    'nur', 'sogar', 'besonders', 'deshalb', 'deswegen', 'trotzdem',
+    'deshalb', 'deswegen', 'daher', 'somit', 'damit',
+    'wenn', 'als', 'wie', 'so', 'da', 'hier', 'dort', 'jetzt', 'dann',
+    'bald', 'später', 'früher',
+    'allerdings', 'vielleicht', 'natürlich', 'wenigstens', 'höchstens',
+    'mindestens', 'zumindest', 'zwar', 'doch', 'jedoch', 'dennoch',
+    'vielmehr', 'ansonsten', 'sonst', 'dagegen', 'dabei', 'dadurch',
+    'dafür', 'davon', 'dazu', 'daran', 'darauf', 'darüber', 'daraus',
+    'dahinter', 'daneben', 'dahinten', 'davor', 'danach', 'darum',
+    'darunter', 'darinnen', 'darin', 'dabei', 'damals',
+    'wobei', 'wodurch', 'wofür', 'wogegen', 'wohinter', 'womit', 'wovon',
+    'wozu', 'woran', 'worauf', 'worüber', 'woraus', 'worin',
+    'hierbei', 'hierdurch', 'hierfür', 'hiermit', 'hiervon', 'hierzu',
+    'hieran', 'hierauf', 'hierüber', 'hieraus', 'hierin',
+    'inzwischen', 'unterdessen', 'gleichzeitig', 'derweil',
+    'zusammen', 'auseinander', 'ineinander', 'miteinander',
+    'durcheinander', 'voneinander', 'zueinander', 'nacheinander',
+    'beieinander', 'aufeinander',
+    // contractions that are single real words (must not be re-split)
+    'im', 'am', 'zum', 'zur', 'vom', 'beim', 'ins', 'ans', 'ums', 'übers', 'übers'
+]);
+
+/* ===========================================================================
+ * 2. Compact German dictionary — ~3000+ most common German words.
+ *    Nouns are stored Capitalised (German orthography); function words,
+ *    verbs, adjectives, adverbs are lower-case. Splitting is case-sensitive
+ *    for nouns but case-insensitive for function words (sentence start).
+ * ========================================================================= */
+var _DE_DICT = null;
+
+function getDeDict() {
+    if (_DE_DICT) return _DE_DICT;
+    _DE_DICT = new Set();
+    var words = (
+        // ---- articles / determiners / pronouns ----
+        'der die das den dem des ein eine einen einer eines kein keine keinen ' +
+        'keiner keinem keines mein meine meinen meiner meinem dein deine deinen ' +
+        'deiner deinem sein seine seinen seiner seinem unser unsere unseren ' +
+        'unserer unserem euer eure euren eurer eurem ihr ihre ihren ihrer ihrem ' +
+        'dieser diese dieses diesen diesem jener jene jenes welcher welche welches ' +
+        'jeder jede jedes mancher manche manches alle allen allem aller alles ' +
+        'einige etliche mehrere wenige viele solche ich du er sie es wir ihr Sie ' +
+        'mich dich sich uns euch mir dir ihm ihnen man jemand niemand etwas ' +
+        'nichts alles wer was wessen wen wem selbst selber ' +
+        // ---- interrogative / relative adverbs ----
+        'wo wann warum wie wohin woher weshalb wieso weswegen wofür wodurch ' +
+        'wogegen wohinter womit wovon wozu woran worauf worüber woraus worin ' +
+        'wobei hierbei hierdurch hierfür hiermit hiervon hierzu hieran hierauf ' +
+        'hierüber hieraus hierin ' +
+        // ---- prepositions ----
+        'in an auf mit von zu bei nach vor über unter durch für gegen ohne um ' +
+        'aus seit trotz während wegen bis ab gegenüber innerhalb außerhalb statt ' +
+        'anstatt binnen außer oberhalb unterhalb diesseits jenseits dank zufolge ' +
+        'aufgrund infolge zwecks mittels laut gemäß entlang neben hinter zwischen ' +
+        // ---- conjunctions ----
+        'und oder aber denn weil dass daß wenn als sobald sowie entweder weder ' +
+        'sondern sowohl ob obwohl obschon damit bevor nachdem solange falls ' +
+        'sodass indem sooft ' +
+        // ---- pronominal adverbs & connectors (must NOT be re-split) ----
+        'dabei dadurch dafür dagegen dahinter damit davon dazu daran darauf ' +
+        'darüber daraus danebens dahinten davor danach darum darunter darinnen ' +
+        'darin damals deswegen deshalb trotzdem dennoch außerdem stattdessen ' +
+        'infolgedessen demnach daher somit folglich mithin indessen unterdessen ' +
+        'gleichzeitig derweil allerdings vielmehr ansonsten sonst ohnehin ' +
+        'dazwischen danebens dabei ' +
+        'inzwischen inzwischen heutzutage künftig zukünftig bisher seither ' +
+        'vorher nachher zuvor danach später früher damals seitdem solange sowie ' +
+        'sobald insofern inwieweit soweit sodass ' +
+        'zusammen auseinander ineinander miteinander durcheinander voneinander ' +
+        'zueinander nacheinander beieinander aufeinander hindurch ' +
+        'heraus herein hinaus hinein herüber hinüber herunter hinunter herauf ' +
+        'hinauf herab hinab zurück vorbe voraus entlang ' +
+        // ---- contractions (single real words) ----
+        'im am zum zur vom beim ins ans ums übers ' +
+        // ---- auxiliary / modal verbs (inflected) ----
+        'bin bist ist sind seid war waren warst wart gewesen habe hast hat haben ' +
+        'hatte hatten hattest hattet gehabt wird werden werdet wurde wurden ' +
+        'wurdest wurdet geworden kann kannst können könnt könnte könntest könnten ' +
+        'mag magst mögen mögt möchte möchtest möchten möchtet soll sollst sollen ' +
+        'sollt sollte solltest sollten solltet will willst wollen wollt wollte ' +
+        'wolltest wollten wolltet muss musst müssen müsst musste mussten musstest ' +
+        'musstet gemusst darf darfst dürfen dürft durfte durften gedurft ' +
+        'würde würdest würden würdet sollte sollten möchte möchten ' +
+        // ---- common verbs (inflected forms) ----
+        'mache machst macht machen gemacht gehe gehst geht gehen gegangen komme ' +
+        'kommst kommt kommen gekommen sehe siehst sieht sehen seht gesehen höre ' +
+        'hörst hört hören gehört finde findest findet finden gefunden suche ' +
+        'suchst sucht suchen gesucht kaufe kaufst kauft kaufen gekauft rufe rufst ' +
+        'ruft rufen gerufen zeige zeigst zeigt zeigen gezeigt brauche brauchst ' +
+        'braucht brauchen gebraucht denke denkst denkt denken gedacht glaube ' +
+        'glaubst glaubt glauben geglaubt schlage schlägst schlägt schlagen ' +
+        'geschlagen trage trägst trägt tragen getragen fahre fährst fährt fahren ' +
+        'gefahren lese liest lesen gelesen schreibe schreibst schreibt schreiben ' +
+        'geschrieben spreche sprichst spricht sprechen gesprochen treffe triffst ' +
+        'trifft treffen getroffen esse isst essen esst gegessen trinke trinkst ' +
+        'trinkt trinken getrunken wohne wohnst wohnt wohnen gewohnt lebe lebst ' +
+        'lebt leben gelebt lerne lernst lernt lernen gelernt studiere studierst ' +
+        'studiert studieren arbeitet arbeitest arbeiten gearbeitet antworte ' +
+        'antwortest antwortet antworten geantwortet erzähle erzählst erzählt ' +
+        'erzählen erzählt beschreibe beschreibst beschreibt beschreiben ' +
+        'beschrieben vergleiche vergleichst vergleicht vergleichen verglichen ' +
+        'diskutiere diskutierst diskutiert diskutieren diskutiert präsentiere ' +
+        'präsentierst präsentiert präsentieren präsentiert interessiere ' +
+        'interessierst interessiert interessieren interessiert lässt lassen ' +
+        'ließ gelassen liegt lag gelegen steht stand gestanden sitzt saß ' +
+        'gesessen hängt hing gehangen führt führte geführt nimmt nahm genommen ' +
+        'gibt gab gegeben tut tat getan läuft lief gelaufen schläft schlief ' +
+        'geschlafen beginnt begann begonnen fängt fing an angefangen hört auf ' +
+        'hörte auf aufgehört macht auf öffnet schließt kauft verkauft verkaufte ' +
+        'verkauft bezahlt bezahlte bezahlt kostet kostete gekostet versucht ' +
+        'versuchte versucht schafft schaffte geschaffen lernt gelernt versteht ' +
+        'verstand verstanden kennt kannte gekannt meint meinte gemeint nennt ' +
+        'nannte genannt heißt hieß geheißen scheint schien geschienen erscheint ' +
+        'erschien erschienen gilt galt gegolten passiert passierte geschieht ' +
+        'geschah geschehen bringt brachte gebracht holt holte geholt schickt ' +
+        'schickte geschickt sendet sandte gesandt weint weinte geweint lacht ' +
+        'lachte gelacht singt sang gesungen tanzt tanzte getanzt springt sprang ' +
+        'gesprungen fliegt flog geflogen schwimmt schwamm geschwommen klettert ' +
+        'kletterte geklettert wartet wartete gewartet hilft half geholfen ' +
+        'vergisst vergaß vergessen erinnert erinnerte erinnert erklärt erklärte ' +
+        'erklärt bedeutet bedeutete bedeutet bekommt bekam bekommen erhält ' +
+        'erhielt erhalten gehört gehörte gehört fällt fiel gefallen steigt ' +
+        'stieg gestiegen bleibt blieb geblieben liegt lag gelegen liegt wächst ' +
+        'wuchs gewachsen währt währte gewährt reicht reichte gereicht zeigt ' +
+        'zeigte gezeigt legt legte gelegt stellt stellte gestellt hängt hing ' +
+        'gehangen steckt steckte gesteckt hält hielt gehalten fährt fuhr ' +
+        'gefahren fliegt flog geflogen ' +
+        // ---- nouns: people & family (capitalised) ----
+        'Mann Frau Kind Kinder Junge Mädchen Mensch Person Personen Leute Herr ' +
+        'Dame Familie Eltern Vater Mutter Sohn Tochter Bruder Schwester Onkel ' +
+        'Tante Großvater Großmutter Opa Oma Enkel Enkelin Cousin Cousine ' +
+        'Schwiegermutter Schwiegervater Schwiegersohn Schwiegertochter ' +
+        'Stiefvater Stiefmutter Schwager Schwägerin Schwiegereltern Verwandte ' +
+        'Bekannte Freunde Nachbarn Baby ' +
+        // ---- nouns: education & study ----
+        'Schule Uni Universität Hochschule Student Studenten Studentin ' +
+        'Professor Professorin Dozent Dozentin Lehrer Lehrerin Schüler ' +
+        'Schülerin Direktor Rektor Dekan Fakultät Institut Kurs Seminar ' +
+        'Vorlesung Übung Hausaufgabe Hausaufgaben Prüfung Klausur Test Examen ' +
+        'Schein Note Noten Zeugnis Studium Studienfach Studienplatz Studiengang ' +
+        'Studierende Kommilitone Kommilitonen Abschluss Bachelor Master Doktor ' +
+        'Diplom Hörsaal Thema Aufgabe Aufgaben Frage Fragen Antwort Antworten ' +
+        'Problem Lösung Beispiel Grund Vorteil Nachteil Meinung Standpunkt ' +
+        'Idee Information Daten Grafik Schaubild Diagramm Entwicklung Zahl ' +
+        'Anzahl Prozent Prozentsatz Preis Kosten Geld Euro Markt Wirtschaft ' +
+        'Firma Unternehmen Gesellschaft Kultur Politik Geschichte Technik ' +
+        'Wissenschaft Umwelt Energie ' +
+        // ---- nouns: time & calendar ----
+        'Tag Tage Jahr Jahre Zeit Stunde Minuten Sekunde Monat Monate Woche ' +
+        'Wochen Wochenende Morgen Vormittag Mittag Nachmittag Abend Nacht ' +
+        'Sonntag Montag Dienstag Mittwoch Donnerstag Freitag Samstag Sonnabend ' +
+        'Frühling Sommer Herbst Winter Januar Februar März April Mai Juni Juli ' +
+        'August September Oktober November Dezember Feiertag Geburtstag ' +
+        'heute morgen gestern übermorgen vorgestern jetzt bald später früher ' +
+        // ---- nouns: places & buildings ----
+        'Welt Land Stadt Dorf Ort Gegend Region Haus Wohnung Zimmer Raum ' +
+        'Küche Bad Badezimmer Schlafzimmer Wohnzimmer Kinderzimmer Arbeitszimmer ' +
+        'Büro Treppe Decke Boden Wand Tür Fenster Garten Hof Straße Weg Platz ' +
+        'Park Brücke Bahnhof Station Flughafen Krankenhaus Apotheke Post Bank ' +
+        'Rathaus Polizei Feuerwehr Botschaft Amt Behörde Museum Theater Kirche ' +
+        'Restaurant Café Hotel Laden Geschäft Einkaufszentrum Supermarkt Markt ' +
+        'Baum Blume Gras Berg See Meer Fluss Strand Wald Feld Bibliothek Mensa ' +
+        'Wohnheim Miete ' +
+        // ---- nouns: transport & travel ----
+        'Auto Bus Bahn Zug Straßenbahn U-Bahn S-Bahn Taxi Fahrrad Motorrad ' +
+        'Flugzeug Schiff Reise Urlaub Flug Fahrt Ticket Karte Plan Fahrplan ' +
+        'Ausweis Pass Reisepass Koffer Tasche Rucksack Richtung Kreuzung Ampel ' +
+        'Brücke ' +
+        // ---- nouns: household & objects ----
+        'Tisch Stuhl Bett Sofa Sessel Hocker Schrank Regal Lampe Bild Spiegel ' +
+        'Schlüssel Uhr Geschenk Rechnung Quittung Stift Bleistift Papier Heft ' +
+        'Ordner Brille Schere Lineal Radiergummi Wörterbuch Lexikon Zeitung ' +
+        'Zeitschrift Artikel Text Absatz Überschrift Übersetzung Grammatik ' +
+        'Buchstabe Alphabet Buch Wort Worte Wörter Satz Seite Telefon Computer ' +
+        'Laptop Bildschirm Tastatur Maus Drucker Internet Email Musik Film ' +
+        'Spiel Sport Mannschaft Spieler Verein Topf Pfanne Teller Schüssel ' +
+        'Tasse Glas Becher Flasche Besteck Messer Gabel Löffel Suppenlöffel ' +
+        'Serviette Tischdecke Schwamm Seife Shampoo Zahnbürste Zahnpasta ' +
+        'Handtuch Kamm Bürste Rasierer Parfüm Taschentuch Watte Pflaster ' +
+        'Verband Medikament Tablette Salbe Tropfen Sirup Pille Kapsel Motor ' +
+        'Reifen Bremse Licht ' +
+        // ---- nouns: food & drink ----
+        'Essen Trinken Lebensmittel Brot Milch Käse Fleisch Fisch Gemüse Obst ' +
+        'Kartoffel Reis Nudel Apfel Banane Orange Tomate Butter Ei Zucker Salz ' +
+        'Pfeffer Suppe Kuchen Schokolade Eis Kaffee Tee Saft Bier Wein Wasser ' +
+        'Frühstück Mittagessen Abendessen ' +
+        // ---- nouns: work & society ----
+        'Arbeit Job Beruf Karriere Gehalt Lohn Freizeit Hobby Sprache Deutsch ' +
+        'Englisch Fremdsprache Muttersprache Wortschatz Aussprache Fehler Verb ' +
+        'Nomen Adjektiv Präposition Artikel Konjunktion Pronomen Adverb Arzt ' +
+        'Ärztin Krankenschwester Pfleger Patient Apotheker Bäcker Metzger ' +
+        'Verkäufer Kassierer Kellner Koch Friseur Mechaniker Elektriker Maler ' +
+        'Maurer Tischler Schneider Gärtner Bauer Fischer Pilot Fahrer Beamter ' +
+        'Polizist Feuerwehrmann Soldat Richter Anwalt Rechtsanwalt Notar ' +
+        'Steuerberater Manager Chef Angestellter Arbeiter Mitarbeiter Kollege ' +
+        'Kollegin Praktikant Azubi Lehrling Ingenieur Wissenschaftler Forscher ' +
+        'Erfinder ' +
+        // ---- nouns: nature & body ----
+        'Sonne Mond Stern Himmel Wolke Regen Schnee Wind Sturm Wetter Feuer ' +
+        'Erde Stein Metall Holz Glas Stoff Natur Umwelt Landschaft Tier Pflanze ' +
+        'Blatt Wurzel Stamm Ast Frucht Samen Hund Katze Vogel Pferd Kuh Schwein ' +
+        'Huhn Schaf Maus Kopf Gesicht Auge Ohr Nase Mund Hand Arm Bein Fuß ' +
+        'Herz Lunge Leber Niere Magen Haut Haar Zahn Zähne Lippe Zunge Stirn ' +
+        'Kinn Wange Schulter Finger Daumen Knie Hüfte Gesundheit Krankheit ' +
+        'Medizin ' +
+        // ---- nouns: abstract / communication ----
+        'Anfang Ende Erfolg Misserfolg Gefahr Hoffnung Liebe Angst Freude ' +
+        'Schmerz Ruhe Mut Geduld Erfahrung Wissen Kenntnis Fähigkeit ' +
+        'Möglichkeit Chance Ziel Plan Traum Wahrheit Lüge Pflicht Recht Gesetz ' +
+        'Regel Rat Tipp Hinweis Nachricht Neuigkeit Bitte Wunsch Ordnung System ' +
+        'Methode Verfahren Prozess Schritt Ergebnis Folge Wirkung Einfluss ' +
+        'Ursache Anlass Grund Zweck Sinn Inhalt Form Stil Art Weise Niveau ' +
+        'Stufe Klasse Gruppe Menge Maß Grad Stärke Schwäche Qualität Wert ' +
+        'Nutzen Schaden Risiko Sicherheit Unsicherheit Zweifel Vertrauen ' +
+        'Erwartung Sorge Glück Gefühl Gedanke Meinung Ansicht Position ' +
+        'Einstellung Verhalten Handlung Tat Maßnahme Entscheidung Wahl Auswahl ' +
+        'Alternative Vorschlag Projekt Vorhaben Absicht Wille Ausdauer Kraft ' +
+        'Macht Verantwortung Aufgabe Funktion Rolle Teil Anteil Beitrag ' +
+        'Leistung Fortschritt Verbesserung Änderung Wachstum Zuwachs Rückgang ' +
+        'Abfall Anstieg Zunahme Abnahme Unterschied Gegensatz Kontrast Vergleich ' +
+        'Verhältnis Beziehung Verbindung Kontakt Kommunikation Gespräch ' +
+        'Diskussion Debatte Argument Begründung Beweis Zeichen Signal Mitteilung ' +
+        'Ankündigung Erklärung Beschreibung Darstellung Zusammenfassung ' +
+        'Bewertung Urteil Schluss Fazit Folgerung Konsequenz Auswirkung Effekt ' +
+        'Bedingung Voraussetzung Anforderung Bedarf Bedürfnis Frage Antwort ' +
+        'Lösung Mittel Weg Methode Prinzip Vorschrift Standard Kategorie Sorte ' +
+        'Reihe Zahl Anzahl Menge Summe Gesamt Rest Abstand Entfernung Länge ' +
+        'Breite Höhe Tiefe Dicke Gewicht Volumen Größe Format Einheit Element ' +
+        'Faktor Aspekt Seite Bereich Feld Branche Zweig Richtung Spur Linie ' +
+        'Punkt Stelle Ort Platz Position Standort Raum Fläche Gebiet Zone ' +
+        'Bezirk Kreis Kontinent Universum Planet ' +
+        // ---- adjectives (base + common inflected forms) ----
+        'gut gute guter gutes guten gutem schlecht schlechte schlechter ' +
+        'schlechtes schönen schöne schöner schönes schönen schönem neu neue ' +
+        'neuer neues neuen neuem alt alte alter altes alten altem groß große ' +
+        'großer großes großen großem klein kleine kleiner kleines kleinen ' +
+        'kleinem viel viele vieler vieles vielen vielem wenig wenige weniger ' +
+        'weniges wenigen wenigem schnell schnelle schneller schnelles schnellen ' +
+        'schnellem langsam langsame langsamer langsames langsamen langsamem ' +
+        'einfach einfache einfacher einfaches einfachen einfachem schwer schwere ' +
+        'schwerer schweres schweren schwerem leicht leichte leichter leichtes ' +
+        'leichten leichtem wichtig wichtige wichtiger wichtiges wichtigen ' +
+        'wichtigem richtig richtige richtiger richtiges richtigen richtigem ' +
+        'falsch falsche falscher falsches falschen falschem möglich mögliche ' +
+        'möglicher mögliches möglichen möglichem unmöglich unmögliche ' +
+        'unmöglicher unmögliches unmöglichen unmöglichem interessant ' +
+        'interessante interessanter interessantes interessanten interessantem ' +
+        'langweilig langweilige langweiliger langweiliges langweiligen ' +
+        'langweiligem toll super prima hässlich hässliche hässlicher hässliches ' +
+        'hässlichen hässlichem heiß heiße heißer heißes heißen heißem kalt ' +
+        'kalte kalter kaltes kalten kaltem warm warme warmer warmes warmen ' +
+        'warmem kühl kühle kühler kühles kühlen kühlem trocken trockene ' +
+        'trockener trockenes trockenen trockenem nass nasse nasser nasses ' +
+        'nassen nassen klar klare klarer klares klaren klarem deutlich deutliche ' +
+        'deutlicher deutliches deutlichen deutlichem sicher sichere sicherer ' +
+        'sicheres sicheren sicherem unsicher unsichere unsicherer unsicheres ' +
+        'unsicheren unsicherem bekannt bekannte bekannter bekanntes bekannten ' +
+        'bekanntem unbekannt unbekannte unbekannter unbekanntes unbekannten ' +
+        'unbekanntem lieb liebe lieber liebes lieben lieben nett nette netter ' +
+        'nettes netten nettem freundlich freundliche freundlicher freundliches ' +
+        'freundlichen freundlichem unfreundlich unfreundliche unfreundlicher ' +
+        'unfreundliches unfreundlichen unfreundlichem höflich höfliche höflicher ' +
+        'höfliches höflichen höflichem unhöflich unhöfliche unhöflicher ' +
+        'unhöfliches unhöflichen unhöflichem pünktlich pünktliche pünktlicher ' +
+        'pünktliches pünktlichen pünktlichem unpünktlich unpünktliche ' +
+        'unpünktlicher unpünktliches unpünktlichen unpünktlichem teuer teure ' +
+        'teurer teures teuren teurem billig billige billiger billiges billigen ' +
+        'billigem günstig günstige günstiger günstiges günstigen günstigem reich ' +
+        'reiche reicher reiches reichen reichem arm arme armer armes armen armem ' +
+        'gesund gesunde gesunder gesundes gesunden gesundem krank kranke kranker ' +
+        'krankes kranken krankem glücklich glückliche glücklicher glückliches ' +
+        'glücklichen glücklichem traurig traurige trauriger trauriges traurigen ' +
+        'traurigem wütend wütende wütender wütendes wütenden wütendem müde müder ' +
+        'müdes müden müdem wach wache wacher waches wachen wachem hungrig ' +
+        'hungrige hungriger hungriges hungrigen hungrigem satt satte satter ' +
+        'sattes satten sattem durstig durstige durstiger durstiges durstigen ' +
+        'durstigem voll volle voller volles vollen vollem leer leere leerer ' +
+        'leeres leeren leerem offen offene offener offenes offenen offenem ' +
+        'geschlossen geschlossene geschlossener geschlossenes geschlossenen ' +
+        'geschlossenem frei freie freier freies freien freiem besetzt besetzte ' +
+        'besetzter besetztes besetzten besetztem sauber saubere sauberer ' +
+        'sauberes sauberen sauberem schmutzig schmutzige schmutziger schmutziges ' +
+        'schmutzigen schmutzigem ordentlich ordentliche ordentlicher ordentliches ' +
+        'ordentlichen ordentlichem unordentlich unordentliche unordentlicher ' +
+        'unordentliches unordentlichen unordentlichem ruhig ruhige ruhiger ' +
+        'ruhiges ruhigen ruhigem laut laute lauter lautes lauten lautem leise ' +
+        'leiser leises leisen leisem stark starke starker starkes starken ' +
+        'starkem schwach schwache schwacher schwaches schwachen schwachem hoch ' +
+        'hohe hoher hohes hohen hohem niedrig niedrige niedriger niedriges ' +
+        'niedrigen niedrigem tief tiefe tiefer tiefes tiefen tiefem breit breite ' +
+        'breiter breites breiten breitem schmal schmale schmaler schmales ' +
+        'schmalen schmalem dick dicke dicker dickes dicken dickem dünn dünne ' +
+        'dünner dünnes dünnen dünnem rund runde runder rundes runden rundem ' +
+        'eckig eckige eckiger eckiges eckigen eckigem gerade gerader gerades ' +
+        'geraden geradem süß süße süßer süßes süßen süßem sauer saure saurer ' +
+        'saures sauren saurem bitter bittere bitterer bitteres bitteren ' +
+        'bitterem salzig salzige salziger salziges salzigen salzigem frisch ' +
+        'frische frischer frisches frischen frischem modern moderne modernes ' +
+        'modernen modernem traditionell traditionelle traditioneller ' +
+        'traditionelles traditionellen traditionellem aktuell aktuelle aktueller ' +
+        'aktuelles aktuellen aktuellem veraltet veraltete veralteter veraltetes ' +
+        'veralteten veraltetem zusätzlich zusätzliche zusätzlicher zusätzliches ' +
+        'zusätzlichen zusätzlichem besonders allgemein persönlich gemeinsam ' +
+        'einzeln einzelne einzelner einzelnes einzelnen einzelnem öffentlich ' +
+        'öffentliche öffentlicher öffentliches öffentlichen öffentlichem privat ' +
+        'private privater privates privaten privatem formell formelle formeller ' +
+        'formelles formellen formellem informell informelle informeller ' +
+        'informelles informellen informellem offiziell offizielle offizieller ' +
+        'offizielles offiziellen offiziellem inoffiziell inoffizielle ' +
+        'inoffizieller inoffizielles inoffiziellen inoffiziellem direkt direkte ' +
+        'direkter direktes direkten direktem indirekt indirekte indirekter ' +
+        'indirektes indirekten indirektem aktiv aktive aktiver aktives aktiven ' +
+        'aktivem passiv passive passiver passives passiven passivem positiv ' +
+        'positive positiver positives positiven positivem negativ negative ' +
+        'negativer negatives negativen negativem national nationale nationaler ' +
+        'nationales nationalen nationalem international internationale ' +
+        'internationaler internationales internationalen internationalem lokal ' +
+        'lokale lokaler lokales lokalen lokalem global globale globaler globales ' +
+        'globalen globalem regional regionale regionaler regionales regionalen ' +
+        'regionalem sozial soziale sozialer soziales sozialen sozialem kulturell ' +
+        'kulturelle kultureller kulturelles kulturellen kulturellem historisch ' +
+        'historische historischer historisches historischen historischem ' +
+        'geografisch geografische geografischer geografisches geografischen ' +
+        'geografischem politisch politische politischer politisches politischen ' +
+        'politisch politischem wirtschaftlich wirtschaftliche wirtschaftlicher ' +
+        'wirtschaftliches wirtschaftlichen wirtschaftlichem ökologisch ökologische ' +
+        'ökologischer ökologisches ökologischen ökologischem technisch technische ' +
+        'technischer technisches technischen technischem wissenschaftlich ' +
+        'wissenschaftliche wissenschaftlicher wissenschaftliches ' +
+        'wissenschaftlichen wissenschaftlichem medizinisch medizinische ' +
+        'medizinischer medizinisches medizinischen medizinischem pädagogisch ' +
+        'pädagogische pädagogischer pädagogisches pädagogischen pädagogischem ' +
+        'psychologisch psychologische psychologischer psychologisches ' +
+        'psychologischen psychologischem philosophisch philosophische ' +
+        'philosophischer philosophisches philosophischen philosophischem ' +
+        'religiös religiöse religiöser religiöses religiösen religiösem ' +
+        'moralisch moralische moralischer moralisches moralischen moralischem ' +
+        'ethisch ethische ethischer ethisches ethischen ethischem legal legale ' +
+        'legaler legales legalen legalem illegal illegale illegaler illegales ' +
+        'illegalen illegalem formal formale formaler formales formalen formalem ' +
+        'normal normale normaler normales normalen normalem natürlich natürliche ' +
+        'natürlicher natürliches natürlichen natürlichem künstlich künstliche ' +
+        'künstlicher künstliches künstlichen künstlichem organisch organische ' +
+        'organischer organisches organischen organischem synthetisch ' +
+        'synthetische synthetischer synthetisches synthetischen synthetischem ' +
+        'wichtig möglich unmöglich nötig notwendig überflüssig sinnlos sinnvoll ' +
+        'nützlich nutzlos hilfreich hilflos gefährlich ungefährlich giftig ' +
+        'ungiftig lebendig tot leblos klug dumm intelligent unintelligent weise ' +
+        'töricht schlau blöd gescheit begabt talentiert fleißig faul arbeitsam ' +
+        'träge dynamisch statisch beweglich unbeweglich flexibel unflexibel ' +
+        'starr locker fest weich hart glatt rau stumpf scharf spitz flach hohl ' +
+        'massiv dicht durchlässig wasserdicht rein unrein befleckt fleckig ' +
+        'fleckfrei gewaschen feucht klatschnass durchnässt regennass verdorrt ' +
+        'verwelkt roh gekocht gebraten gebacken gegrillt verbrannt angebrannt ' +
+        'gekauft gespült geputzt gereinigt desinfiziert sterilisiert ' +
+        'wunderschön schrecklich bequem unbequem gefährlich sicher bunt ernst ' +
+        'nett lustig verrückt geduldig ungeduldig ehrlich unehrlich böse ähnlich ' +
+        'gleich verschieden einzig genug spät früh jung erwachsen reif ' +
+        'bequem unbequem ' +
+        // ---- adverbs ----
+        'heute morgen gestern übermorgen vorgestern jetzt bald später früher ' +
+        'immer nie niemals manchmal oft selten meistens meist hier da dort ' +
+        'oben unten links rechts vorne hinten draußen drinnen überall nirgends ' +
+        'zusammen allein auch nur noch schon sowieso trotzdem deshalb deswegen ' +
+        'infolgedessen aufgrund gegenüber hinsichtlich bezüglich anstatt statt ' +
+        'wegen binnen außer innerhalb außerhalb oberhalb unterhalb diesseits ' +
+        'jenseits sehr mehr ziemlich ganz völlig total absolut äußerst höchst ' +
+        'extrem besonders vorwiegend hauptsächlich generell grundsätzlich ' +
+        'normalerweise üblicherweise gewöhnlich fast beinahe nahezu ungefähr ' +
+        'etwa rund schätzungsweise circa ca gerade eben exakt genau präzise ' +
+        'haargenau punktgenau akkurat sorgfältig gründlich oberflächlich ' +
+        'ausführlich detailliert kurz knapp bündig prägnant pointiert geistreich ' +
+        'witzig humorvoll lustig komisch seltsam merkwürdig eigenartig sonderbar ' +
+        'bizarr skurril exzentrisch verrückt wahnsinnig irre dämlich albern ' +
+        'naiv arglos unschuldig schuldlos tadellos makellos fehlerfrei perfekt ' +
+        'ideal optimal bestmöglich bestens hervorragend ausgezeichnet exzellent ' +
+        'brillant glänzend großartig fantastisch wunderbar herrlich prächtig ' +
+        'hübsch ansehnlich attraktiv reizvoll charmant bezaubernd faszinierend ' +
+        'fesselnd spannend mitreißend packend ergreifend rührend bewegend ' +
+        'tröstlich erfreulich freudig froh fröhlich heiter vergnügt aufgeregt ' +
+        'nervös angespannt gespannt wirklich echt tatsächlich eigentlich nämlich ' +
+        'wohl eben halt übrigens hoffentlich bestimmt vielleicht möglicherweise ' +
+        'vielleicht wahrscheinlich sicherlich gewiss wahrscheinlich offensichtlich ' +
+        'anscheinend scheinbar angeblich ' +
+        // ---- numbers, ordinals, multiplicatives ----
+        'null eins zwei drei vier fünf sechs sieben acht neun zehn elf zwölf ' +
+        'dreizehn vierzehn fünfzehn sechzehn siebzehn achtzehn neunzehn zwanzig ' +
+        'dreißig vierzig fünfzig sechzig siebzig achtzig neunzig hundert tausend ' +
+        'million millionen milliarde milliarden erste zweite dritte vierte fünfte ' +
+        'sechste siebte achte neunte zehnte elfte zwölfte einmal zweimal dreimal ' +
+        'viermal mehrmals ' +
+        // ---- languages / nationalities ----
+        'deutsch englisch französisch spanisch italienisch chinesisch japanisch ' +
+        'russisch türkisch arabisch polnisch portugiesisch niederländisch ' +
+        'Deutschland Europa Amerika Asien Afrika Asien Berlin München Hamburg ' +
+        // ---- extra common everyday nouns (capitalised) ----
+        'Abschied Anfang Anfang Erfolg Ende Gefahr Hoffnung Liebe Angst Freude ' +
+        'Schmerz Ruhe Lust Mut Geduld Erfahrung Wissen Kenntnis Fähigkeit ' +
+        'Möglichkeit Chance Ziel Plan Traum Wahrheit Lüge Pflicht Recht Gesetz ' +
+        'Regel Rat Tipp Hinweis Nachricht Neuigkeit Ankündigung Warnung Bitte ' +
+        'Wunsch Ordnung System Methode Verfahren Prozess Schritt Ergebnis Folge ' +
+        'Wirkung Einfluss Ursache Anlass Grund Zweck Sinn Inhalt Form Stil Art ' +
+        'Weise Niveau Stufe Klasse Gruppe Menge Maß Grad Stärke Schwäche Qualität ' +
+        'Wert Nutzen Schaden Risiko Sicherheit Vertrauen Erwartung Sorge Glück ' +
+        'Gefühl Gedanke Meinung Ansicht Position Einstellung Verhalten Handlung ' +
+        'Tat Maßnahme Entscheidung Wahl Auswahl Alternative Vorschlag Projekt ' +
+        'Vorhaben Absicht Wille Ausdauer Kraft Macht Verantwortung Aufgabe ' +
+        'Funktion Rolle Teil Anteil Beitrag Leistung Fortschritt Verbesserung ' +
+        'Änderung Wachstum Zuwachs Rückgang Abfall Anstieg Zunahme Abnahme ' +
+        'Unterschied Gegensatz Kontrast Vergleich Verhältnis Beziehung ' +
+        'Verbindung Kontakt Kommunikation Gespräch Diskussion Debatte Argument ' +
+        'Begründung Beweis Zeichen Signal Mitteilung Erklärung Beschreibung ' +
+        'Darstellung Zusammenfassung Bewertung Urteil Schluss Fazit Folgerung ' +
+        'Konsequenz Auswirkung Effekt Bedingung Voraussetzung Anforderung ' +
+        'Bedarf Bedürfnis Frage Antwort Lösung Mittel Weg Methode Prinzip ' +
+        'Vorschrift Standard Kategorie Sorte Reihe Zahl Anzahl Summe Rest ' +
+        'Abstand Entfernung Länge Breite Höhe Tiefe Dicke Gewicht Volumen Größe ' +
+        'Format Einheit Element Faktor Aspekt Seite Bereich Feld Branche Zweig ' +
+        'Richtung Spur Linie Punkt Stelle Ort Platz Position Standort Raum ' +
+        'Fläche Gebiet Zone Bezirk Kreis Kontinent Universum Planet ' +
+        'Sonne Mond Stern Himmel Wolke Regen Schnee Wind Sturm Wetter Feuer ' +
+        'Erde Stein Metall Holz Glas Stoff Natur Umwelt Landschaft Tier Pflanze ' +
+        'Baum Blume Gras Blatt Wurzel Stamm Ast Frucht Samen ' +
+        // ---- extra everyday nouns (objects / places / abstract) ----
+        'Tisch Stuhl Bett Sofa Sessel Hocker Schrank Regal Lampe Bild Spiegel ' +
+        'Schlüssel Uhr Geschenk Rechnung Quittung Stift Bleistift Papier Heft ' +
+        'Ordner Brille Schere Lineal Wörterbuch Buch Telefon Computer Internet ' +
+        'Email Musik Film Spiel Sport Mannschaft Spieler Verein Topf Pfanne ' +
+        'Teller Schüssel Tasse Glas Becher Flasche Besteck Messer Gabel Löffel ' +
+        'Serviette Tischdecke Schwamm Seife Shampoo Zahnbürste Zahnpasta ' +
+        'Handtuch Kamm Bürste Rasierer Parfüm Taschentuch Watte Pflaster ' +
+        'Verband Medikament Tablette Salbe Tropfen Sirup Pille Kapsel ' +
+        'Krankenhaus Arztpraxis Klinik Praxis Therapie Behandlung Operation ' +
+        'Untersuchung Diagnose Rezept Impfung Virus Bakterium Infektion Fieber ' +
+        'Schmerzen Kopf Bauch Rücken Hals Nase Ohr Auge Hand Arm Bein Fuß Herz ' +
+        'Lunge Leber Niere Magen Haut Haar Zahn Gesicht Mund Lippe Zunge Stirn ' +
+        'Kinn Wange Schulter Ellbogen Handgelenk Finger Daumen Zeigefinger ' +
+        'Mittelfinger Ringfinger Nagel Knie Hüfte Oberschenkel Unterschenkel ' +
+        'Knöchel Ferse Zeh Wade Gesäß Brust Rippe Wirbel Wirbelsäule Becken ' +
+        'Gelenk Muskel Sehne Knochen Blut Ader Vene Arterie Nerv Gehirn ' +
+        'Rückenmark Luftröhre Speiseröhre Darm Galle Blase ' +
+        // ---- colours / materials / misc adjectives ----
+        'rot rote roter rotes roten rotm grün grüne grüner grünes grünen ' +
+        'blau blaue blauer blaues blauen blauem gelb gelbe gelber gelbes gelben ' +
+        'gelbem schwarz schwarze schwarzer schwarzes schwarzen schwarzem weiß ' +
+        'weiße weißer weißes weißen weißem braun braune brauner braunes braunen ' +
+        'braunem grau graue grauer graues grauen grauem orange rosa lila violett ' +
+        'gold golden silber silbern ' +
+        // ---- extra verbs / participles (lowercase) ----
+        'geben nehmen machen gehen kommen sehen wissen denken sagen fragen hören ' +
+        'lesen schreiben sprechen treffen essen trinken wohnen leben lernen ' +
+        'studieren arbeiten antworten erzählen beschreiben vergleichen ' +
+        'diskutieren präsentieren interessieren brauchen glauben schlagen tragen ' +
+        'fahren bleiben liegen stehen sitzen hängen führen lassen fallen laufen ' +
+        'schlafen beginnen aufhören öffnen schließen kaufen verkaufen bezahlen ' +
+        'kosten versuchen schaffen verstehen kennen meinen nennen heißen scheinen ' +
+        'erscheinen gelten passieren geschehen bringen holen schicken weinen ' +
+        'lachen singen tanzen springen fliegen schwimmen klettern warten helfen ' +
+        'vergessen erinnern erklären bedeuten bekommen erhalten gehören ' +
+        'reichen zeigen legen stellen hängen stecken halten führen fahren ' +
+        'gegangen gekommen gesehen gehört gefunden gesucht gekauft gerufen ' +
+        'gezeigt gebraucht gedacht geglaubt geschlagen getragen gefahren ' +
+        'gelesen geschrieben gesprochen getroffen gegessen getrunken gewohnt ' +
+        'gelebt gelernt studiert gearbeitet geantwortet erzählt beschrieben ' +
+        'verglichen diskutiert präsentiert interessiert gewesen gehabt geworden ' +
+        'gemacht gegangen gekommen gesehen gehört gefunden gesucht gekauft ' +
+        'gerufen gezeigt gebraucht gedacht geglaubt geschlagen getragen ' +
+        'gefahren gelesen geschrieben gesprochen getroffen gegessen getrunken ' +
+        'gewohnt gelebt gelernt studiert gearbeitet geantwortet erzählt ' +
+        'beschrieben verglichen diskutiert präsentiert interessiert ' +
+        // ---- TestDaF / academic vocabulary ----
+        'Vorbereitungszeit Sprechzeit Aufgabenstellung ' +
+        'Situationsbeschreibung Quelle Vergleich Darstellung Argument Fazit ' +
+        'Begründung überzeugen darstellen abwägen begründen zusammenfassen ' +
+        'vorstellen argumentieren belegen erwähnen hervorheben hervorgehen ' +
+        'darüber außerdem dennoch jedoch einerseits andererseits zunächst ' +
+        'anschließend schließlich zuletzt zudem ferner gleichfalls ebenso ' +
+        'daher somit folglich infolgedessen mithin demnach demzufolge indessen ' +
+        'inzwischen unterdessen gleichzeitig derzeit heutzutage künftig ' +
+        'zukünftig bisher seither vorher nachher zuvor danach später früher ' +
+        'damals seitdem solange sowie sobald ' +
+        // ---- extra common short words & particles (lowercase) ----
+        'ja nein doch etwa fast gar sehr wohl recht eben halt noch schon immer ' +
+        'oft viel wenig eher ziemlich ganz sehr gar so da hier dort nun dann ' +
+        'wieder zurück herunter hinunter herauf hinauf herab hinab ' +
+        'vorn hinten vorne oben unten links rechts mitten draußen drinnen ' +
+        'irgendwo irgendwann irgendwie irgendwer irgendwas irgendjemand ' +
+        'überall nirgends überall zusammen allein ' +
+        // ---- extra nouns: places / buildings / institutions ----
+        'Bahnhof Flughafen Krankenhaus Apotheke Bank Post Rathaus Polizei ' +
+        'Feuerwehr Botschaft Amt Behörde Museum Theater Kirche Restaurant Café ' +
+        'Hotel Laden Geschäft Einkaufszentrum Supermarkt Markt Bibliothek Mensa ' +
+        'Wohnheim Universität Hochschule Schule Bahnhof Kreuzung Ampel Brücke ' +
+        // ---- extra nouns: family & people ----
+        'Mann Frau Kind Kinder Junge Mädchen Mensch Person Leute Herr Dame ' +
+        'Familie Eltern Vater Mutter Sohn Tochter Bruder Schwester Onkel Tante ' +
+        'Großvater Großmutter Opa Oma Enkel Enkelin Cousin Cousine Freund ' +
+        'Freundin Kollege Kollegin Nachbar Nachbarin Bekannte ' +
+        // ---- extra common verbs infinitive ----
+        'sein haben werden können müssen sollen wollen mögen dürfen lassen ' +
+        'bleiben gehen kommen stehen liegen sitzen sehen hören sagen sprechen ' +
+        'fragen antworten erzählen beschreiben vergleichen diskutieren ' +
+        'präsentieren interessieren lernen studieren arbeiten leben wohnen ' +
+        'essen trinken kochen backen braten waschen putzen aufräumen ' +
+        'einkaufen bezahlen kosten sparen verdienen gewinnen verlieren suchen ' +
+        'finden kaufen verkaufen mieten vermieten bauen reparieren öffnen ' +
+        'schließen anfangen beginnen beenden aufhören versuchen schaffen ' +
+        'verstehen kennen lernen lehren erklären zeigen geben nehmen bringen ' +
+        'holen schicken senden empfangen bekommen erhalten behalten verlieren ' +
+        'finden suchen wählen treffen besuchen einladen feiern gratulieren ' +
+        'heiraten umziehen verreisen fliegen fahren reisen wandern spazieren ' +
+        'schwimmen klettern tanzen singen spielen lachen weinen schlafen ' +
+        'träumen warten helfen brauchen glauben hoffen fürchten zweifeln ' +
+        'wissen denken vergessen erinnern ' +
+        // ---- extra adverbs / particles ----
+        'gern gerne lieber amliebsten sofort endlich leider übrigens ' +
+        'hoffentlich bestimmt wirklich echt absolut etwa ziemlich ganz gar ' +
+        'sehr viel wenig eher fast beinahe schätzungsweise ungefähr ' +
+        'ungefähr vielleicht möglicherweise wahrscheinlich sicherlich gewiss ' +
+        'offensichtlich anscheinend scheinbar angeblich tatsächlich eigentlich ' +
+        'nämlich wohl eben halt ja nein doch ' +
+        // ---- extra nouns: everyday life ----
+        'Arbeit Beruf Job Karriere Gehalt Lohn Urlaub Ferien Freizeit Hobby ' +
+        'Interesse Interessen Sprache Deutsch Englisch Wortschatz Grammatik ' +
+        'Aussprache Fehler Verb Nomen Adjektiv Präposition Artikel Konjunktion ' +
+        'Pronomen Adverb Musik Kunst Literatur Film Sport Spiel Mannschaft ' +
+        'Spieler Verein Mannschaft ' +
+        // ---- extra nouns: nature & weather ----
+        'Wetter Sonne Mond Stern Himmel Wolke Regen Schnee Wind Sturm Eis ' +
+        'Feuer Wasser Luft Erde Stein Metall Holz Glas Papier Stoff Natur ' +
+        'Umwelt Landschaft Tier Pflanze Baum Blume Gras Blatt Wurzel Stamm ' +
+        'Ast Frucht Samen Hund Katze Vogel Pferd Kuh Schwein Huhn Schaf Maus ' +
+        'Fisch ' +
+        // ---- extra nouns: body & health ----
+        'Körper Kopf Gesicht Auge Ohr Nase Mund Hand Arm Bein Fuß Herz Lunge ' +
+        'Leber Niere Magen Haut Haar Zahn Lippe Zunge Stirn Kinn Wange ' +
+        'Schulter Finger Knie Gesundheit Krankheit Medizin Arzt Krankenhaus ' +
+        'Apotheke Rezept Medikament Tablette ' +
+        // ---- extra nouns: food & kitchen ----
+        'Essen Trinken Lebensmittel Brot Milch Käse Fleisch Fisch Gemüse Obst ' +
+        'Apfel Banane Orange Tomate Kartoffel Reis Nudel Butter Ei Zucker Salz ' +
+        'Pfeffer Suppe Kuchen Schokolade Eis Kaffee Tee Saft Bier Wein Wasser ' +
+        'Frühstück Mittagessen Abendessen ' +
+        // ---- extra nouns: household & objects ----
+        'Tisch Stuhl Bett Sofa Sessel Schrank Regal Lampe Bild Spiegel ' +
+        'Schlüssel Uhr Geschenk Rechnung Quittung Stift Bleistift Papier Heft ' +
+        'Ordner Brille Schere Lineal Radiergummi Wörterbuch Buch Wort Satz ' +
+        'Seite Telefon Computer Laptop Bildschirm Tastatur Maus Drucker Internet ' +
+        'Email Topf Pfanne Teller Schüssel Tasse Glas Becher Flasche Besteck ' +
+        'Messer Gabel Löffel ' +
+        // ---- extra adjectives ----
+        'gut schön neu alt groß klein viel wenig schnell langsam einfach ' +
+        'schwer leicht wichtig richtig falsch möglich unmöglich interessant ' +
+        'langweilig toll super prima hässlich heiß kalt warm kühl trocken nass ' +
+        'klar deutlich sicher unsicher bekannt unbekannt nett freundlich ' +
+        'unfreundlich höflich unhöflich pünktlich unpünktlich teuer billig ' +
+        'günstig reich arm gesund krank glücklich traurig wütend müde hungrig ' +
+        'satt durstig voll leer offen geschlossen frei besetzt sauber schmutzig ' +
+        'ordentlich unordentlich ruhig laut leise stark schwach hoch niedrig ' +
+        'tief breit schmal dick dünn rund eckig gerade süß sauer bitter ' +
+        'salzig frisch modern traditionell aktuell veraltet zusätzlich ' +
+        'besonders allgemein persönlich gemeinsam einzeln öffentlich privat ' +
+        'formell informell offiziell inoffiziell direkt indirekt aktiv passiv ' +
+        'positiv negativ national international lokal global regional sozial ' +
+        'kulturell historisch geografisch politisch wirtschaftlich ökologisch ' +
+        'technisch wissenschaftlich medizinisch pädagogisch psychologisch ' +
+        'philosophisch religiös moralisch ethisch legal illegal formal normal ' +
+        'natürlich künstlich organisch synthetisch wunderschön schrecklich ' +
+        'bequem gefährlich sicher bunt ernst lustig verrückt geduldig ' +
+        'ungeduldig ehrlich unehrlich böse ähnlich gleich verschieden einzig ' +
+        'genug spät früh jung erwachsen reif klug dumm intelligent weise ' +
+        'schlau begabt talentiert fleißig faul ' +
+        // ---- extra common words to avoid false splits ----
+        'wirklich sowieso überall nirgends übermorgen vorgestern nachmittags ' +
+        'vormittags abends morgens mittags nachts derzeit inzwischen ohnehin ' +
+        'beizeiten inmitten vorn vorne gerade genau etwa fast ' +
+        'deshalb deswegen trotzdem dennoch außerdem stattdessen infolgedessen ' +
+        'demnach daher somit folglich mithin indessen unterdessen gleichzeitig ' +
+        'derweil allerdings vielmehr ansonsten sonst ohnehin ' +
+        'dabei dadurch dafür dagegen dahinter damit davon dazu daran darauf ' +
+        'darüber daraus danebens dahinten davor danach darum darunter darinnen ' +
+        'darin damals ' +
+        'wobei wodurch wofür wogegen wohinter womit wovon wozu woran worauf ' +
+        'worüber woraus worin ' +
+        'hierbei hierdurch hierfür hiermit hiervon hierzu hieran hierauf ' +
+        'hierüber hieraus hierin ' +
+        'zusammen auseinander ineinander miteinander durcheinander voneinander ' +
+        'zueinander nacheinander beieinander aufeinander hindurch ' +
+        'heraus herein hinaus hinein herüber hinüber herunter hinunter herauf ' +
+        'hinauf herab hinab zurück vorbe voraus entlang ' +
+        'indem insofern inwieweit soweit sodass solange sowie sobald ' +
+        'inzwischen unterdessen gleichwohl ' +
+        'sehr mehr ziemlich ganz völlig total absolut äußerst höchst extrem ' +
+        'besonders vorwiegend hauptsächlich generell grundsätzlich normalerweise ' +
+        'üblicherweise gewöhnlich meistens meist manchmal oft selten ' +
+        // ---- extra common nouns (capitalised) final batch ----
+        'Problem Lösung Beispiel Frage Antwort Grund Vorteil Nachteil Meinung ' +
+        'Idee Information Idee Entwicklung Zahl Anzahl Prozent Preis Kosten ' +
+        'Geld Euro Markt Wirtschaft Firma Unternehmen Gesellschaft Kultur ' +
+        'Politik Geschichte Technik Wissenschaft Umwelt Energie Natur Wasser ' +
+        'Luft Boden ' +
+        'Mann Frau Kind Tag Jahr Zeit Welt Land Stadt Haus Schule ' +
+        'Universität Student Professor Kurs Seminar Vorlesung Prüfung Klausur ' +
+        'Note Studium Kommilitone Thema Aufgabe Frage Antwort Problem Lösung ' +
+        'Beispiel Grund Vorteil Nachteil Meinung Standpunkt Idee Information ' +
+        'Daten Grafik Schaubild Diagramm Entwicklung Zahl Anzahl Prozent Preis ' +
+        'Kosten Geld Euro Markt Wirtschaft Firma Unternehmen Gesellschaft ' +
+        'Kultur Politik Geschichte Technik Wissenschaft Umwelt Energie Natur ' +
+        'Wasser Luft Boden ' +
+        // ---- final: assorted high-frequency words ----
+        'schon noch auch nur schon immer nie manchmal oft selten meistens meist ' +
+        'sehr mehr ganz gar sogar besonders deshalb deswegen trotzdem außerdem ' +
+        'jedoch dennoch vielmehr ansonsten sonst vielleicht natürlich ' +
+        'allerdings wenigstens höchstens mindestens zumindest zwar doch ' +
+        'allerdings tatsächlich eigentlich nämlich wohl eben halt übrigens ' +
+        'hoffentlich bestimmt sicherlich wahrscheinlich offensichtlich ' +
+        'anscheinend scheinbar angeblich möglicherweise ' +
+        // ---- grammar / linguistics terms (capitalised) ----
+        'Wortart Wortarten Substantiv Adjektiv Artikel Pronomen Präposition ' +
+        'Konjunktion Adverb Hilfsverb Modalverb Vollverb Reflexivpronomen ' +
+        'Kasus Nominativ Genitiv Dativ Akkusativ Singular Plural Maskulinum ' +
+        'Femininum Neutrum Konjugation Deklination Tempus Präsens Präteritum ' +
+        'Perfekt Plusquamperfekt Futur Imperativ Konjunktiv Indikativ Partizip ' +
+        'Infinitiv Rektion Valenz Subjekt Prädikat Objekt Attribut Adverbial ' +
+        'Nebensatz Hauptsatz Relativsatz Kausalsatz Konditionalsatz ' +
+        'Konzessivsatz Finalsatz Konsekutivsatz Temporalsatz Lokalsatz ' +
+        'Satzglied Satzreihe Satzgefüge Infinitivgruppe Partizipialgruppe ' +
+        'Präpositionalobjekt Genitivobjekt Dativobjekt Akkusativobjekt ' +
+        'Präpositionalattribut Nomenphrase Verbphrase Adjektivphrase ' +
+        'Adverbphrase Komma Punkt Fragezeichen Ausrufezeichen Semikolon ' +
+        'Doppelpunkt Anführungszeichen Klammer Bindestrich Schrägstrich ' +
+        'Absatz Kapitel Abschnitt Untertitel Überschrift Fußnote Endnote ' +
+        'Inhaltsverzeichnis Literaturverzeichnis Glossar Register Stichwort ' +
+        'Quellenangabe Literaturangabe Zitat Fundstelle Seitenzahl Zeile Spalte ' +
+        'Abbildung Tabelle Statistik Säulendiagramm Kreisdiagramm ' +
+        'Liniendiagramm Balkendiagramm Kurve Achse Skala Legende Maßstab ' +
+        'Gleichung Formel Variable Konstante Funktion Parameter Argument ' +
+        'Addition Subtraktion Multiplikation Division Summe Differenz Produkt ' +
+        'Quotient Bruch Dezimalzahl Ganzzahl Ziffer Hypothese These Antithese ' +
+        'Synthese Gegenargument Tatsache Feststellung Behauptung Vermutung ' +
+        'Annahme Reflexion Konzept Begriff Vorstellung Ansicht Sichtweise ' +
+        'Perspektive Betrachtungsweise Ansatz Zugang Strategie Taktik Modell ' +
+        'Struktur Gliederung Hierarchie Ebene Dimension Facette Merkmal ' +
+        'Charakteristikum Eigenschaft Kennzeichen Kriterium Richtlinie Norm ' +
+        'Verordnung Bestimmung Klausel Paragraph Zeitraum Zeitspanne Dauer ' +
+        'Höhepunkt Tiefpunkt Wendepunkt Moment Augenblick Jahrzehnt ' +
+        'Jahrhundert Jahrtausend Epoche Ära Periode Phase Stadium Zustand ' +
+        'Situation Lage Stand Umstände Rahmen Kontext Hintergrund Vorgeschichte ' +
+        'Vergangenheit Gegenwart Zukunft Andenken Souvenir Gedächtnis Erlebnis ' +
+        'Abenteuer ' +
+        // ---- additional nouns: body parts (capitalised) ----
+        'Zeh Ferse Wade Gesäß Brust Rippe Wirbel Wirbelsäule Becken Gelenk ' +
+        'Muskel Sehne Knochen Ader Vene Arterie Nerv Gehirn Rückenmark ' +
+        'Luftröhre Speiseröhre Magen Darm Galle Blase Braue Wimper Lid ' +
+        'Pupille Iris Schläfe Nacken Ellbogen Handgelenk Daumen Zeigefinger ' +
+        'Mittelfinger Ringfinger Knöchel Oberschenkel Unterschenkel ' +
+        // ---- additional nouns: animals (capitalised) ----
+        'Tier Tiger Löwe Bär Wolf Fuchs Hase Kaninchen Ratte Eichhörnchen ' +
+        'Igel Frosch Schlange Wal Hai Delfin Krabbe Hummer Garnele Spinne ' +
+        'Insekt Biene Ameise Schmetterling Fliege Mücke Wanze Käfer Wurm ' +
+        'Schnecke Muschel Pferd Kuh Schwein Schaf Ziege Huhn Hahn Henne ' +
+        'Küken Gans Ente Truthahn Taube Krähe Drossel Meise Sperling ' +
+        'Schwalbe Eule Adler Falke Storch Kranich Reh Hirsch Wildschwein ' +
+        'Dachs Karpfen Forelle Aal Lachs Thunfisch Kabeljau Hering Hecht ' +
+        // ---- additional nouns: plants (capitalised) ----
+        'Rose Tulpe Narzisse Sonnenblume Gänseblümchen Klee Distel Moos Pilz ' +
+        'Busch Strauch Dorn Zweig Nadel Tanne Fichte Eiche Buche Birke ' +
+        'Ahorn Linde Pappel Weide Kiefer Palme Kakteen ' +
+        // ---- additional nouns: food & kitchen (capitalised) ----
+        'Wurst Schinken Hähnchen Pute Gans Lamm Rindfleisch Schweinefleisch ' +
+        'Geflügel Meeresfrüchte Spaghetti Mehl Gewürz Kräuter Basilikum ' +
+        'Petersilie Schnittlauch Kümmel Zimt Vanille Knoblauch Zwiebel Karotte ' +
+        'Gurke Paprika Spinat Kohl Brokkoli Blumenkohl Bohne Erbse Linse Mais ' +
+        'Birne Kirsche Erdbeere Himbeere Brombeere Blaubeere Johannisbeere ' +
+        'Stachelbeere Aprikose Pfirsich Pflaume Zwetschge Melone Ananas Mango ' +
+        'Kiwi Zitrone Limette Grapefruit Mandarine Mandel Nuss Haselnuss ' +
+        'Walnuss Cashew Erdnuss Rosine Quark Joghurt Sahne Honig Marmelade ' +
+        'Konfitüre Keks Torte Gebäck Brötchen Semmel Croissant Baguette Sekt ' +
+        'Schnaps Likör Wodka Whisky Rum Cocktail Limonade Cola Fanta Sprite ' +
+        'Orangensaft Apfelsaft Tomatensaft Karottensaft Multivitaminsaft ' +
+        // ---- additional nouns: professions (capitalised) ----
+        'Dachdecker Klempner Schlosser Schweißer Zimmermann Drechsler Weber ' +
+        'Färber Gerber Sattler Konditor Fleischer Barista Kosmetikerin Masseur ' +
+        'Optiker Zahntechniker Chemiker Biologe Physiker Mathematiker ' +
+        'Informatiker Programmierer Administrator Designer Architekt ' +
+        'Bauingenieur Vermesser Kartograph Geologe Geograph Meteorologe ' +
+        'Astronom Flugbegleiter Kapitän Matrose Lokführer Busfahrer Taxifahrer ' +
+        'Kutscher Förster Jäger Landwirt Florist Elektriker Maler Tischler ' +
+        'Schreiner Schneider Bäcker Metzger Verkäufer Kassierer Kellner Koch ' +
+        'Friseur Mechaniker Pilot Fahrer Beamter Polizist Feuerwehrmann Soldat ' +
+        'Richter Anwalt Notar Steuerberater Manager Chef Angestellter Arbeiter ' +
+        'Praktikant Ingenieur Wissenschaftler Forscher Erfinder ' +
+        // ---- additional nouns: nature / geography / objects (capitalised) ----
+        'Wüste Oase Steppe Tundra Gletscher Vulkan Überschwemmung Orkan Tornado ' +
+        'Lawine Erdrutsch Bergwerk Höhle Schlucht Kliff Felsen Gipfel Tal Ebene ' +
+        'Halbinsel Insel Archipel Bucht Golf Kap Landenge Meerenge Wasserfall ' +
+        'Quelle Bach Strom See Teich Tümpel Sumpf Moor Wiese Weide Acker ' +
+        'Nordpol Südpol Äquator Hausnummer Stockwerk Etage Vorgarten Hinterhof ' +
+        'Spielplatz Marktplatz Kirchplatz Markthalle Kaufhaus Warenhaus Boutique ' +
+        'Metzgerei Bäckerei Konditorei Apotheke Drogerie Friseursalon ' +
+        'Tankstelle Waschstraße Autowerkstatt Werkstatt Atelier Studio Labor ' +
+        'Archiv Gericht Gefängnis Klinik Ambulanz Notaufnahme Operationssaal ' +
+        'Entbindungsstation Rezeption Wartezimmer Sprechzimmer Behandlungsraum ' +
+        'Ministerium Botschaft Konsulat Fachhochschule Seminarraum Hörsaal ' +
+        'Studentenwerk Campus ' +
+        // ---- additional verbs / participles (lowercase) ----
+        'öffne öffnest öffnet öffnen geöffnet schließe schließt schließen ' +
+        'geschlossen kaufe kaufst kauft kaufen gekauft verkaufe verkaufst ' +
+        'verkauft verkaufen verkaufte verkauft bezahle bezahlst bezahlt ' +
+        'bezahlen bezahlt koste kostest kostet kosten kostete gekostet ' +
+        'versuche versuchst versucht versuchen versuchte versucht schaffe ' +
+        'schaffst schafft schaffen schaffte geschaffen verstehe verstehst ' +
+        'versteht verstehen verstand verstanden kenne kennst kennt kennen ' +
+        'kannte gekannt meine meinst meint meinen meinte gemeint nennst nennt ' +
+        'nannte genannt heißt heiße heißen hieß geheißen scheine scheinst scheint ' +
+        'scheinen schien geschienen erscheine erscheinst erscheint erscheinen ' +
+        'erschien erschienen gelte gilt gelten galt gegolten passiere passierst ' +
+        'passiert passieren passierte geschehe geschieht geschah geschehen bringe ' +
+        'bringst bringt bringen brachte gebracht hole holst holt holen holte ' +
+        'geholt schicke schickst schickt schicken schickte geschickt sende ' +
+        'sendest sendet senden sandte gesandt weine weinst weint weinen weinte ' +
+        'geweint lache lachst lacht lachen lachte gelacht singe singst singt ' +
+        'singen sang gesungen tanze tanzte getanzt springe springst springt ' +
+        'springen sprang gesprungen fliege fliegst fliegt fliegen flog ' +
+        'geflogen schwimme schwimmst schwimmt schwimmen schwamm geschwommen ' +
+        'klettere kletterst klettert klettern kletterte geklettert warte ' +
+        'wartest wartet warten wartete gewartet helfe hilfst hilft helfen half ' +
+        'geholfen vergesse vergisst vergessen vergaß erinnere erinnerst erinnert ' +
+        'erinnern erinnerte erklärt erklärst erklärt erklären erklärte erklärt ' +
+        'bedeute bedeutest bedeutet bedeuten bedeutete bedeutet bekomme ' +
+        'bekommst bekommt bekommen bekam erhalten erhält erhältst erhielt ' +
+        'gehöre gehörst gehört gehören gehörte gehört reiche reichst reicht ' +
+        'reichen reichte gereicht zeige zeigst zeigt zeigen zeigte gezeigt lege ' +
+        'legst legt legen legte gelegt stelle stellst stellt stellen stellte ' +
+        'gestellt hänge hängst hängt hängen hing gehangen stecke steckst steckt ' +
+        'stecken steckte gesteckt halte hältst hält halten hielt gehalten fahre ' +
+        'fährst fährt fahren fuhr gefahren fliege fliegst fliegt fliegen flog ' +
+        'geflogen blase bläst blasen blies geblasen beiße beißt beißen biss ' +
+        'gebissen fange fängst fängt fangen fing gefangen jage jagst jagt jagen ' +
+        'jagte gejagt klinge klingst klingt klingen klang geklungen klopfe ' +
+        'klopft klopfen klopfte geklopft lade lädst lädt laden lud geladen ' +
+        'leuchte leuchtest leuchtet leuchten leuchtete geleuchtet pfeife pfeifst ' +
+        'pfeift pfeifen pfiff gepfiffen prüfe prüfst prüft prüfen prüfte ' +
+        'geprüft rette rettest rettet retten rettete gerettet rolle rollst ' +
+        'rollt rollen rollte gerollt schiebe schiebst schiebt schieben schob ' +
+        'geschoben schieße schießt schießen schoss geschossen schließe schließt ' +
+        'schließen schloss geschlossen schweige schweigst schweigt schweigen ' +
+        'schwieg geschwiegen streiche streichst streicht streichen strich ' +
+        'gestrichen stoße stößt stoßen stieß gestoßen streite streitest streitet ' +
+        'streiten stritt gestritten stütze stützt stützen stützte gestützt ' +
+        'suche suchst sucht suchen suchte gesucht teile teilst teilt teilen ' +
+        'teilte geteilt trage trägst trägt tragen trug getragen treffe triffst ' +
+        'trifft treffen traf getroffen trenne trennst trennt trennen trennte ' +
+        'getrennt trinke trinkst trinkt trinken trank getrunken trockne ' +
+        'trocknest trocknet trocknen trocknete getrocknet übe übst übt üben übte ' +
+        'geübt überzeuge überzeugst überzeugt überzeugen überzeugte überzeugt ' +
+        'untersuche untersuchst untersucht untersuchen untersuchte untersucht ' +
+        'verändere veränderst verändert verändern veränderte verändert verlasse ' +
+        'verlässt verlassen verließ verlassen vergleiche vergleicht vergleichen ' +
+        'verglich verglichen verhindere verhinderst verhindert verhindern ' +
+        'verhinderte verhindert verkaufe verkauft verkaufen verliere verlierst ' +
+        'verliert verlieren verlor verloren vermittle vermittelst vermittelt ' +
+        'vermitteln vermittelte vermittelt vermeide vermeidest vermeidet ' +
+        'vermeiden vermied vermieden verrät verrätst verraten verriet verraten ' +
+        'versuche versucht versuchen versuchte versucht verteidige verteidigst ' +
+        'verteidigt verteidigen verteidigte verteidigt verteile verteilst ' +
+        'verteilt verteilen verteilte verteilt vertraue vertraust vertraut ' +
+        'vertrauen vertraute vertraut verwandle verwandelst verwandelt verwandeln ' +
+        'verwandelte verwandelt verwende verwendest verwendet verwenden ' +
+        'verwendete verwendet verursache verursachst verursacht verursachen ' +
+        'verursachte verursacht verwirkliche verwirklichst verwirklicht ' +
+        'verwirklichen verwirklichte verwirklicht vorschlage vorschlägst ' +
+        'vorschlägt vorschlagen schlug vor vorgeschlagen vorstelle vorstellst ' +
+        'vorstellt vorstellen stellte vor vorgestellt wachse wächst wachsen ' +
+        'wuchs gewachsen wähle wähst wählt wählen wählte gewählt wandere ' +
+        'wanderst wandert wandern wanderte gewandert wasche wäschst wäscht ' +
+        'waschen wusch gewaschen wechsle wechselst wechselt wechseln wechselte ' +
+        'gewechselt werfe wirfst wirft werfen warf geworfen werde wirst werden ' +
+        'wurde geworden wickle wickelst wickelt wickeln wickelte gewickelt ' +
+        'wiederhole wiederholst wiederholt wiederholen wiederholte wiederholt ' +
+        'wisse weißt wissen wusste gewusst wohne wohnst wohnt wohnen wohnte ' +
+        'gewohnt wundere wunderst wundert wundern wunderte gewundert wünsche ' +
+        'wünschst wünscht wünschen wünschte gewünscht zeuge zeugst zeugt zeugen ' +
+        'zeugte gezeugt zähle zählst zählt zählen zählte gezählt zwinge zwingst ' +
+        'zwingt zwingen zwang gezwungen ' +
+        // ---- additional adjectives (lowercase) ----
+        'eckig rund oval viereckig dreieckig kreisförmig kugelförmig würfelförmig ' +
+        'zylindrisch konisch flach gewölbt konkav konvex spitz stumpf rutschfest ' +
+        'klebrig flüssig gasförmig elastisch spröde zäh zähflüssig dickflüssig ' +
+        'dünnflüssig trüb transparent durchsichtig undurchsichtig opak leuchtend ' +
+        'glänzend matt glitzernd funkelnd schimmernd irisierend einfarbig ' +
+        'mehrfarbig gestreift gepunktet kariert gemustert mutig feige neugierig ' +
+        'gleichgültig zufrieden unzufrieden stolz bescheiden egoistisch selbstlos ' +
+        'humorvoll ernsthaft charmant sympathisch unsympathisch eifersüchtig ' +
+        'nostalgisch optimistisch pessimistisch realistisch idealistisch ' +
+        'pragmatisch theoretisch praktisch abstrakt konkret kreativ einfallslos ' +
+        'originell banal außergewöhnlich ungewöhnlich typisch atypisch auffällig ' +
+        'unauffällig sichtbar unsichtbar spürbar fühlbar hörbar lesbar ' +
+        'verständlich unverständlich erklärbar lösbar machbar real fiktiv ' +
+        'authentisch echt unecht original bekannt unbeliebt populär unpopulär ' +
+        'berühmt ' +
+        // ---- additional adverbs (lowercase) ----
+        'irgendwo irgendwann irgendwie irgendwer irgendwas irgendjemand ' +
+        'andauernd fortwährend ständig unaufhörlich pausenlos dauerhaft ' +
+        'vorübergehend zeitweise gelegentlich fallweise notfalls ' +
+        'erforderlichenfalls nötigenfalls gegebenenfalls glücklicherweise ' +
+        'bedauerlicherweise erfreulicherweise interessanterweise ' +
+        'merkwürdigerweise seltsamerweise bekanntermaßen erwartungsgemäß ' +
+        'wie erwartet wie vorgesehen wie geplant wie gewohnt wie üblich wie ' +
+        'immer wie gehabt wie gesagt wie erwähnt wie bekannt stattdessen ' +
+        'hingegen andererseits einerseits zunächst anschließend schließlich ' +
+        'zuletzt zudem ferner des Weiteren darüber hinaus nicht nur sondern ' +
+        'auch sowohl als auch entweder oder weder noch je desto umso ' +
+        'solchermaßen derart dergestalt somit folglich demnach mithin ' +
+        'deswegen deshalb trotzdem dennoch außerdem obendrein gleichwohl ' +
+        // ---- additional common nouns (capitalised): weather / astronomy / misc ----
+        'Wetterbericht Wettervorhersage Prognose Vorhersage Voraussage ' +
+        'Wetterlage Kaltfront Warmfront Tiefdruckgebiet Hochdruckgebiet ' +
+        'Luftdruck Luftfeuchtigkeit Temperatur Grad Celsius Fahrenheit Kelvin ' +
+        'Niederschlag Hagel Graupel Nebel Tau Reif Gewitter Donner Blitz ' +
+        'Windböe Windstille Brise Monsun Passatwind Föhn Luftströmung Strömung ' +
+        'Wolkenbildung Wolkenbruch Starkregen Dauerregen Schneeregen Schneefall ' +
+        'Schneedecke Schneemann Schneeball Eisdecke Eisberg Eisfläche Eisbahn ' +
+        'Schlittschuh Snowboard Schlitten Rodel Bob Sonnenschein Sonnenaufgang ' +
+        'Sonnenuntergang Sonnenstrahl Sonnenbrand Sonnenbrille Sonnencreme ' +
+        'Sonnenlicht Mondlicht Vollmond Neumond Halbmond Sternzeichen ' +
+        'Tierkreiszeichen Sternbild Sternschnuppe Galaxie Sonnensystem Merkur ' +
+        'Venus Mars Jupiter Saturn Uranus Neptun Pluto Flamme Funke Asche ' +
+        'Rauch Glut Brand Brandstiftung Feuerwehr Feuerlöscher Feuermelder ' +
+        'Feueralarm Brandschutz ' +
+        // ---- additional common verbs (lowercase) ----
+        'denken vergessen erinnern lernen lehren unterrichten prüfen testen ' +
+        'wiederholen üben trainieren vergleichen unterscheiden erkennen ' +
+        'identifizieren bestimmen klassifizieren ordnen sortieren gruppieren ' +
+        'einteilen unterteilen sammeln aufbewahren lagern aufheben behalten ' +
+        'verlieren finden suchen entdecken erfinden entwickeln erstellen ' +
+        'erzeugen produzieren herstellen bauen konstruieren entwerfen planen ' +
+        'organisieren vorbereiten durchführen ausführen verändern ändern ' +
+        'anpassen verbessern verschlechtern korrigieren reparieren ' +
+        'instandsetzen restaurieren erneuern ersetzen austauschen wechseln ' +
+        'umbauen umgestalten renovieren sanieren entscheiden wählen aussuchen ' +
+        'festlegen feststellen ermitteln herausfinden klären lösen beantworten ' +
+        'erklären beschreiben darstellen zusammenfassen wiedergeben berichten ' +
+        'erzählen erwähnen nennen bezeichnen benennen kennzeichnen markieren ' +
+        'betonen hervorheben unterstreichen pointieren argumentieren begründen ' +
+        'beweisen belegen rechtfertigen verteidigen angreifen kritisieren ' +
+        'loben tadeln schimpfen streiten diskutieren debattieren verhandeln ' +
+        'zustimmen ablehnen verweigern akzeptieren annehmen zögern zaudern ' +
+        // ---- final batch: assorted high-frequency words ----
+        'nördlich südlich östlich westlich nordöstlich nordwestlich ' +
+        'südöstlich südwestlich zentral peripher mittig innen außen oben ' +
+        'unten vorn hinten links rechts geradeaus zurück vorwärts seitwärts ' +
+        'bergauf bergab aufwärts abwärts einwärts auswärts heimwärts rückwärts ' +
+        'hierhin dorthin irgendwohin nirgendwohin überallhin hierher dorther ' +
+        'irgendwoher nirgendwoher überallher täglich wöchentlich monatlich ' +
+        'jährlich stündlich minütlich sekündlich vorläufig provisorisch ' +
+        'anfangs letztendlich hernach ' +
+        // ---- common dative / plural noun forms (so func+Noun splits work) ----
+        'Hause Häuser Miete Mieten Tage Monate Jahre Stunden Minuten Wochen ' +
+        'Männer Frauen Kinder Leute Menschen Studenten Professoren Lehrer ' +
+        'Schüler Häuser Zimmer Autos Busse Bahnen Züge Straßen Städte Dörfer ' +
+        'Länder Flüsse Berge Seen Meere Wälder Gärten Bäume Blumen Bücher ' +
+        'Worte Wörter Sätze Seiten Kapitel Briefe emails Fragen Antworten ' +
+        'Probleme Lösungen Beispiele Gründe Vorteile Nachteile Meinungen Ideen ' +
+        'Informationen Daten Grafiken Kosten Preise Märkte Firmen Unternehmen ' +
+        'Gesellschaften Kulturen Politiken Geschichten Techniken Wissenschaften ' +
+        'Energien Augen Ohren Hände Füße Zähne Münder Nasen Köpfe Gesichter ' +
+        'Arme Beine Schultern Finger Knie Mütter Väter Söhne Töchter Brüder ' +
+        'Schwestern Eltern Freunde Bekannte Nachbarn Kollegen Gäste Kunden ' +
+        // ---- additional real words to guard against false splits ----
+        'inmitten derweil indessen unterdessen gleichwohl zurzeit dergestalt ' +
+        'innewohnen innehalten innehaben vormalig ehemals vordem vorab vorweg ' +
+        'voran vorwärts nachträglich nachherig nachfolgend derzeitig ' +
+        'gegenwärtig augenblicklich momentan ehedem obendrein beizeiten ' +
+        'unterwegs unterwegs derweilen indes desungeachtet nichtsdestotrotz ' +
+        'mitunter obgleich obschon wenngleich gleichviel wohingegen indes ' +
+        'dahingegen hingegen andernfalls allenfalls notgedrungen notgedrungen ' +
+        'schlichtweg schlichtweg kurzerhand schier schlechthin geradezu ' +
+        'geradezu geradewegs geradeaus schlechthin schlechthin schlechthin'
+    );
+    _DE_DICT = new Set(words.trim().split(/\s+/));
+    return _DE_DICT;
+}
+
+/* ===========================================================================
+ * 3. spellCheckGermanText — line-aware spell check (skips translations)
+ * ========================================================================= */
+function spellCheckGermanText(text) {
+    if (!text) return text;
+    var dict = getDeDict();
+
+    var lines = text.split('\n');
+    var result = lines.map(function (line) {
+        if (isChineseLine(line)) return line; // Don't spell-check Chinese translations
+
+        // Tokenize German words (incl. umlauts / ß, apostrophes, hyphens).
+        return line.replace(/[A-Za-zÄÖÜäöüß][A-Za-zÄÖÜäöüß'\-]*/g, function (word) {
+            return spellCheckGermanWord(word, dict);
+        });
+    });
+    return result.join('\n');
+}
+
+/* ===========================================================================
+ * 4. spellCheckGermanWord — check a single token
+ * ========================================================================= */
+function spellCheckGermanWord(word, dict) {
+    if (!word) return word;
+    dict = dict || getDeDict();
+
+    // Words already known are never split (covers compounds like "Kraftwerk"
+    // as well as regular inflected forms that live in the dictionary).
+    if (deInDict(word, dict)) return word;
+
+    // Don't touch very short tokens (1-3 chars) — likely abbreviations or
+    // valid short words.
+    if (word.length <= 3) return word;
+
+    // Don't touch tokens containing apostrophes or hyphens — they are
+    // already compound/morphological forms (e.g. "geht's", "deutsch-englisch").
+    if (word.indexOf("'") >= 0 || word.indexOf('-') >= 0) return word;
+
+    // Try to split into known words. German is split CASE-SENSITIVELY so that
+    // nouns keep their capitalisation; function words are still recognised
+    // case-insensitively (sentence-initial "Der", "Und", ...).
+    var bestSplit = findBestGermanSplit(word, dict);
+    if (bestSplit && bestSplit.length >= 2) {
+        return bestSplit.join(' ');
+    }
+    return word; // Can't split — leave as is (conservative)
+}
+
+/* ===========================================================================
+ * 5. findBestGermanSplit — find the best way to split a concatenated token
+ *
+ * Strategy:
+ *   - Try 2-way and 3-way splits where every part is a known word.
+ *   - Score each candidate. A candidate is only acceptable if at least one
+ *     part is a function word (case-insensitive). Splits where every part
+ *     is a capitalized noun (compound word) are rejected.
+ *   - Prefer the candidate that most looks like a missing-space artefact:
+ *     a lowercase function word immediately followed by a capitalised word
+ *     (e.g. "die"+"Miete").
+ * ========================================================================= */
+function findBestGermanSplit(word, dict) {
+    dict = dict || getDeDict();
+    var n = word.length;
+    if (n < 4) return null; // Too short to split meaningfully
+
+    var best = null;       // { parts:[...], score:Number }
+    var bestScore = -Infinity;
+
+    // --- 2-way splits -------------------------------------------------------
+    for (var i = 2; i <= n - 2; i++) {
+        var left = word.substring(0, i);
+        var right = word.substring(i);
+        if (!deInDict(left, dict) || !deInDict(right, dict)) continue;
+
+        var parts = [left, right];
+        var score = scoreGermanSplit(parts);
+        if (score <= 0) continue; // rejected (no function word / compound)
+
+        if (score > bestScore) {
+            bestScore = score;
+            best = { parts: parts, score: score };
+        }
+    }
+
+    // --- 3-way splits -------------------------------------------------------
+    if (n >= 6) {
+        for (var i2 = 2; i2 <= n - 4; i2++) {
+            var p1 = word.substring(0, i2);
+            if (!deInDict(p1, dict)) continue;
+            for (var j = i2 + 2; j <= n - 2; j++) {
+                var p2 = word.substring(i2, j);
+                var p3 = word.substring(j);
+                if (!deInDict(p2, dict) || !deInDict(p3, dict)) continue;
+
+                var parts3 = [p1, p2, p3];
+                var score3 = scoreGermanSplit(parts3);
+                if (score3 <= 0) continue;
+
+                if (score3 > bestScore) {
+                    bestScore = score3;
+                    best = { parts: parts3, score: score3 };
+                }
+            }
+        }
+    }
+
+    return best ? best.parts : null;
+}
+
+/* ===========================================================================
+ * 6. Internal helpers
+ * ========================================================================= */
+
+/**
+ * Membership test that is case-sensitive for nouns but case-insensitive for
+ * function words (so sentence-initial "Der" / "Und" / "In" are recognised).
+ */
+function deInDict(word, dict) {
+    dict = dict || getDeDict();
+    if (!word) return false;
+    if (dict.has(word)) return true;
+    // Function words legitimately appear capitalised at the start of a
+    // sentence — recognise them case-insensitively.
+    if (DE_FUNCTION_WORDS.has(word.toLowerCase())) return true;
+    return false;
+}
+
+/** True for an uppercase-initial token that is NOT a function word. */
+function deIsNoun(word) {
+    if (!word) return false;
+    var first = word.charAt(0);
+    var isCap = (first >= 'A' && first <= 'Z') ||
+                first === 'Ä' || first === 'Ö' || first === 'Ü';
+    if (!isCap) return false;
+    // "Der"/"Und"/"In" at sentence start are function words, not nouns.
+    if (DE_FUNCTION_WORDS.has(word.toLowerCase())) return false;
+    return true;
+}
+
+function deIsFunctionWord(word) {
+    if (!word) return false;
+    return DE_FUNCTION_WORDS.has(word.toLowerCase());
+}
+
+/**
+ * Score a candidate split. Returns <= 0 to reject, > 0 to accept (higher
+ * is better). Acceptance requires at least one function word; pure
+ * noun+noun compounds are rejected.
+ */
+function scoreGermanSplit(parts) {
+    var hasFunc = false;
+    var nounCount = 0;
+    var score = 0;
+
+    for (var i = 0; i < parts.length; i++) {
+        var p = parts[i];
+        var isFunc = deIsFunctionWord(p);
+        var isNoun = deIsNoun(p);
+
+        if (isFunc) {
+            hasFunc = true;
+            score += 30;                       // function word involved
+        } else if (isNoun) {
+            nounCount++;
+            score += 6;                        // content noun
+        } else {
+            score += 8;                        // other lower-case content word
+        }
+        // Mild length reward (prefers balanced, non-trivial parts) — capped.
+        score += Math.min(p.length, 8);
+    }
+
+    // No function word anywhere -> too risky (likely a compound). Reject.
+    if (!hasFunc) return -1000;
+
+    // All parts capitalized nouns -> compound word (e.g. "AutoBus"). Reject.
+    if (nounCount === parts.length) return -1000;
+
+    // Strong "missing space" signal: a lowercase function word directly
+    // followed by a capitalised word (e.g. "die"+"Miete", "und"+"Der").
+    for (var k = 0; k < parts.length - 1; k++) {
+        var a = parts[k];
+        var b = parts[k + 1];
+        var aLower = !(a.charAt(0) >= 'A' && a.charAt(0) <= 'Z') &&
+                     a.charAt(0) !== 'Ä' && a.charAt(0) !== 'Ö' && a.charAt(0) !== 'Ü';
+        var bCap = deIsNoun(b);
+        if (deIsFunctionWord(a) && aLower && bCap) {
+            score += 25;
+        }
+    }
+
+    return score;
+}
+
+/* ===========================================================================
+ * 7. Exports (browser global + CommonJS)
+ * ========================================================================= */
+if (typeof window !== 'undefined') {
+    window.DE_FUNCTION_WORDS = DE_FUNCTION_WORDS;
+    window.getDeDict = getDeDict;
+    window.spellCheckGermanText = spellCheckGermanText;
+    window.spellCheckGermanWord = spellCheckGermanWord;
+    window.findBestGermanSplit = findBestGermanSplit;
+    window.deInDict = deInDict;
+}
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = {
+        DE_FUNCTION_WORDS: DE_FUNCTION_WORDS,
+        getDeDict: getDeDict,
+        spellCheckGermanText: spellCheckGermanText,
+        spellCheckGermanWord: spellCheckGermanWord,
+        findBestGermanSplit: findBestGermanSplit,
+        deInDict: deInDict,
+        isChineseLine: typeof isChineseLine === 'function' ? isChineseLine : null
+    };
+}
+
+function spellCheckText(text) {
+    var lang = State.lang || 'en';
+    if (lang === 'ja') return text; // Japanese doesn't use spaces between words
+    
+    if (lang === 'de') {
+        // German: use German spell check with function-word-aware splitting
+        return spellCheckGermanText(text);
+    }
+    
+    var dict = getEnDict(); // Use English dict for en/fr
+    if (!dict) return text;
+    
+    // Process each non-translation line
+    var lines = text.split('\n');
+    var result = lines.map(function(line) {
+        if (isChineseLine(line)) return line; // Don't spell-check Chinese translations
+        
+        // Tokenize: extract words (contiguous letters, possibly with hyphens/apostrophes)
+        // We need to process each "word token" and check if it's a concatenation
+        return line.replace(/[A-Za-z][A-Za-z'\-]*/g, function(word) {
+            return spellCheckWord(word, dict);
+        });
+    });
+    return result.join('\n');
+}
+
+// Check a single word — if it's not in the dictionary, try to split it into known words
+function spellCheckWord(word, dict) {
+    var lower = word.toLowerCase();
+    
+    // Don't touch words that are in the dictionary (including common forms)
+    if (dict.has(lower)) return word;
+    // Don't touch very short words (1-3 chars) — likely abbreviations or valid short words
+    if (word.length <= 3) return word;
+    // Don't touch words with apostrophes or hyphens (they're compound forms)
+    if (word.indexOf("'") >= 0 || word.indexOf('-') >= 0) return word;
+    // Don't touch proper nouns (start with capital and rest lowercase, and > 4 chars — could be a name)
+    // But DO check if a Capitalized word is actually two words glued (e.g. "Thepress" → "The press")
+    
+    // Try to split the word into 2 or 3 known words
+    var bestSplit = findBestSplit(lower, dict);
+    if (bestSplit && bestSplit.length >= 2) {
+        // Preserve original capitalization pattern
+        var wasCapitalized = word[0] === word[0].toUpperCase() && word[0] !== word[0].toLowerCase();
+        var result = bestSplit.join(' ');
+        if (wasCapitalized) {
+            result = result.charAt(0).toUpperCase() + result.slice(1);
+        }
+        return result;
+    }
+    
+    return word; // Can't split — leave as is
+}
+
+// Find the best way to split a string into 2-3 dictionary words
+function findBestSplit(word, dict) {
+    var n = word.length;
+    if (n < 4) return null; // Too short to split
+    
+    // Try 2-word splits: "theway" → "the" + "way"
+    for (var i = 2; i <= n - 2; i++) {
+        var part1 = word.substring(0, i);
+        var part2 = word.substring(i);
+        if (dict.has(part1) && dict.has(part2)) {
+            return [part1, part2];
+        }
+    }
+    
+    // Try 3-word splits: "oftheway" → "of" + "the" + "way"
+    if (n >= 6) {
+        for (var i = 2; i <= n - 4; i++) {
+            for (var j = i + 2; j <= n - 2; j++) {
+                var p1 = word.substring(0, i);
+                var p2 = word.substring(i, j);
+                var p3 = word.substring(j);
+                if (dict.has(p1) && dict.has(p2) && dict.has(p3)) {
+                    return [p1, p2, p3];
+                }
+            }
+        }
+    }
+    
+    return null;
+}
+
+function preprocessCorpusText(text) {
+    var lang = State.lang || 'en';
+    
+    // 1. Normalize line endings
+    text = text.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+    
+    // 2. Remove zero-width characters and soft hyphens (common in PDF extraction)
+    text = text.replace(/[\u200B\u200C\u200D\uFEFF\u00AD]/g, '');
+    
+    // 3. Fix spacing: ensure space after sentence-ending punctuation when followed by a letter
+    //    e.g. "Europe.Before" → "Europe. Before", "way,knowledge" → "way, knowledge"
+    text = text.replace(/([.,;:!?])([A-Za-z\u00C4\u00E4\u00D6\u00F6\u00DC\u00FC\u00DF\u3040-\u309F\u30A0-\u30FF\u4e00-\u9fff])/g, '$1 $2');
+    
+    // 4. Fix missing space after closing parenthesis/bracket before a letter
+    text = text.replace(/([)\]}])([A-Za-z])/g, '$1 $2');
+    
+    // 5. Fix missing space before opening parenthesis/bracket after a letter
+    text = text.replace(/([A-Za-z])([(\[{])/g, '$1 $2');
+    
+    if (lang === 'ja') {
+        // Japanese: no space splitting needed for CJK, but fix latin-CJK boundary
+        text = text.replace(/([A-Za-z])([\u3040-\u309F\u30A0-\u30FF\u4e00-\u9fff])/g, '$1 $2');
+        text = text.replace(/([\u3040-\u309F\u30A0-\u30FF\u4e00-\u9fff])([A-Za-z])/g, '$1 $2');
+    } else {
+        // English/German: fix word concatenation where a common word is glued to a Capitalized word
+        // e.g. "ofThe" → "of The", "andThe" → "and The" (safe: Capital letter after lowercase = sentence boundary)
+        // Do NOT split lowercase+lowercase (would break compound words like "invention", "therefore")
+        var commonWords = lang === 'de'
+            ? ['der', 'die', 'das', 'und', 'ist', 'nicht', 'ein', 'eine', 'mit', 'von', 'zu', 'den', 'dem', 'im', 'in', 'an', 'auf', 'für', 'als', 'bei', 'es', 'wird', 'werden', 'sich', 'auch', 'noch', 'aber', 'oder', 'so', 'dass', 'wenn']
+            : ['the', 'and', 'of', 'to', 'in', 'is', 'it', 'that', 'for', 'on', 'with', 'as', 'at', 'by', 'from', 'was', 'are', 'be', 'this', 'an', 'or', 'but', 'not', 'have', 'has', 'had', 'were', 'been', 'will', 'would', 'could', 'should', 'can', 'may', 'might', 'must', 'shall', 'do', 'does', 'did', 'how', 'what', 'when', 'where', 'which', 'who', 'whom', 'whose', 'why'];
+        commonWords.forEach(function(w) {
+            // Only split when common word is directly followed by a Capital letter (safe heuristic)
+            // "ofThe" → "of The", "andJohannes" → "and Johannes"
+            var re = new RegExp('\\b' + w + '([A-Z][a-z])', 'g');
+            text = text.replace(re, w + ' $1');
+        });
+        
+        // 6. Fix hyphenated line breaks: "transfor-\nmed" → "transformed"
+        text = text.replace(/([a-zA-Z\u00C4\u00E4\u00D6\u00F6\u00DC\u00FC\u00DF])-\n([a-zA-Z\u00C4\u00E4\u00D6\u00F6\u00DC\u00FC\u00DF])/g, '$1$2');
+    }
+    
+    // 7. Collapse multiple spaces (but preserve newlines)
+    text = text.replace(/[ \t]+/g, ' ');
+    
+    // 8. Remove trailing spaces on each line
+    text = text.split('\n').map(function(l) { return l.replace(/\s+$/g, ''); }).join('\n');
+    
+    return text;
+}
+
+// Merge lines that were broken mid-sentence by PDF extraction
+// A line is considered "broken" if:
+// - It's a non-translation line that doesn't end with sentence-ending punctuation
+// - The next line is also a non-translation line (not a Chinese translation)
+// - The next line starts with a lowercase letter or is a continuation
+function mergeBrokenLines(lines) {
+    if (lines.length <= 1) return lines;
+    var merged = [];
+    var i = 0;
+    while (i < lines.length) {
+        var current = lines[i];
+        var currentIsTrans = isChineseLine(current);
+        
+        // Look ahead: should we merge with the next line?
+        while (i + 1 < lines.length) {
+            var nextLine = lines[i + 1];
+            var nextIsTrans = isChineseLine(nextLine);
+            
+            // Don't merge if next line is a translation (Chinese) and current is not
+            if (nextIsTrans && !currentIsTrans) break;
+            // Don't merge if current is translation and next is not
+            if (currentIsTrans && !nextIsTrans) break;
+            // Don't merge two translations
+            if (currentIsTrans && nextIsTrans) break;
+            
+            // Both are non-translation lines — check if current line is "broken"
+            // A line is broken if it doesn't end with sentence-ending punctuation
+            // AND the next line starts with lowercase (continuation)
+            // OR the current line is very short (< 5 chars) suggesting it was cut off
+            var endsWithSentence = /[.!?;:]$/.test(current.trim());
+            var nextStartsLower = /^[a-z\u00E4\u00F6\u00FC\u00DF]/.test(nextLine.trim());
+            var currentShort = current.trim().length < 5;
+            
+            // For Japanese: check if line ends without a particle/verb ending
+            if (State.lang === 'ja') {
+                var jaEndsComplete = /[。！？でするくんてにをが、，]/.test(current.trim().slice(-1));
+                if (!jaEndsComplete && !nextIsTrans) {
+                    current = current + ' ' + nextLine;
+                    i++;
+                    continue;
+                }
+                break;
+            }
+            
+            if (!endsWithSentence && (nextStartsLower || currentShort)) {
+                // Merge with a space
+                current = current + ' ' + nextLine;
+                i++;
+                continue;
+            }
+            break;
+        }
+        merged.push(current);
+        i++;
+    }
+    return merged;
+}
+
+function renderTopicFolders() {
+    var container = document.getElementById('topic-folder-list');
+    if (!container) return;
+    var docs = State.documents || [];
+    var allTopics = getAllTopics();
+    var groups = {};
+    allTopics.forEach(function(t) { groups[t.id] = []; });
+    groups['general'] = [];
+    docs.forEach(function(d) {
+        var tid = d.topic || 'general';
+        if (!groups[tid]) groups[tid] = [];
+        groups[tid].push(d);
+    });
+    var generalTopic = { id: 'general', name: '通用', icon: 'folder', color: '#837868', bg: '#EFE7D6', isDefault: false };
+    var html = '';
+    var order = allTopics.map(function(t) { return t.id; }).concat(['general']);
+    var hasAnyFolder = false;
+    order.forEach(function(tid) {
+        var t = tid === 'general' ? generalTopic : findTopicById(tid);
+        if (!t) return;
+        // Skip empty default topics, but show empty custom folders (user-created)
+        if ((!groups[tid] || groups[tid].length === 0) && (tid === 'general' || t.isDefault)) return;
+        hasAnyFolder = true;
+        var items = groups[tid] || [];
+        var isActive = State.corpus && items.some(function(d) { return d.id === State.corpus.docId; });
+        html += '<div class="lc-topic-folder-group' + (isActive ? '' : ' collapsed') + '">';
+        html += '<div class="lc-topic-folder-header" style="color:' + t.color + ';background:' + t.bg + ';" data-topic-id="' + tid + '" onclick="this.parentElement.classList.toggle(\'collapsed\')">';
+        html += '<i data-lucide="' + (t.icon || 'folder') + '"></i>';
+        html += '<span class="lc-folder-name" ondblclick="event.stopPropagation();editFolderName(\'' + tid + '\', this)" title="双击重命名">' + escapeHtml(t.name) + '</span>';
+        html += '<span class="lc-folder-count">' + items.length + ' 篇</span>';
+        html += '<div class="lc-folder-actions">';
+        html += '<button class="lc-folder-action-btn" onclick="event.stopPropagation();editFolderName(\'' + tid + '\', this.closest(\'.lc-topic-folder-header\').querySelector(\'.lc-folder-name\'))" title="重命名"><i data-lucide="pencil"></i></button>';
+        if (!t.isDefault) {
+            html += '<button class="lc-folder-action-btn" onclick="event.stopPropagation();deleteTopicFolder(\'' + tid + '\')" title="删除文件夹"><i data-lucide="trash-2"></i></button>';
+        }
+        html += '</div>';
+        html += '<i data-lucide="chevron-down" class="lc-folder-chevron" style="margin-left:8px;"></i>';
+        html += '</div><div class="lc-topic-folder-body">';
+        if (items.length === 0) {
+            html += '<div class="lc-topic-empty" style="padding:12px;font-size:13px;color:var(--lc-color-text-tertiary);text-align:center;">暂无文章，导入后可选择此文件夹</div>';
+        }
+        items.forEach(function(d) {
+            var active = State.corpus && State.corpus.docId === d.id;
+            var progress = getDocProgress(d);
+            html += '<div class="lc-topic-doc-item' + (active ? ' active' : '') + '" onclick="loadDocument(\'' + d.id + '\')" style="cursor:pointer;">';
+            html += '<i data-lucide="file-text" style="width:14px;height:14px;color:var(--lc-color-text-tertiary);"></i>';
+            html += '<span class="lc-doc-title">' + escapeHtml(d.title) + '</span>';
+            html += '<span class="lc-doc-progress" title="阅读进度">';
+            html += '<span class="lc-doc-progress-bar"><span class="lc-doc-progress-fill" style="width:' + progress + '%"></span></span>';
+            html += '<span>' + progress + '%</span>';
+            html += '</span>';
+            html += '<span class="lc-doc-meta">' + (d.pageCount || 1) + '页</span>';
+            html += '<button class="lc-doc-delete" onclick="event.stopPropagation();deleteDocument(\'' + d.id + '\')" title="删除"><i data-lucide="trash-2"></i></button>';
+            html += '</div>';
+        });
+        html += '</div></div>';
+    });
+    if (!hasAnyFolder) {
+        html = '<div class="lc-topic-empty"><i data-lucide="folder-open" style="width:24px;height:24px;margin-bottom:8px;display:block;margin-left:auto;margin-right:auto;"></i>暂无已保存的文章，导入后将自动归类到此</div>';
+    }
+    html += '<button class="lc-folder-add-btn" onclick="addTopicFolder()"><i data-lucide="folder-plus"></i> 新建主题文件夹</button>';
+    container.innerHTML = html;
+    refreshIcons();
+}
+
+window.loadDocument = function(docId) {
+    exitEditModeAndSave();
+    var doc = (State.documents || []).find(function(d) { return d.id === docId; });
+    if (!doc) return;
+    State.corpus = { docId: doc.id, title: doc.title, topic: doc.topic, pages: doc.pages, readPages: doc.readPages || 0 };
+    State.hiddenItems = doc.hiddenItems || [];
+    _lastReadPage = doc.readPages || 0;
+    saveUserData();
+    renderWorkbench();
+    renderAnswerRail();
+    updateHiddenCount();
+    updateTranslationToggleUI();
+    switchView('workbench');
+    showToast('已加载: ' + doc.title, 'success');
+};
+
+window.deleteDocument = function(docId) {
+    State.documents = (State.documents || []).filter(function(d) { return d.id !== docId; });
+    if (State.corpus && State.corpus.docId === docId) { State.corpus = null; State.hiddenItems = []; renderWorkbench(); renderAnswerRail(); updateHiddenCount(); }
+    saveUserData();
+    renderTopicFolders();
+    showToast('已删除', 'info');
+};
+
+window.editFolderName = function(topicId, nameSpan) {
+    var topic = findTopicById(topicId);
+    if (!topic) return;
+    var oldName = topic.name;
+    var input = document.createElement('input');
+    input.type = 'text';
+    input.className = 'lc-folder-name-edit';
+    input.value = oldName;
+    nameSpan.replaceWith(input);
+    input.focus();
+    input.select();
+    var saved = false;
+    function commit() {
+        if (saved) return;
+        saved = true;
+        var newName = input.value.trim();
+        if (!newName || newName === oldName) {
+            input.replaceWith(nameSpan);
+            return;
+        }
+        if (topic.isDefault) {
+            if (!State.topicNameOverrides) State.topicNameOverrides = {};
+            State.topicNameOverrides[topicId] = newName;
+        } else {
+            var ct = (State.customTopics || []).find(function(t) { return t.id === topicId; });
+            if (ct) ct.name = newName;
+        }
+        saveUserData();
+        populateTopicSelect();
+        renderTopicFolders();
+        showToast('已重命名', 'success');
+    }
+    input.addEventListener('blur', commit);
+    input.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') { e.preventDefault(); input.blur(); }
+        if (e.key === 'Escape') { saved = true; input.replaceWith(nameSpan); }
+    });
+};
+
+window.addTopicFolder = function() {
+    // Use custom modal instead of prompt() — prompt() is often blocked by browsers
+    openCreateFolderModal();
+};
+
+function openCreateFolderModal() {
+    // Remove existing modal
+    var existing = document.getElementById('lc-create-folder-modal');
+    if (existing) existing.remove();
+    
+    var modal = document.createElement('div');
+    modal.id = 'lc-create-folder-modal';
+    modal.className = 'lc-modal-overlay';
+    modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:10000;display:flex;align-items:center;justify-content:center;';
+    modal.innerHTML = 
+        '<div style="background:var(--lc-color-surface);border-radius:16px;padding:28px;max-width:440px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,0.3);">' +
+        '<h3 style="margin:0 0 16px;font-size:18px;color:var(--lc-color-text);">新建主题文件夹</h3>' +
+        '<label style="display:block;font-size:13px;color:var(--lc-color-text-secondary);margin-bottom:6px;">文件夹名称</label>' +
+        '<input type="text" id="create-folder-input" placeholder="请输入文件夹名称" style="width:100%;padding:10px 14px;border:1px solid var(--lc-color-border);border-radius:8px;font-size:15px;color:var(--lc-color-text);background:var(--lc-color-surface-sunken);box-sizing:border-box;" />' +
+        '<div style="display:flex;gap:10px;margin-top:20px;justify-content:flex-end;">' +
+        '<button id="create-folder-cancel" class="lc-btn lc-btn-ghost" style="padding:8px 20px;">取消</button>' +
+        '<button id="create-folder-save" class="lc-btn lc-btn-primary" style="padding:8px 20px;">创建</button>' +
+        '</div></div>';
+    document.body.appendChild(modal);
+    
+    var input = document.getElementById('create-folder-input');
+    input.focus();
+    
+    document.getElementById('create-folder-cancel').addEventListener('click', function() { modal.remove(); });
+    modal.addEventListener('click', function(e) { if (e.target === modal) modal.remove(); });
+    
+    function doCreate() {
+        var name = input.value.trim();
+        if (!name) { showToast('文件夹名称不能为空', 'error'); return; }
+        var allTopics = getAllTopics();
+        if (allTopics.some(function(t) { return t.name === name; }) || name === '通用') {
+            showToast('文件夹名称已存在', 'error');
+            return;
+        }
+        var colorIdx = (State.customTopics || []).length % CUSTOM_TOPIC_COLORS.length;
+        var newTopic = {
+            id: 'custom-' + Date.now(),
+            name: name,
+            icon: 'folder',
+            color: CUSTOM_TOPIC_COLORS[colorIdx],
+            bg: hexToRgba(CUSTOM_TOPIC_COLORS[colorIdx], 0.12)
+        };
+        if (!State.customTopics) State.customTopics = [];
+        State.customTopics.push(newTopic);
+        saveUserData();
+        populateTopicSelect();
+        renderTopicFolders();
+        refreshIcons();
+        modal.remove();
+        showToast('文件夹「' + name + '」已创建', 'success');
+    }
+    
+    document.getElementById('create-folder-save').addEventListener('click', doCreate);
+    input.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') doCreate();
+        if (e.key === 'Escape') modal.remove();
+    });
+}
+
+window.deleteTopicFolder = function(topicId) {
+    var topic = findTopicById(topicId);
+    if (!topic) return;
+    var docsInTopic = (State.documents || []).filter(function(d) { return d.topic === topicId; });
+    var msg = '确定删除文件夹「' + topic.name + '」？';
+    if (docsInTopic.length > 0) {
+        msg += '其中的 ' + docsInTopic.length + ' 篇文章将移至「通用」分类。';
+    }
+    if (!confirm(msg)) return;
+    docsInTopic.forEach(function(d) { d.topic = 'general'; });
+    State.customTopics = (State.customTopics || []).filter(function(t) { return t.id !== topicId; });
+    saveUserData();
+    populateTopicSelect();
+    renderTopicFolders();
+    showToast('文件夹已删除', 'info');
+};
+
+function hexToRgba(hex, alpha) {
+    var r = parseInt(hex.slice(1, 3), 16);
+    var g = parseInt(hex.slice(3, 5), 16);
+    var b = parseInt(hex.slice(5, 7), 16);
+    return 'rgba(' + r + ',' + g + ',' + b + ',' + alpha + ')';
+}
+
+function populateTopicSelect() {
+    var select = document.getElementById('topic-select');
+    if (!select) return;
+    var currentValue = select.value;
+    var allTopics = getAllTopics();
+    var options = allTopics.map(function(t) {
+        return '<option value="' + t.id + '">' + escapeHtml(t.name) + '</option>';
+    });
+    options.push('<option value="general">通用</option>');
+    select.innerHTML = options.join('');
+    if (allTopics.some(function(t) { return t.id === currentValue; }) || currentValue === 'general') {
+        select.value = currentValue;
+    }
+}
+
+function getDocProgress(doc) {
+    if (!doc || !doc.pages) return 0;
+    var totalPages = doc.pages.length || 1;
+    var readPages = doc.readPages || 0;
+    // If no reading progress recorded, check if document has been opened (has hiddenItems as proxy)
+    if (readPages === 0 && doc.hiddenItems && doc.hiddenItems.length > 0) {
+        readPages = 1; // At least page 1 was read if they've been working on it
+    }
+    return Math.round((readPages / totalPages) * 100);
+}
+
+function getTotalWordsInCorpus() {
+    if (!State.corpus) return 0;
+    var count = 0;
+    State.corpus.pages.forEach(function(page) {
+        page.lines.forEach(function(line) {
+            if (!line.isTranslation) {
+                var matches = line.text.match(/[a-zA-Z][a-zA-Z'-]*/g);
+                if (matches) count += matches.length;
+            }
+        });
+    });
+    return count;
+}
+
+function syncCurrentDocProgress() {
+    if (!State.corpus) return;
+    var doc = (State.documents || []).find(function(d) { return d.id === State.corpus.docId; });
+    if (!doc) return;
+    doc.hiddenItems = JSON.parse(JSON.stringify(State.hiddenItems));
+    doc.readPages = State.corpus.readPages || 0;
+    doc.pages = JSON.parse(JSON.stringify(State.corpus.pages));
+    doc._updatedAt = Date.now(); // Mark document as updated for cross-device sync
+}
+
+function saveProgress() {
+    if (!State.corpus) { showToast('请先加载语料', 'error'); return; }
+    syncCurrentDocProgress();
+    var total = getTotalWordsInCorpus();
+    var hidden = State.hiddenItems.length;
+    var pct = total > 0 ? Math.round((hidden / total) * 100) : 0;
+    saveUserData();
+    renderTopicFolders();
+    showToast('进度已保存（' + hidden + '/' + total + ' 词，' + pct + '%）', 'success');
+}
+
+function handleTextParse() {
+    exitEditModeAndSave();
+    var text = document.getElementById('paste-area').value.trim();
+    if (!text) { showToast('请先粘贴文本', 'error'); return; }
+    var title = document.getElementById('corpus-title').value || '自定义语料';
+    var topic = document.getElementById('topic-select').value;
+    var pages = parseTextToPages(text);
+    if (pages.length === 0 || pages.every(function(p) { return p.lines.length === 0; })) { showToast('未能解析到有效文本', 'error'); return; }
+    var docId = genId();
+    State.corpus = { docId: docId, title: title, topic: topic, pages: pages };
+    State.hiddenItems = [];
+    if (!State.documents) State.documents = [];
+    State.documents.push({ id: docId, title: title, topic: topic, pages: pages, hiddenItems: [], pageCount: pages.length, createdAt: Date.now() });
+    saveUserData();
+    showToast('文本解析成功，已归入主题文件夹', 'success');
+    renderWorkbench();
+    renderTopicFolders();
+    switchView('workbench');
+}
+
+function loadSample() {
+    var config = getCurrentLangConfig();
+    document.getElementById('paste-area').value = config.sampleCorpus;
+    document.getElementById('corpus-title').value = config.sampleTitle;
+    document.getElementById('topic-select').value = config.sampleTopic;
+    handleTextParse();
+}
+
+// ===== WORKBENCH =====
+function renderWorkbench() {
+    var panel = document.getElementById('corpus-panel');
+    var titleEl = document.getElementById('wb-title');
+    titleEl.textContent = State.corpus ? State.corpus.title : '挖空训练台';
+    panel.innerHTML = '';
+    if (!State.corpus) {
+        panel.innerHTML = '<div class="lc-empty-hint"><i data-lucide="file-text"></i><p>请先在「导入」页面上传文档或粘贴文本</p></div>';
+        refreshIcons();
+        return;
+    }
+    State.corpus.pages.forEach(function(page, pageIdx) {
+        if (pageIdx > 0) {
+            var sep = document.createElement('div');
+            sep.className = 'lc-page-sep';
+            sep.dataset.pageNum = page.pageNum;
+            sep.textContent = '—— 第 ' + page.pageNum + ' 页 ——';
+            panel.appendChild(sep);
+        } else {
+            // First page: add a marker at the top so scroll tracking can detect page 1
+            var marker = document.createElement('div');
+            marker.className = 'lc-page-sep lc-page-marker';
+            marker.dataset.pageNum = page.pageNum;
+            marker.style.cssText = 'height:1px;overflow:hidden;font-size:0;';
+            panel.insertBefore(marker, panel.firstChild);
+        }
+        page.lines.forEach(function(line, lineIdx) {
+            var lineNum = lineIdx + 1;
+            var showNum = (lineNum === 1 || lineNum % 5 === 0);
+            panel.appendChild(renderCorpusLine(line, lineNum, page.pageNum, showNum, pageIdx, lineIdx));
+        });
+    });
+    if (!State.editMode) {
+        setupWordInteractions();
+        reapplyHiddenItems();
+    }
+    refreshIcons();
+    // Track scroll position to update reading progress
+    setupReadingProgressTracker();
+}
+
+// Track scroll position in the corpus panel to detect which page the user is reading
+var _scrollTrackerBound = false;
+var _lastReadPage = 0;
+var _scrollTick = false;
+function throttle(fn, delay) {
+    return function() {
+        if (_scrollTick) return;
+        _scrollTick = true;
+        var ctx = this, args = arguments;
+        setTimeout(function() { fn.apply(ctx, args); _scrollTick = false; }, delay);
+    };
+}
+function setupReadingProgressTracker() {
+    var panel = document.getElementById('corpus-panel');
+    if (!panel) return;
+    
+    // Use a throttled scroll handler to detect current page
+    if (!_scrollTrackerBound) {
+        _scrollTrackerBound = true;
+        panel.addEventListener('scroll', throttle(function() {
+            updateReadingProgress();
+        }, 300));
+    }
+    // Initial update
+    setTimeout(updateReadingProgress, 100);
+}
+
+function updateReadingProgress() {
+    if (!State.corpus || !State.corpus.pages) return;
+    var panel = document.getElementById('corpus-panel');
+    if (!panel) return;
+    
+    var totalPages = State.corpus.pages.length;
+    if (totalPages === 0) return;
+    
+    // Find all page separators/markers
+    var pageMarkers = panel.querySelectorAll('[data-page-num]');
+    if (pageMarkers.length === 0) return;
+    
+    // Determine which page is currently visible
+    // The current page is the last page marker whose top is above the panel's scrollTop + small offset
+    var scrollTop = panel.scrollTop;
+    var visibleOffset = 40; // small offset to detect "entering" a new page
+    var currentPage = 1;
+    
+    pageMarkers.forEach(function(marker) {
+        var markerTop = marker.offsetTop;
+        if (markerTop <= scrollTop + visibleOffset) {
+            var pn = parseInt(marker.dataset.pageNum);
+            if (pn > currentPage) currentPage = pn;
+        }
+    });
+    
+    // Also check if user has scrolled to near the bottom (last page)
+    var maxScroll = panel.scrollHeight - panel.clientHeight;
+    if (scrollTop >= maxScroll - 20) {
+        currentPage = totalPages;
+    }
+    
+    if (currentPage !== _lastReadPage) {
+        _lastReadPage = currentPage;
+        // Save reading progress to the document
+        if (State.corpus && State.corpus.docId) {
+            var doc = State.documents.find(function(d) { return d.id === State.corpus.docId; });
+            if (doc) {
+                doc.readPages = currentPage;
+                doc._updatedAt = Date.now(); // Mark for cross-device sync
+                // Also update the active corpus copy
+                State.corpus.readPages = currentPage;
+                saveUserData();
+                // Update progress bar in the import panel without full re-render
+                updateDocProgressInImportPanel(State.corpus.docId);
+            }
+        }
+    }
+}
+
+// Update a single document's progress bar in the import panel without full re-render
+function updateDocProgressInImportPanel(docId) {
+    var doc = State.documents.find(function(d) { return d.id === docId; });
+    if (!doc) return;
+    var progress = getDocProgress(doc);
+    // Find the progress element for this document
+    var docItems = document.querySelectorAll('.lc-topic-doc-item');
+    for (var i = 0; i < docItems.length; i++) {
+        var item = docItems[i];
+        if (item.getAttribute('onclick') && item.getAttribute('onclick').indexOf(docId) >= 0) {
+            var fillEl = item.querySelector('.lc-doc-progress-fill');
+            var textEl = item.querySelectorAll('span');
+            if (fillEl) fillEl.style.width = progress + '%';
+            // Update the percentage text (the last span before the meta)
+            var progressSpans = item.querySelectorAll('.lc-doc-progress span');
+            if (progressSpans.length > 1) progressSpans[1].textContent = progress + '%';
+            break;
+        }
+    }
+}
+
+function renderCorpusLine(line, lineNum, pageNum, showNum, pageIdx, lineIdx) {
+    if (line.isTranslation) {
+        var block = document.createElement('div');
+        block.className = 'lc-translation-block';
+        if (State.translationCollapsed && !State.editMode) block.classList.add('collapsed');
+        var header = document.createElement('div');
+        header.className = 'lc-translation-header';
+        header.innerHTML = '<i data-lucide="chevron-down"></i> 译文';
+        header.addEventListener('click', function() {
+            block.classList.toggle('collapsed');
+            var icon = header.querySelector('i');
+            if (icon) { icon.setAttribute('data-lucide', block.classList.contains('collapsed') ? 'chevron-right' : 'chevron-down'); refreshIcons(); }
+        });
+        var content = document.createElement('div');
+        content.className = 'lc-translation-content';
+        var textDiv = document.createElement('div');
+        textDiv.className = 'lc-translation-text';
+        textDiv.textContent = line.text;
+        if (State.editMode) {
+            textDiv.contentEditable = 'true';
+            textDiv.spellcheck = false;
+            attachEditableHandlers(textDiv, pageIdx, lineIdx);
+        }
+        content.appendChild(textDiv);
+        block.appendChild(header);
+        block.appendChild(content);
+        var wrapper = document.createElement('div');
+        wrapper.className = 'lc-corpus-line';
+        if (State.editMode) wrapper.classList.add('editing');
+        wrapper.dataset.pageIdx = pageIdx;
+        wrapper.dataset.lineIdx = lineIdx;
+        var gutter = document.createElement('span');
+        gutter.className = 'lc-gutter';
+        gutter.textContent = showNum ? lineNum : '';
+        wrapper.appendChild(gutter);
+        var textSpan = document.createElement('span');
+        textSpan.className = 'lc-corpus-text';
+        textSpan.style.fontSize = '14px';
+        textSpan.appendChild(block);
+        wrapper.appendChild(textSpan);
+        return wrapper;
+    }
+    var div = document.createElement('div');
+    div.className = 'lc-corpus-line';
+    if (State.editMode) div.classList.add('editing');
+    div.dataset.pageIdx = pageIdx;
+    div.dataset.lineIdx = lineIdx;
+    var gutter2 = document.createElement('span');
+    gutter2.className = 'lc-gutter';
+    gutter2.textContent = showNum ? lineNum : '';
+    div.appendChild(gutter2);
+    var textSpan2 = document.createElement('span');
+    textSpan2.className = 'lc-corpus-text';
+    if (State.editMode) {
+        textSpan2.contentEditable = 'true';
+        textSpan2.spellcheck = false;
+        textSpan2.textContent = line.text;
+        attachEditableHandlers(textSpan2, pageIdx, lineIdx);
+    } else {
+        var tokens = tokenizeLine(line.text);
+        tokens.forEach(function(tok) {
+            if (tok.type === 'text') {
+                textSpan2.appendChild(document.createTextNode(tok.value));
+            } else {
+                var ws = document.createElement('span');
+                ws.className = 'lc-word';
+                ws.textContent = tok.value;
+                ws.dataset.word = tok.value;
+                ws.dataset.line = lineNum;
+                ws.dataset.page = pageNum;
+                textSpan2.appendChild(ws);
+            }
+        });
+    }
+    div.appendChild(textSpan2);
+    return div;
+}
+
+function attachEditableHandlers(el, pageIdx, lineIdx) {
+    el.addEventListener('blur', function() {
+        saveEditedLine(pageIdx, lineIdx, el.innerText);
+    });
+    el.addEventListener('input', function() {
+        saveEditedLine(pageIdx, lineIdx, el.innerText);
+    });
+    el.addEventListener('paste', function(e) {
+        e.preventDefault();
+        var text = (e.clipboardData || window.clipboardData).getData('text/plain');
+        document.execCommand('insertText', false, text);
+    });
+}
+
+// --- Edit Mode: inline text editing for corpus lines ---
+function saveEditedLine(pageIdx, lineIdx, newText) {
+    if (!State.corpus || !State.corpus.pages[pageIdx]) return;
+    var lines = State.corpus.pages[pageIdx].lines;
+    if (!lines || !lines[lineIdx]) return;
+    // Live save: collapse newlines to space (final newline-splitting happens on exit)
+    lines[lineIdx].text = newText.replace(/\n/g, ' ').trim();
+}
+
+function collectAndProcessEdits() {
+    if (!State.corpus) return;
+    var panel = document.getElementById('corpus-panel');
+    if (!panel) return;
+
+    // Collect edited texts from DOM (authoritative source on exit)
+    var edits = {};
+    panel.querySelectorAll('.lc-corpus-line.editing').forEach(function(lineEl) {
+        var pi = parseInt(lineEl.dataset.pageIdx);
+        var li = parseInt(lineEl.dataset.lineIdx);
+        var textEl = lineEl.querySelector('[contenteditable="true"]');
+        if (textEl && !isNaN(pi) && !isNaN(li)) {
+            var key = pi + '-' + li;
+            if (edits[key] === undefined) edits[key] = textEl.innerText;
+        }
+    });
+
+    // Apply edits: split lines containing newlines into separate line entries
+    State.corpus.pages.forEach(function(page, pageIdx) {
+        var newLines = [];
+        page.lines.forEach(function(line, lineIdx) {
+            var key = pageIdx + '-' + lineIdx;
+            var text = edits[key] !== undefined ? edits[key] : line.text;
+            var parts = text.split('\n').map(function(t) { return t.trim(); }).filter(function(t) { return t; });
+            if (parts.length === 0) return; // skip empty lines (effectively deletes them)
+            parts.forEach(function(part) {
+                newLines.push({ text: part, isTranslation: isChineseLine(part) });
+            });
+        });
+        page.lines = newLines;
+    });
+}
+
+function toggleEditMode() {
+    if (!State.corpus) { showToast('请先加载语料', 'error'); return; }
+
+    if (!State.editMode) {
+        // Entering edit mode
+        if (State.hiddenItems.length > 0) {
+            showToast('编辑模式下挖空暂不可用，退出编辑后自动恢复', 'info');
+        }
+        State.editMode = true;
+    } else {
+        // Exiting edit mode: collect all edits from DOM, reprocess lines
+        collectAndProcessEdits();
+        State.editMode = false;
+        syncCurrentDocProgress();
+        saveUserData();
+        showToast('文本编辑已保存', 'success');
+    }
+
+    updateEditModeUI();
+    renderWorkbench();
+    if (!State.editMode) {
+        renderAnswerRail();
+        updateHiddenCount();
+    }
+}
+
+function updateEditModeUI() {
+    var btn = document.getElementById('btn-edit-mode');
+    var hintText = document.getElementById('wb-hint-text');
+    if (!btn) return;
+    if (State.editMode) {
+        btn.classList.add('active');
+        var icon = btn.querySelector('i');
+        if (icon) { icon.setAttribute('data-lucide', 'check'); refreshIcons(); }
+        if (hintText) hintText.textContent = '编辑模式：点击文本直接修改内容 · 按 Enter 可换行新增行 · 再次点击「编辑文本」退出并保存 · 退出后挖空自动恢复';
+    } else {
+        btn.classList.remove('active');
+        var icon2 = btn.querySelector('i');
+        if (icon2) { icon2.setAttribute('data-lucide', 'pencil'); refreshIcons(); }
+        if (hintText) hintText.textContent = '单击单词即可隐藏 · 长按拖动选择短语可整段隐藏 · 答案自动归纳至右侧并标注行号 · 点击空白处可恢复 · 双击右侧词条可删除 · 译文行自动折叠';
+    }
+}
+
+// Silently exit edit mode and save edits (used before document switching)
+function exitEditModeAndSave() {
+    if (State.editMode) {
+        if (State.corpus) {
+            collectAndProcessEdits();
+            syncCurrentDocProgress();
+        }
+        State.editMode = false;
+        updateEditModeUI();
+    }
+}
+
+function tokenizeLine(line) {
+    var tokens = [];
+    var regex;
+    if (State.lang === 'ja') {
+        // Japanese: tokenize kanji (individual), katakana words, and latin words
+        regex = /([a-zA-Z]+|[\u30A0-\u30FF]+|[\u4e00-\u9fff])/g;
+    } else if (State.lang === 'de') {
+        // German: include umlauts (äöüÄÖÜß)
+        regex = /([a-zA-Z\u00C4\u00E4\u00D6\u00F6\u00DC\u00FC\u00DF][a-zA-Z\u00C4\u00E4\u00D6\u00F6\u00DC\u00FC\u00DF'\-]*)/g;
+    } else {
+        // English (default)
+        regex = /([a-zA-Z][a-zA-Z'-]*)/g;
+    }
+    var lastIdx = 0, m;
+    while ((m = regex.exec(line)) !== null) {
+        if (m.index > lastIdx) tokens.push({ type: 'text', value: line.slice(lastIdx, m.index) });
+        tokens.push({ type: 'word', value: m[1] });
+        lastIdx = regex.lastIndex;
+    }
+    if (lastIdx < line.length) tokens.push({ type: 'text', value: line.slice(lastIdx) });
+    return tokens;
+}
+
+function toggleTranslationCollapse() {
+    State.translationCollapsed = !State.translationCollapsed;
+    updateTranslationToggleUI();
+    renderWorkbench();
+    saveUserData();
+}
+
+function updateTranslationToggleUI() {
+    var label = document.getElementById('toggle-translation-label');
+    var btn = document.getElementById('btn-toggle-translation');
+    if (!label || !btn) return;
+    var visible = !State.translationCollapsed;
+    label.textContent = visible ? '译文可见' : '译文已隐藏';
+    btn.classList.toggle('on', visible);
+}
+
+function reapplyHiddenItems() {
+    if (!State.corpus) return;
+    var panel = document.getElementById('corpus-panel');
+    if (!panel) return;
+    var allWords = Array.from(panel.querySelectorAll('.lc-word'));
+    
+    State.hiddenItems.forEach(function(item) {
+        if (item.type === 'word') {
+            // Find word by matching text + line number
+            var wordEl = allWords.find(function(w) {
+                return w.dataset.word === item.text && parseInt(w.dataset.line) === item.line && parseInt(w.dataset.page) === item.page;
+            });
+            if (wordEl) {
+                wordEl.dataset.hideId = item.id;
+                wordEl.dataset.originalText = wordEl.dataset.word;
+                wordEl.classList.add('lc-blank');
+                wordEl.textContent = '';
+            }
+        } else if (item.type === 'phrase') {
+            // Find phrase: locate the first word, then take consecutive words matching the phrase
+            var phraseWords = item.text.split(/\s+/);
+            var startIdx = -1;
+            for (var i = 0; i <= allWords.length - phraseWords.length; i++) {
+                var match = true;
+                for (var j = 0; j < phraseWords.length; j++) {
+                    if (allWords[i + j].dataset.word !== phraseWords[j] || parseInt(allWords[i + j].dataset.line) !== item.line) {
+                        match = false; break;
+                    }
+                }
+                if (match) { startIdx = i; break; }
+            }
+            if (startIdx >= 0) {
+                phraseWords.forEach(function(pw, idx) {
+                    var el = allWords[startIdx + idx];
+                    el.dataset.hideId = item.id;
+                    el.dataset.originalText = el.dataset.word;
+                    if (idx === 0) { el.classList.add('lc-phrase-blank'); el.textContent = ''; }
+                    else { el.style.display = 'none'; }
+                });
+            }
+        }
+    });
+}
+
+var isSelecting = false; var selStart = null; var selEnd = null;
+var _wordInteractionBound = false; // prevent duplicate document-level listeners
+
+function setupWordInteractions() {
+    var panel = document.getElementById('corpus-panel');
+    if (!panel) return;
+    
+    // Bind document-level listeners only once
+    if (!_wordInteractionBound) {
+        _wordInteractionBound = true;
+        document.addEventListener('mouseup', onSelectionEnd);
+        document.addEventListener('touchend', onSelectionEnd);
+        document.addEventListener('selectstart', function(e) { if (isSelecting) e.preventDefault(); });
+    }
+    
+    // Remove old delegated listeners to avoid duplication on re-render
+    panel.onmousedown = null;
+    panel.onmouseover = null;
+    panel.ontouchstart = null;
+    panel.ontouchmove = null;
+    
+    // Mouse: delegate mousedown and mouseover on the panel
+    panel.onmousedown = function(e) {
+        var w = e.target.closest('.lc-word');
+        if (w) { e.preventDefault(); startSelection(w); }
+    };
+    panel.onmouseover = function(e) {
+        var w = e.target.closest('.lc-word');
+        if (w && isSelecting) extendSelection(w);
+    };
+    
+    // Touch: delegate touchstart and touchmove for mobile phrase selection
+    panel.ontouchstart = function(e) {
+        var touch = e.touches[0];
+        var target = document.elementFromPoint(touch.clientX, touch.clientY);
+        var w = target && target.closest('.lc-word');
+        if (w) { e.preventDefault(); startSelection(w); }
+    };
+    panel.ontouchmove = function(e) {
+        if (!isSelecting) return;
+        e.preventDefault();
+        var touch = e.touches[0];
+        var target = document.elementFromPoint(touch.clientX, touch.clientY);
+        var w = target && target.closest('.lc-word');
+        if (w) extendSelection(w);
+    };
+}
+
+function startSelection(wordEl) {
+    isSelecting = true;
+    selStart = wordEl;
+    selEnd = wordEl;
+    updateSelectionHighlight();
+}
+
+function extendSelection(wordEl) {
+    if (isSelecting) {
+        selEnd = wordEl;
+        updateSelectionHighlight();
+    }
+}
+
+function onSelectionEnd() {
+    if (!isSelecting) return;
+    if (selStart === selEnd) {
+        if (selStart.classList.contains('lc-blank') || selStart.classList.contains('lc-phrase-blank')) { var hideId = selStart.dataset.hideId; if (hideId) unhideItem(hideId); }
+        else if (!selStart.dataset.hideId) hideWord(selStart);
+    } else { hidePhrase(selStart, selEnd); }
+    isSelecting = false; selStart = null; selEnd = null; clearSelectionHighlight();
+}
+
+function getWordsBetween(start, end) {
+    var panel = document.getElementById('corpus-panel');
+    if (!panel) return [];
+    var all = Array.from(panel.querySelectorAll('.lc-word'));
+    var si = all.indexOf(start); var ei = all.indexOf(end);
+    if (si === -1 || ei === -1) return [];
+    var from = si < ei ? si : ei; var to = si < ei ? ei : si;
+    return all.slice(from, to + 1).filter(function(w) { return !w.classList.contains('lc-blank') && !w.classList.contains('lc-phrase-blank') && !w.dataset.hideId; });
+}
+
+function updateSelectionHighlight() {
+    document.querySelectorAll('.lc-word.lc-selecting').forEach(function(w) { w.classList.remove('lc-selecting'); });
+    if (selStart && selEnd) getWordsBetween(selStart, selEnd).forEach(function(w) { w.classList.add('lc-selecting'); });
+}
+
+function clearSelectionHighlight() { document.querySelectorAll('.lc-word.lc-selecting').forEach(function(w) { w.classList.remove('lc-selecting'); }); }
+
+function hideWord(wordEl) {
+    var word = wordEl.dataset.word; var line = parseInt(wordEl.dataset.line); var page = parseInt(wordEl.dataset.page);
+    var id = genId();
+    wordEl.classList.add('lc-blank'); wordEl.dataset.hideId = id; wordEl.dataset.originalText = word; wordEl.textContent = '';
+    State.hiddenItems.push({ id: id, text: word, line: line, page: page, type: 'word' });
+    addToVocabulary(word, line, id);
+    renderAnswerRail(); updateHiddenCount(); saveUserData();
+}
+
+function hidePhrase(startEl, endEl) {
+    var words = getWordsBetween(startEl, endEl);
+    if (words.length < 2) { hideWord(startEl); return; }
+    var phraseText = words.map(function(w) { return w.dataset.word; }).join(' ');
+    var line = parseInt(words[0].dataset.line); var page = parseInt(words[0].dataset.page);
+    var id = genId();
+    words.forEach(function(w, i) {
+        w.dataset.hideId = id; w.dataset.originalText = w.dataset.word;
+        if (i === 0) { w.classList.add('lc-phrase-blank'); w.textContent = ''; } else { w.style.display = 'none'; }
+    });
+    State.hiddenItems.push({ id: id, text: phraseText, line: line, page: page, type: 'phrase' });
+    // Auto-add to phrase book with corpus topic (no popup — user can batch-categorize in export)
+    var defaultTopic = State.corpus ? State.corpus.topic : 'general';
+    addToPhraseBook(phraseText, defaultTopic, id);
+    renderAnswerRail(); updateHiddenCount(); saveUserData();
+}
+
+function unhideItem(id) {
+    var item = State.hiddenItems.find(function(i) { return i.id === id; });
+    if (!item) return;
+    document.querySelectorAll('[data-hide-id="' + id + '"]').forEach(function(el) {
+        el.classList.remove('lc-blank', 'lc-phrase-blank'); el.style.display = ''; el.textContent = el.dataset.originalText || '';
+        delete el.dataset.hideId; delete el.dataset.originalText;
+    });
+    State.hiddenItems = State.hiddenItems.filter(function(i) { return i.id !== id; });
+    if (item.type === 'word') State.vocabulary.words = State.vocabulary.words.filter(function(w) { return w.hideId !== id; });
+    else State.vocabulary.phrases = State.vocabulary.phrases.filter(function(p) { return p.hideId !== id; });
+    renderAnswerRail(); updateHiddenCount(); renderVocabulary(); saveUserData();
+}
+
+function undoLastHide() { if (State.hiddenItems.length === 0) { showToast('没有可撤销的操作', 'info'); return; } var last = State.hiddenItems[State.hiddenItems.length - 1]; unhideItem(last.id); showToast('已撤销', 'info'); }
+function resetAllHides() { if (State.hiddenItems.length === 0) return; Array.from(State.hiddenItems).forEach(function(item) { unhideItem(item.id); }); showToast('已重置所有挖空', 'info'); }
+
+function updateHiddenCount() {
+    var count = State.hiddenItems.length;
+    document.getElementById('wb-hidden-count').textContent = '已挖空 ' + count + ' 项';
+    document.getElementById('rail-count').textContent = count;
+    document.getElementById('word-count').textContent = State.hiddenItems.filter(function(i) { return i.type === 'word'; }).length;
+    document.getElementById('phrase-count').textContent = State.hiddenItems.filter(function(i) { return i.type === 'phrase'; }).length;
+}
+
+function renderAnswerRail() {
+    var wordsDiv = document.getElementById('rail-words');
+    var phrasesDiv = document.getElementById('rail-phrases');
+    var wordItems = State.hiddenItems.filter(function(i) { return i.type === 'word'; });
+    var phraseItems = State.hiddenItems.filter(function(i) { return i.type === 'phrase'; });
+    if (wordItems.length === 0) wordsDiv.innerHTML = '<div class="lc-empty-hint" style="padding:16px 8px;"><p style="font-size:12px;">点击语料中的单词开始</p></div>';
+    else wordsDiv.innerHTML = wordItems.map(function(item) { return '<div class="lc-answer-item" data-hide-id="' + item.id + '" title="单击定位 · 双击删除 · 右键编辑"><span class="lc-answer-word">' + escapeHtml(item.text) + '</span><span class="lc-answer-locator">第' + item.line + '行</span></div>'; }).join('');
+    if (phraseItems.length === 0) phrasesDiv.innerHTML = '<div class="lc-empty-hint" style="padding:16px 8px;"><p style="font-size:12px;">长按拖动选择短语</p></div>';
+    else phrasesDiv.innerHTML = phraseItems.map(function(item) {
+        var pEntry = State.vocabulary.phrases.find(function(p) { return p.hideId === item.id; });
+        var meaning = pEntry && pEntry.meaning ? pEntry.meaning : '';
+        var meaningHtml = meaning ? '<span class="lc-answer-phrase-meaning">' + escapeHtml(meaning) + '</span>' : '';
+        return '<div class="lc-answer-item phrase" data-hide-id="' + item.id + '" title="单击定位 · 双击删除 · 右键编辑"><div style="flex:1;min-width:0;"><div class="lc-answer-word">' + escapeHtml(item.text) + '</div>' + meaningHtml + '</div><span class="lc-answer-locator">第' + item.line + '行</span></div>';
+    }).join('');
+    document.querySelectorAll('.lc-answer-item').forEach(function(el) {
+        // Single click: locate in corpus
+        el.addEventListener('click', function() {
+            if (el._dblClicked) { el._dblClicked = false; return; }
+            if (el._ctxClicked) { el._ctxClicked = false; return; }
+            var id = el.dataset.hideId; var blank = document.querySelector('[data-hide-id="' + id + '"]');
+            if (blank) { blank.scrollIntoView({ behavior: 'smooth', block: 'center' }); blank.style.transition = 'background 0.3s'; blank.style.background = 'var(--lc-color-primary-tint)'; setTimeout(function() { blank.style.background = ''; }, 800); }
+        });
+        // Double click: delete entry and unhide
+        el.addEventListener('dblclick', function() {
+            el._dblClicked = true;
+            var id = el.dataset.hideId;
+            if (id) {
+                unhideItem(id);
+                showToast('已删除词条并取消挖空', 'info');
+            }
+        });
+        // Right click: edit entry text
+        el.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+            el._ctxClicked = true;
+            var id = el.dataset.hideId;
+            if (id) openEditEntryModal(id, el.classList.contains('phrase'));
+        });
+    });
+}
+
+// Edit entry modal — allows editing the displayed text of a hidden item
+function openEditEntryModal(hideId, isPhrase) {
+    var item = State.hiddenItems.find(function(h) { return h.id === hideId; });
+    if (!item) return;
+    // Remove existing modal
+    var existing = document.getElementById('lc-edit-entry-modal');
+    if (existing) existing.remove();
+    
+    var modal = document.createElement('div');
+    modal.id = 'lc-edit-entry-modal';
+    modal.className = 'lc-modal-overlay';
+    modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:10000;display:flex;align-items:center;justify-content:center;';
+    modal.innerHTML = 
+        '<div style="background:var(--lc-color-surface);border-radius:16px;padding:28px;max-width:440px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,0.3);">' +
+        '<h3 style="margin:0 0 16px;font-size:18px;color:var(--lc-color-text);">编辑词条</h3>' +
+        '<label style="display:block;font-size:13px;color:var(--lc-color-text-secondary);margin-bottom:6px;">' + (isPhrase ? '短语内容' : '单词内容') + '</label>' +
+        '<input type="text" id="edit-entry-input" value="' + escapeHtml(item.text) + '" style="width:100%;padding:10px 14px;border:1px solid var(--lc-color-border);border-radius:8px;font-size:15px;font-family:var(--lc-font-serif);color:var(--lc-color-text);background:var(--lc-color-surface-sunken);box-sizing:border-box;" />' +
+        (isPhrase ? '<label style="display:block;font-size:13px;color:var(--lc-color-text-secondary);margin:12px 0 6px;">中文翻译</label><input type="text" id="edit-entry-meaning" value="' + escapeHtml((function(){ var p = State.vocabulary.phrases.find(function(p){return p.hideId===hideId;}); return p&&p.meaning?p.meaning:''; })()) + '" style="width:100%;padding:10px 14px;border:1px solid var(--lc-color-border);border-radius:8px;font-size:14px;color:var(--lc-color-text);background:var(--lc-color-surface-sunken);box-sizing:border-box;" />' : '') +
+        '<div style="display:flex;gap:10px;margin-top:20px;justify-content:flex-end;">' +
+        '<button id="edit-entry-cancel" class="lc-btn lc-btn-ghost" style="padding:8px 20px;">取消</button>' +
+        '<button id="edit-entry-save" class="lc-btn lc-btn-primary" style="padding:8px 20px;">保存</button>' +
+        '</div></div>';
+    document.body.appendChild(modal);
+    
+    var input = document.getElementById('edit-entry-input');
+    input.focus(); input.select();
+    
+    document.getElementById('edit-entry-cancel').addEventListener('click', function() { modal.remove(); });
+    modal.addEventListener('click', function(e) { if (e.target === modal) modal.remove(); });
+    
+    document.getElementById('edit-entry-save').addEventListener('click', function() {
+        var newText = input.value.trim();
+        if (!newText) { showToast('内容不能为空', 'error'); return; }
+        item.text = newText;
+        // If phrase, also update the phrase book entry and meaning
+        if (isPhrase) {
+            var meaningInput = document.getElementById('edit-entry-meaning');
+            var pEntry = State.vocabulary.phrases.find(function(p) { return p.hideId === hideId; });
+            if (pEntry) {
+                pEntry.phrase = newText;
+                if (meaningInput) pEntry.meaning = meaningInput.value.trim();
+                pEntry.lastModified = Date.now(); // Mark for cross-device sync
+            }
+        } else {
+            // Update vocabulary word entry
+            var wEntry = State.vocabulary.words.find(function(w) { return w.hideId === hideId; });
+            if (wEntry) { wEntry.word = newText; wEntry.lastModified = Date.now(); }
+        }
+        // Update DOM: change the displayed text in the corpus blank
+        var blankEl = document.querySelector('[data-hide-id="' + hideId + '"]');
+        if (blankEl) {
+            blankEl.dataset.originalText = newText;
+            // Keep it hidden (blank) — just update the stored text
+        }
+        saveUserData();
+        renderAnswerRail();
+        renderVocabulary();
+        modal.remove();
+        showToast('词条已更新', 'success');
+    });
+    
+    input.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') document.getElementById('edit-entry-save').click();
+        if (e.key === 'Escape') modal.remove();
+    });
+}
+
+// ===== VOCABULARY =====
+// Returns vocabulary filtered by current language (en/de/ja kept separate)
+function getLangVocab() {
+    var lang = State.lang || 'en';
+    return {
+        words: State.vocabulary.words.filter(function(w) { return (w.lang || 'en') === lang; }),
+        phrases: State.vocabulary.phrases.filter(function(p) { return (p.lang || 'en') === lang; })
+    };
+}
+
+async function addToVocabulary(word, line, hideId) {
+    if (State.vocabulary.words.some(function(w) { return w.hideId === hideId; })) return;
+    var entry = { id: genId(), word: word, phonetic: '', meaning: '', source: State.corpus ? State.corpus.title : '未知语料', line: line, status: '未开始', hideId: hideId, addedAt: Date.now(), reviewCount: 0, nextReview: null, lastReview: null, example: '', lang: State.lang || 'en' };
+    State.vocabulary.words.push(entry);
+    try {
+        var resp = await fetch('https://api.dictionaryapi.dev/api/v2/entries/en/' + word.toLowerCase());
+        if (resp.ok) {
+            var data = await resp.json();
+            if (Array.isArray(data) && data[0]) {
+                var ph = data[0].phonetic; if (!ph && data[0].phonetics) { var p = data[0].phonetics.find(function(x) { return x.text; }); ph = p ? p.text : ''; }
+                entry.phonetic = ph || '';
+                var m0 = data[0].meanings; var d0 = m0 && m0[0] && m0[0].definitions && m0[0].definitions[0];
+                entry.meaning = d0 ? d0.definition : '';
+                entry.example = d0 ? (d0.example || '') : '';
+                if (State.currentView === 'vocabulary') renderVocabulary();
+                saveUserData();
+            }
+        }
+    } catch (e) {}
+}
+
+function addToPhraseBook(phrase, topic, hideId) {
+    if (State.vocabulary.phrases.some(function(p) { return p.hideId === hideId; })) return;
+    var topicObj = findTopicById(topic) || { name: '通用', color: '#837868', bg: '#EFE7D6' };
+    var entry = {
+        id: genId(), phrase: phrase, phonetic: '', meaning: '',
+        topic: topic, topicName: topicObj.name, topicColor: topicObj.color, topicBg: topicObj.bg,
+        source: State.corpus ? State.corpus.title : '未知语料', hideId: hideId, addedAt: Date.now(), lang: State.lang || 'en'
+    };
+    // Auto-extract Chinese translation from corpus translation lines
+    entry.meaning = findPhraseTranslation(phrase);
+    State.vocabulary.phrases.push(entry);
+}
+
+// Find the Chinese translation for a phrase by matching against corpus translation lines
+function findPhraseTranslation(phrase) {
+    if (!State.corpus || !State.corpus.pages) return '';
+    var phraseLower = phrase.toLowerCase();
+    var bestMatch = '';
+    var bestScore = 0;
+    
+    State.corpus.pages.forEach(function(page) {
+        page.lines.forEach(function(line, lineIdx) {
+            if (!line.isTranslation) return;
+            var transText = line.text;
+            // Strategy 1: If the English line right before this translation contains the phrase words,
+            // use this translation (most precise — it's the sentence-level translation)
+            if (lineIdx > 0) {
+                var prevLine = page.lines[lineIdx - 1];
+                if (prevLine && !prevLine.isTranslation) {
+                    var prevLower = prevLine.text.toLowerCase();
+                    var phraseWords = phraseLower.split(/\s+/);
+                    var matchCount = phraseWords.filter(function(w) { return prevLower.indexOf(w) >= 0; }).length;
+                    if (matchCount === phraseWords.length && matchCount >= 2) {
+                        // Full phrase found in the English line — use this translation
+                        bestMatch = transText;
+                        bestScore = 100;
+                    }
+                }
+            }
+            // Strategy 2: Partial keyword match in translation itself (for CJK mixed content)
+            if (bestScore < 50) {
+                var phraseWords2 = phraseLower.split(/\s+/).filter(function(w) { return w.length > 2; });
+                var partialMatch = phraseWords2.some(function(w) { return transText.toLowerCase().indexOf(w) >= 0; });
+                if (partialMatch && transText.length > 2) {
+                    bestMatch = transText;
+                    bestScore = 50;
+                }
+            }
+        });
+    });
+    
+    return bestMatch;
+}
+
+var _pendingPhrase = null;
+
+function showPhraseTagPopup(phraseText, hideId, line, page) {
+    _pendingPhrase = { phraseText: phraseText, hideId: hideId, line: line, page: page };
+    var defaultTopic = State.corpus ? State.corpus.topic : 'general';
+    var allTopics = getAllTopics();
+    var generalTopic = { id: 'general', name: '通用', color: '#837868', bg: '#EFE7D6' };
+    var topicsWithGeneral = allTopics.concat([generalTopic]);
+
+    var overlay = document.createElement('div');
+    overlay.className = 'lc-tag-popup-overlay';
+    overlay.id = 'phrase-tag-popup';
+
+    var html = '<div class="lc-tag-popup">'
+        + '<div class="lc-tag-popup-header">'
+        + '<h3>为短语选择分类</h3>'
+        + '<button class="lc-tag-popup-close" onclick="closePhraseTagPopup()"><i data-lucide="x" style="width:18px;height:18px;"></i></button>'
+        + '</div>'
+        + '<div class="lc-tag-popup-body">'
+        + '<div class="lc-tag-popup-phrase">' + escapeHtml(phraseText) + '</div>'
+        + '<div class="lc-tag-popup-label">选择主题分类（勾选加入）</div>'
+        + '<div class="lc-tag-popup-grid" id="tag-options-grid">';
+    topicsWithGeneral.forEach(function(t, i) {
+        var isDefault = t.id === defaultTopic;
+        html += '<div class="lc-tag-option' + (isDefault ? ' selected' : '') + '" data-topic-id="' + t.id + '" onclick="selectPhraseTag(\'' + t.id + '\')">'
+            + '<span class="lc-tag-option-dot" style="background:' + t.color + ';"></span>'
+            + '<span>' + escapeHtml(t.name) + '</span>'
+            + '</div>';
+    });
+    html += '</div>';
+    html += '<div style="margin-top:12px;display:flex;gap:8px;align-items:center;">';
+    html += '<span class="lc-tag-popup-label" style="margin:0;white-space:nowrap;">或新建：</span>';
+    html += '<input type="text" id="tag-new-name" placeholder="输入新分类名" style="flex:1;padding:6px 10px;border:1px solid var(--lc-color-border);border-radius:8px;font-family:inherit;font-size:13px;background:var(--lc-color-surface);color:var(--lc-color-text);">';
+    html += '<button class="lc-btn lc-btn-ghost lc-btn-sm" onclick="quickAddTagFromPopup()"><i data-lucide="plus" style="width:14px;height:14px;"></i> 添加</button>';
+    html += '</div>';
+    html += '</div>';
+    html += '<div class="lc-tag-popup-footer">'
+        + '<button class="lc-btn lc-btn-ghost" onclick="closePhraseTagPopup(true)">跳过</button>'
+        + '<button class="lc-btn lc-btn-primary" onclick="confirmPhraseTag()">确认分类</button>'
+        + '</div>';
+    html += '</div>';
+
+    overlay.innerHTML = html;
+    document.body.appendChild(overlay);
+    requestAnimationFrame(function() { overlay.classList.add('show'); });
+    refreshIcons();
+}
+
+var _selectedTagTopic = null;
+
+window.selectPhraseTag = function(topicId) {
+    _selectedTagTopic = topicId;
+    document.querySelectorAll('#tag-options-grid .lc-tag-option').forEach(function(el) {
+        el.classList.toggle('selected', el.dataset.topicId === topicId);
+    });
+};
+
+window.quickAddTagFromPopup = function() {
+    var input = document.getElementById('tag-new-name');
+    var name = input.value.trim();
+    if (!name) return;
+    var allTopics = getAllTopics();
+    if (allTopics.some(function(t) { return t.name === name; }) || name === '通用') {
+        showToast('分类名称已存在', 'error');
+        return;
+    }
+    var colorIdx = (State.customTopics || []).length % CUSTOM_TOPIC_COLORS.length;
+    var newTopic = {
+        id: 'custom-' + Date.now(),
+        name: name,
+        icon: 'folder',
+        color: CUSTOM_TOPIC_COLORS[colorIdx],
+        bg: hexToRgba(CUSTOM_TOPIC_COLORS[colorIdx], 0.12)
+    };
+    if (!State.customTopics) State.customTopics = [];
+    State.customTopics.push(newTopic);
+    saveUserData();
+    populateTopicSelect();
+    renderTopicFolders();
+    var grid = document.getElementById('tag-options-grid');
+    var div = document.createElement('div');
+    div.className = 'lc-tag-option selected';
+    div.dataset.topicId = newTopic.id;
+    div.onclick = function() { selectPhraseTag(newTopic.id); };
+    div.innerHTML = '<span class="lc-tag-option-dot" style="background:' + newTopic.color + ';"></span><span>' + escapeHtml(name) + '</span>';
+    grid.appendChild(div);
+    _selectedTagTopic = newTopic.id;
+    input.value = '';
+    document.querySelectorAll('#tag-options-grid .lc-tag-option').forEach(function(el) {
+        el.classList.toggle('selected', el.dataset.topicId === newTopic.id);
+    });
+    refreshIcons();
+    showToast('分类「' + name + '」已创建', 'success');
+};
+
+window.closePhraseTagPopup = function(skip) {
+    var overlay = document.getElementById('phrase-tag-popup');
+    if (!overlay) return;
+    overlay.classList.remove('show');
+    setTimeout(function() { overlay.remove(); }, 200);
+    if (skip && _pendingPhrase) {
+        var defaultTopic = State.corpus ? State.corpus.topic : 'general';
+        addToPhraseBook(_pendingPhrase.phraseText, defaultTopic, _pendingPhrase.hideId);
+        renderVocabulary();
+        showToast('已使用默认分类', 'info');
+    }
+    _pendingPhrase = null;
+    _selectedTagTopic = null;
+};
+
+window.confirmPhraseTag = function() {
+    if (!_pendingPhrase) return;
+    var topic = _selectedTagTopic || (State.corpus ? State.corpus.topic : 'general');
+    addToPhraseBook(_pendingPhrase.phraseText, topic, _pendingPhrase.hideId);
+    renderVocabulary();
+    var topicObj = findTopicById(topic);
+    showToast('短语已加入「' + (topicObj ? topicObj.name : '通用') + '」', 'success');
+    _pendingPhrase = null;
+    _selectedTagTopic = null;
+    var overlay = document.getElementById('phrase-tag-popup');
+    if (overlay) { overlay.classList.remove('show'); setTimeout(function() { overlay.remove(); }, 200); }
+};
+
+/**
+ * German Dictionary Lookup (German → Chinese)
+ * -------------------------------------------
+ * A self-contained module that provides:
+ *   1. A built-in mini-dictionary of 500+ common German words with Chinese translations
+ *   2. An async lookup function (builtin → API → heuristic)
+ *   3. A floating popup UI that matches the app's warm brown/orange design system
+ *   4. A function to attach "查词" buttons to vocabulary items
+ *
+ * Design-system CSS variables used:
+ *   --lc-color-surface, --lc-color-border, --lc-color-primary,
+ *   --lc-color-text, --lc-color-text-secondary, --lc-color-text-tertiary,
+ *   --lc-radius-md, --lc-shadow-float
+ *
+ * The popup CSS is injected once on first use so the file stays standalone.
+ */
+
+/* ===========================================================================
+ * 0. Inline CSS for the dictionary popup
+ * ========================================================================= */
+
+var LC_DICT_POPUP_CSS = `
+.lc-dict-popup {
+    position: fixed;
+    z-index: 10000;
+    background: var(--lc-color-surface);
+    border: 1px solid var(--lc-color-border);
+    border-radius: var(--lc-radius-md);
+    box-shadow: var(--lc-shadow-float);
+    padding: 16px;
+    min-width: 240px;
+    max-width: 360px;
+    font-size: 14px;
+}
+.lc-dict-popup-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--lc-color-border);
+}
+.lc-dict-popup-word {
+    font-weight: 700;
+    font-size: 16px;
+    color: var(--lc-color-primary);
+}
+.lc-dict-popup-translation {
+    color: var(--lc-color-text);
+    line-height: 1.5;
+    margin: 8px 0;
+}
+.lc-dict-popup-close {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--lc-color-text-tertiary);
+    font-size: 20px;
+    padding: 0 4px;
+    line-height: 1;
+}
+.lc-dict-popup-close:hover {
+    color: var(--lc-color-primary);
+}
+.lc-dict-popup-source {
+    font-size: 11px;
+    color: var(--lc-color-text-tertiary);
+    margin-top: 8px;
+}
+.lc-dict-popup-loading {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--lc-color-text-secondary);
+}
+.lc-dict-popup-loading .lc-dict-spinner {
+    width: 14px;
+    height: 14px;
+    border: 2px solid var(--lc-color-border);
+    border-top-color: var(--lc-color-primary);
+    border-radius: 50%;
+    animation: lc-dict-spin 0.7s linear infinite;
+    display: inline-block;
+}
+.lc-dict-popup-meta {
+    font-size: 12px;
+    color: var(--lc-color-text-secondary);
+    margin-top: 4px;
+    font-style: italic;
+}
+.lc-dict-popup-notfound {
+    color: var(--lc-color-text-secondary);
+    font-style: italic;
+    margin: 8px 0;
+}
+.lc-dict-popup-actions {
+    margin-top: 10px;
+    display: flex;
+    gap: 8px;
+}
+.lc-dict-popup-btn {
+    background: var(--lc-color-primary);
+    color: #fff;
+    border: none;
+    border-radius: var(--lc-radius-md);
+    padding: 5px 12px;
+    font-size: 12px;
+    cursor: pointer;
+}
+.lc-dict-popup-btn:hover {
+    opacity: 0.85;
+}
+.lc-dict-popup-btn-secondary {
+    background: transparent;
+    color: var(--lc-color-primary);
+    border: 1px solid var(--lc-color-border);
+}
+.lc-dict-lookup-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    background: var(--lc-color-surface);
+    border: 1px solid var(--lc-color-border);
+    border-radius: var(--lc-radius-md);
+    padding: 2px 8px;
+    font-size: 12px;
+    color: var(--lc-color-primary);
+    cursor: pointer;
+    margin-left: 6px;
+    vertical-align: middle;
+    transition: background 0.15s ease;
+}
+.lc-dict-lookup-btn:hover {
+    background: var(--lc-color-primary);
+    color: #fff;
+}
+@keyframes lc-dict-spin {
+    to { transform: rotate(360deg); }
+}
+`;
+
+/* Inject the CSS exactly once */
+function _ensureDictPopupCSS() {
+    if (document.getElementById('lc-dict-popup-style')) return;
+    var style = document.createElement('style');
+    style.id = 'lc-dict-popup-style';
+    style.textContent = LC_DICT_POPUP_CSS;
+    document.head.appendChild(style);
+}
+
+/* ===========================================================================
+ * 1. Built-in mini-dictionary (500+ common German → Chinese entries)
+ *    Keys are lowercased; multi-word phrases keep a single space.
+ * ========================================================================= */
+
+var DE_ZH_DICT = {
+    // ---- Articles / Determiners ----
+    'der': '冠词/阳性',
+    'die': '冠词/阴性/复数',
+    'das': '冠词/中性',
+    'den': '冠词/阳性(宾格)',
+    'dem': '冠词/与格',
+    'des': '冠词/属格',
+    'ein': '一个(阳性)',
+    'eine': '一个(阴性)',
+    'einem': '一个(与格)',
+    'einen': '一个(阳性宾格)',
+    'eines': '一个(属格)',
+    'kein': '没有(阳性)',
+    'keine': '没有(阴性/复数)',
+    'mein': '我的(阳性)',
+    'meine': '我的(阴性/复数)',
+    'dein': '你的(阳性)',
+    'deine': '你的(阴性/复数)',
+    'sein': '他的(阳性)',
+    'seine': '他的(阴性/复数)',
+    'ihr': '她的/你们的(阳性)',
+    'ihre': '她的/你们的(阴性/复数)',
+    'unser': '我们的(阳性)',
+    'unsere': '我们的(阴性/复数)',
+    'euer': '你们的(阳性)',
+    'eure': '你们的(阴性/复数)',
+    'dieser': '这个(阳性)',
+    'diese': '这个(阴性/复数)',
+    'dieses': '这个(中性)',
+    'jener': '那个(阳性)',
+    'jene': '那个(阴性/复数)',
+    'welcher': '哪个(阳性)',
+    'welche': '哪个(阴性/复数)',
+    'jeder': '每个(阳性)',
+    'jede': '每个(阴性)',
+    'jedes': '每个(中性)',
+    'alle': '所有',
+    'manche': '一些',
+    'viele': '许多',
+    'wenige': '少数',
+    'einige': '一些',
+    'mehrere': '好几个',
+    'solche': '这样的',
+
+    // ---- Pronouns ----
+    'ich': '我',
+    'du': '你',
+    'er': '他',
+    'sie': '她/他们',
+    'es': '它',
+    'wir': '我们',
+    'ihr': '你们',
+    'mich': '我(宾格)',
+    'dich': '你(宾格)',
+    'sich': '自己',
+    'uns': '我们(宾格/与格)',
+    'euch': '你们(宾格/与格)',
+    'mir': '我(与格)',
+    'dir': '你(与格)',
+    'ihm': '他(与格)',
+    'ihr': '她(与格)',
+    'ihnen': '他们(与格)/您(与格)',
+    'man': '人们/一个人',
+    'jemand': '某人',
+    'niemand': '无人',
+    'etwas': '某事/一些',
+    'nichts': '没有什么',
+    'alles': '一切',
+    'wer': '谁',
+    'was': '什么',
+    'wo': '哪里',
+    'wann': '何时',
+    'warum': '为什么',
+    'wieso': '为什么',
+    'wie': '怎样',
+    'wohin': '去哪里',
+    'woher': '从哪里来',
+    'welche': '哪些',
+    'wessen': '谁的',
+
+    // ---- Basic verbs ----
+    'haben': '有',
+    'bin': '是(我)',
+    'bist': '是(你)',
+    'ist': '是',
+    'sind': '是(我们/他们)',
+    'seid': '是(你们)',
+    'war': '是(过去时)',
+    'waren': '是(过去时复数)',
+    'wird': '将成为',
+    'werden': '成为',
+    'wurde': '成为(过去时)',
+    'machen': '做/制作',
+    'gehen': '走/去',
+    'kommt': '来(第三人称单数)',
+    'kommen': '来',
+    'sieht': '看(第三人称单数)',
+    'sehen': '看',
+    'sagt': '说(第三人称单数)',
+    'sagen': '说',
+    'sagt': '说',
+    'fragen': '问',
+    'gibt': '给(第三人称单数)',
+    'geben': '给',
+    'nimmt': '拿(第三人称单数)',
+    'nehmen': '拿/取',
+    'findet': '找到(第三人称单数)',
+    'finden': '找到',
+    'suchen': '寻找',
+    'kaufen': '买',
+    'brauchen': '需要',
+    'weiß': '知道(第三人称单数)',
+    'wissen': '知道',
+    'denken': '想/思考',
+    'glauben': '相信',
+    'schlagen': '打/敲',
+    'tragen': '穿/戴/扛',
+    'fahren': '行驶/乘车',
+    'liest': '读(第三人称单数)',
+    'lesen': '读',
+    'schreiben': '写',
+    'spricht': '说(第三人称单数)',
+    'sprechen': '说/讲',
+    'trifft': '遇见(第三人称单数)',
+    'treffen': '遇见',
+    'isst': '吃(第三人称单数)',
+    'essen': '吃',
+    'trinkt': '喝(第三人称单数)',
+    'trinken': '喝',
+    'wohnt': '居住(第三人称单数)',
+    'wohnen': '居住',
+    'lebt': '生活(第三人称单数)',
+    'leben': '生活',
+    'lernen': '学习',
+    'studieren': '学习/读大学',
+    'arbeitet': '工作(第三人称单数)',
+    'arbeiten': '工作',
+    'antworten': '回答',
+    'erzählen': '讲述',
+    'beschreiben': '描述',
+    'vergleichen': '比较',
+    'diskutieren': '讨论',
+    'präsentieren': '展示/介绍',
+    'interessieren': '使...感兴趣',
+    'möchte': '想要',
+    'möchten': '想要(复数)',
+    'würden': '会(虚拟式)',
+    'sollten': '应该(虚拟式)',
+    'könnten': '能够(虚拟式)',
+    'müssten': '必须(虚拟式)',
+    'müssen': '必须',
+    'kann': '能/会',
+    'kannst': '能/会(你)',
+    'können': '能/会',
+    'darf': '允许',
+    'dürfen': '允许',
+    'sollen': '应该',
+    'wollen': '想/要',
+    'mögen': '喜欢',
+    'steht': '站(第三人称单数)',
+    'stehen': '站/立',
+    'liegt': '躺/位于(第三人称单数)',
+    'liegen': '躺/位于',
+    'sitzt': '坐(第三人称单数)',
+    'sitzen': '坐',
+    'legen': '放平',
+    'stellen': '竖放',
+    'hängen': '挂',
+    'stecken': '插/放',
+    'hält': '拿/停(第三人称单数)',
+    'halten': '拿/停/保持',
+    'fällt': '落下(第三人称单数)',
+    'fallen': '落下',
+    'läuft': '跑(第三人称单数)',
+    'laufen': '跑/走',
+    'springen': '跳',
+    'fliegen': '飞',
+    'schwimmen': '游泳',
+    'klettern': '攀爬',
+    'tanzen': '跳舞',
+    'singen': '唱歌',
+    'spielt': '玩(第三人称单数)',
+    'spielen': '玩/演奏',
+    'hört': '听(第三人称单数)',
+    'hören': '听',
+    'rufen': '喊',
+    'weinen': '哭',
+    'lachen': '笑',
+    'schläft': '睡觉(第三人称单数)',
+    'schlafen': '睡觉',
+    'träumen': '做梦',
+    'wecken': '叫醒',
+    'aufstehen': '起床',
+    'öffnen': '打开',
+    'schließt': '关闭(第三人称单数)',
+    'schließen': '关闭',
+    'anfangen': '开始',
+    'ankommen': '到达',
+    'beginnen': '开始',
+    'beenden': '结束',
+    'aufhören': '停止',
+    'versuchen': '尝试',
+    'hilft': '帮助(第三人称单数)',
+    'helfen': '帮助',
+    'warten': '等待',
+    'vergisst': '忘记(第三人称单数)',
+    'vergessen': '忘记',
+    'erinnern': '记起/提醒',
+    'versteht': '理解(第三人称单数)',
+    'verstehen': '理解',
+    'erklärt': '解释(第三人称单数)',
+    'erklären': '解释',
+    'zeigt': '展示(第三人称单数)',
+    'zeigen': '展示',
+    'bedeutet': '意味着(第三人称单数)',
+    'bedeuten': '意味着',
+    'heißt': '名叫(第三人称单数)',
+    'heißen': '名叫',
+    'bekommen': '得到',
+    'erhalten': '收到',
+    'schicken': '寄送',
+    'senden': '发送',
+    'bringt': '带来(第三人称单数)',
+    'bringen': '带来',
+    'holen': '取来',
+    'wechseln': '更换/兑换',
+    'tauschen': '交换',
+    'bezahlen': '付款',
+    'kostet': '花费(第三人称单数)',
+    'kosten': '花费/值',
+    'sparen': '节省',
+    'verliert': '失去(第三人称单数)',
+    'verlieren': '失去/输',
+    'gewinnt': '赢(第三人称单数)',
+    'gewinnen': '赢',
+    'planen': '计划',
+    'vorbereiten': '准备',
+    'organisieren': '组织',
+    'besuchen': '拜访',
+    'einladen': '邀请',
+    'feiern': '庆祝',
+    'gratulieren': '祝贺',
+    'heiraten': '结婚',
+
+    // ---- Nouns: People & Family ----
+    'der mann': '男人',
+    'die frau': '女人',
+    'das kind': '孩子',
+    'der mensch': '人',
+    'die person': '人',
+    'die leute': '人们',
+    'der herr': '先生/男士',
+    'die dame': '女士',
+    'der junge': '男孩',
+    'das mädchen': '女孩',
+    'der student': '大学生(男)',
+    'die studentin': '大学生(女)',
+    'der schüler': '学生(中小学,男)',
+    'die schülerin': '学生(中小学,女)',
+    'der professor': '教授(男)',
+    'die professorin': '教授(女)',
+    'der lehrer': '老师(男)',
+    'die lehrerin': '老师(女)',
+    'der arzt': '医生(男)',
+    'die ärztin': '医生(女)',
+    'der kunde': '顾客(男)',
+    'die kundin': '顾客(女)',
+    'der kollege': '同事(男)',
+    'die kollegin': '同事(女)',
+    'der chef': '老板/上司',
+    'der mitarbeiter': '员工',
+    'der tourist': '游客(男)',
+    'die touristin': '游客(女)',
+    'der gast': '客人',
+    'der nachbar': '邻居(男)',
+    'die nachbarin': '邻居(女)',
+    'der freund': '朋友(男)',
+    'die freundin': '朋友(女)',
+    'der gast': '客人',
+    'die familie': '家庭',
+    'der vater': '父亲',
+    'die mutter': '母亲',
+    'die eltern': '父母',
+    'der sohn': '儿子',
+    'die tochter': '女儿',
+    'der bruder': '兄弟',
+    'die schwester': '姐妹',
+    'der onkel': '叔叔/舅舅',
+    'die tante': '阿姨/姑姑',
+    'der großvater': '祖父/外祖父',
+    'die großmutter': '祖母/外祖母',
+    'die großeltern': '祖父母',
+    'der enkel': '孙子(男)',
+    'die enkelin': '孙女(女)',
+    'der cousin': '堂/表兄弟',
+    'die cousine': '堂/表姐妹',
+    'der partner': '伙伴/伴侣',
+    'die partnerin': '女伴',
+
+    // ---- Nouns: Time ----
+    'der tag': '天/日子',
+    'das jahr': '年',
+    'die zeit': '时间',
+    'der monat': '月份',
+    'die woche': '周',
+    'die stunde': '小时',
+    'die minute': '分钟',
+    'die sekunde': '秒',
+    'der morgen': '早晨',
+    'der vormittag': '上午',
+    'der mittag': '中午',
+    'der nachmittag': '下午',
+    'der abend': '晚上',
+    'die nacht': '夜晚',
+    'der sonntag': '星期日',
+    'der montag': '星期一',
+    'der dienstag': '星期二',
+    'der mittwoch': '星期三',
+    'der donnerstag': '星期四',
+    'der freitag': '星期五',
+    'der samstag': '星期六',
+    'der sonnabend': '星期六(北德)',
+    'der frühling': '春天',
+    'der sommer': '夏天',
+    'der herbst': '秋天',
+    'der winter': '冬天',
+    'das wochenende': '周末',
+    'der feiertag': '假日',
+    'der geburtstag': '生日',
+    'heute': '今天',
+    'morgen': '明天',
+    'gestern': '昨天',
+    'übermorgen': '后天',
+    'vorgestern': '前天',
+
+    // ---- Nouns: Places & Buildings ----
+    'die welt': '世界',
+    'das land': '国家/土地',
+    'die stadt': '城市',
+    'das dorf': '村庄',
+    'der ort': '地方/地点',
+    'die gegend': '地区',
+    'die region': '区域',
+    'das haus': '房子',
+    'die wohnung': '公寓/住所',
+    'das zimmer': '房间',
+    'der raum': '房间/空间',
+    'die küche': '厨房',
+    'das bad': '浴室',
+    'das badezimmer': '浴室',
+    'das schlafzimmer': '卧室',
+    'das wohnzimmer': '客厅',
+    'die treppe': '楼梯',
+    'die decke': '天花板',
+    'der boden': '地面/地板',
+    'die wand': '墙',
+    'die tür': '门',
+    'das fenster': '窗户',
+    'der garten': '花园',
+    'der hof': '院子',
+    'die straße': '街道',
+    'der weg': '路/方式',
+    'der platz': '广场/座位',
+    'der park': '公园',
+    'die brücke': '桥',
+    'die schule': '学校',
+    'die universität': '大学',
+    'die hochschule': '高等院校',
+    'die bibliothek': '图书馆',
+    'die mensa': '大学食堂',
+    'der bahnhof': '火车站',
+    'die station': '车站',
+    'der flughafen': '机场',
+    'das krankenhaus': '医院',
+    'die apotheke': '药房',
+    'die post': '邮局',
+    'die bank': '银行',
+    'das rathaus': '市政厅',
+    'die polizei': '警察',
+    'die feuerwehr': '消防队',
+    'die botschaft': '大使馆',
+    'das amt': '局/办事处',
+    'die behörde': '当局',
+    'das museum': '博物馆',
+    'das theater': '剧院',
+    'die kirche': '教堂',
+    'das restaurant': '餐厅',
+    'das café': '咖啡馆',
+    'das hotel': '酒店',
+    'der laden': '商店',
+    'das geschäft': '商店',
+    'das einkaufszentrum': '购物中心',
+    'der markt': '市场',
+    'der supermarkt': '超市',
+    'der baum': '树',
+    'die blume': '花',
+    'das gras': '草',
+    'der berg': '山',
+    'der see': '湖',
+    'das meer': '海',
+    'der fluss': '河流',
+    'der strand': '海滩',
+    'der wald': '森林',
+    'das feld': '田地',
+
+    // ---- Nouns: Education & Study ----
+    'der kurs': '课程',
+    'das seminar': '研讨课',
+    'die vorlesung': '讲座',
+    'die prüfung': '考试',
+    'die klausur': '闭卷考试',
+    'die note': '成绩/分数',
+    'das zeugnis': '成绩单',
+    'das studium': '学业/学习',
+    'der studiengang': '专业',
+    'der abschluss': '毕业/学位',
+    'der bachelor': '学士',
+    'der master': '硕士',
+    'der doktor': '博士',
+    'die vorlesung': '大课/讲座',
+    'die übung': '练习',
+    'die hausaufgabe': '家庭作业',
+    'der kommilitone': '同学(男)',
+    'die kommilitonin': '同学(女)',
+    'das thema': '主题/题目',
+    'die aufgabe': '任务/作业',
+    'die frage': '问题',
+    'die antwort': '回答',
+    'das problem': '问题/难题',
+    'die lösung': '解决方案',
+    'das beispiel': '例子',
+    'der grund': '原因',
+    'der vorteil': '优点',
+    'der nachteil': '缺点',
+    'die meinung': '观点/意见',
+    'die idee': '想法',
+    'die information': '信息',
+    'die daten': '数据',
+    'die grafik': '图表',
+    'die entwicklung': '发展',
+    'die zahl': '数字',
+    'das prozent': '百分比',
+    'der preis': '价格',
+    'das geld': '钱',
+    'der euro': '欧元',
+    'die wirtschaft': '经济',
+    'die firma': '公司',
+    'die gesellschaft': '社会',
+    'die kultur': '文化',
+    'die politik': '政治',
+    'die geschichte': '历史/故事',
+    'die technik': '技术',
+    'die wissenschaft': '科学',
+    'die umwelt': '环境',
+    'die energie': '能源',
+    'das wasser': '水',
+    'die luft': '空气',
+
+    // ---- Nouns: Transport & Travel ----
+    'das auto': '汽车',
+    'der bus': '公共汽车',
+    'die bahn': '火车/铁路',
+    'der zug': '火车',
+    'die straßenbahn': '有轨电车',
+    'die u-bahn': '地铁',
+    'die s-bahn': '城铁',
+    'das taxi': '出租车',
+    'das fahrrad': '自行车',
+    'das motorrad': '摩托车',
+    'das flugzeug': '飞机',
+    'das schiff': '船',
+    'die reise': '旅行',
+    'der urlaub': '假期',
+    'der flug': '飞行/航班',
+    'die fahrt': '行程/车程',
+    'das ticket': '票',
+    'die karte': '票/卡/地图',
+    'der plan': '计划/时刻表',
+    'der fahrplan': '时刻表',
+    'der ausweis': '证件',
+    'der pass': '护照',
+    'der koffer': '行李箱',
+    'die tasche': '包',
+
+    // ---- Nouns: Household & Objects ----
+    'der tisch': '桌子',
+    'der stuhl': '椅子',
+    'das bett': '床',
+    'das sofa': '沙发',
+    'der schrank': '柜子',
+    'das regal': '架子',
+    'die lampe': '灯',
+    'das bild': '图片',
+    'der spiegel': '镜子',
+    'der schlüssel': '钥匙',
+    'die uhr': '钟表',
+    'das geschenk': '礼物',
+    'die rechnung': '账单',
+    'die quittung': '收据',
+    'der stift': '笔',
+    'der bleistift': '铅笔',
+    'das papier': '纸',
+    'das heft': '本子',
+    'der ordner': '文件夹',
+    'der rucksack': '背包',
+    'der geldbeutel': '钱包',
+    'die brille': '眼镜',
+    'die schere': '剪刀',
+    'das lineal': '尺子',
+    'der radiergummi': '橡皮',
+    'das wörterbuch': '词典',
+    'das lexikon': '百科全书',
+    'die zeitung': '报纸',
+    'die zeitschrift': '杂志',
+    'der artikel': '文章',
+    'der text': '文本',
+    'der absatz': '段落',
+    'die überschrift': '标题',
+    'die übersetzung': '翻译',
+    'die grammatik': '语法',
+    'der buchstabe': '字母',
+    'das alphabet': '字母表',
+    'das buch': '书',
+    'das wort': '词',
+    'der satz': '句子',
+    'die seite': '页/边',
+    'das telefon': '电话',
+    'der computer': '电脑',
+    'das internet': '互联网',
+    'die musik': '音乐',
+    'der film': '电影',
+    'das spiel': '游戏',
+    'der sport': '运动',
+    'die gesundheit': '健康',
+    'das essen': '食物/吃',
+    'die lebensmittel': '食品',
+    'das frühstück': '早餐',
+    'das mittagessen': '午餐',
+    'das abendessen': '晚餐',
+    'der kaffee': '咖啡',
+    'der tee': '茶',
+    'der saft': '果汁',
+    'das bier': '啤酒',
+    'der wein': '葡萄酒',
+    'das wasser': '水',
+    'die milch': '牛奶',
+    'das fleisch': '肉',
+    'der fisch': '鱼',
+    'die kartoffel': '土豆',
+    'der reis': '米饭',
+    'die nudel': '面条',
+    'das gemüse': '蔬菜',
+    'das obst': '水果',
+    'der apfel': '苹果',
+    'die banane': '香蕉',
+    'die orange': '橙子',
+    'die tomate': '西红柿',
+    'der käse': '奶酪',
+    'die butter': '黄油',
+    'das ei': '鸡蛋',
+    'der zucker': '糖',
+    'das salz': '盐',
+    'der pfeffer': '胡椒',
+    'die suppe': '汤',
+    'der kuchen': '蛋糕',
+    'die schokolade': '巧克力',
+    'das eis': '冰淇淋',
+    'das brot': '面包',
+
+    // ---- Nouns: Work & Society ----
+    'die arbeit': '工作',
+    'der job': '工作/职业',
+    'der beruf': '职业',
+    'das gehalt': '工资',
+    'die freiheit': '自由',
+    'die freizeit': '休闲时间',
+    'das hobby': '爱好',
+    'die sprache': '语言',
+    'das deutsch': '德语',
+    'der fehler': '错误',
+    'deutschland': '德国',
+    'europa': '欧洲',
+    'die miete': '租金',
+    'das volk': '民族/人民',
+    'das ding': '东西',
+    'die sache': '事物/事情',
+    'die stelle': '地方/职位',
+    'das gebäude': '建筑物',
+    'der kalender': '日历',
+    'die uhrzeit': '时间(钟点)',
+
+    // ---- Nouns: Nature ----
+    'die sonne': '太阳',
+    'der mond': '月亮',
+    'der stern': '星星',
+    'der himmel': '天空',
+    'die wolke': '云',
+    'der regen': '雨',
+    'der schnee': '雪',
+    'der wind': '风',
+    'das wetter': '天气',
+    'die erde': '地球/土地',
+    'die natur': '自然',
+    'das tier': '动物',
+    'der hund': '狗',
+    'die katze': '猫',
+    'der vogel': '鸟',
+    'das pferd': '马',
+    'die kuh': '牛',
+    'das schwein': '猪',
+    'das huhn': '鸡',
+    'das schaf': '羊',
+    'die maus': '老鼠',
+
+    // ---- Adjectives ----
+    'gut': '好',
+    'schön': '美丽的',
+    'neu': '新的',
+    'alt': '旧的/老的',
+    'groß': '大的',
+    'klein': '小的',
+    'viel': '多的',
+    'wenig': '少的',
+    'schnell': '快的',
+    'langsam': '慢的',
+    'einfach': '简单的',
+    'schwer': '难的/重的',
+    'wichtig': '重要的',
+    'richtig': '正确的',
+    'falsch': '错误的',
+    'möglich': '可能的',
+    'interessant': '有趣的',
+    'toll': '极好的',
+    'heiß': '热的',
+    'kalt': '冷的',
+    'warm': '温暖的',
+    'trocken': '干燥的',
+    'nass': '湿的',
+    'sicher': '安全的/确定的',
+    'bekannt': '著名的/熟悉的',
+    'freundlich': '友好的',
+    'höflich': '礼貌的',
+    'pünktlich': '准时的',
+    'teuer': '贵的',
+    'billig': '便宜的',
+    'reich': '富有的',
+    'arm': '贫穷的',
+    'gesund': '健康的',
+    'krank': '生病的',
+    'glücklich': '幸福的/高兴的',
+    'traurig': '悲伤的',
+    'müde': '疲倦的',
+    'hungrig': '饥饿的',
+    'durstig': '口渴的',
+    'voll': '满的',
+    'leer': '空的',
+    'offen': '开着的',
+    'geschlossen': '关闭的',
+    'frei': '自由的/空闲的',
+    'sauber': '干净的',
+    'schmutzig': '脏的',
+    'ruhig': '安静的',
+    'laut': '大声的',
+    'stark': '强壮的',
+    'schwach': '弱的',
+    'hoch': '高的',
+    'tief': '深的/低的',
+    'breit': '宽的',
+    'dick': '厚的/胖的',
+    'dünn': '薄的/瘦的',
+    'süß': '甜的',
+    'sauer': '酸的',
+    'frisch': '新鲜的',
+    'modern': '现代的',
+    'traditionell': '传统的',
+    'aktuell': '当前的',
+    'zusätzlich': '额外的',
+    'besonders': '特别的',
+    'persönlich': '个人的',
+    'gemeinsam': '共同的',
+    'öffentlich': '公共的',
+    'privat': '私人的',
+    'formell': '正式的',
+    'informell': '非正式的',
+    'direkt': '直接的',
+    'aktiv': '积极的/活跃的',
+    'positiv': '正面的',
+    'negativ': '负面的',
+    'national': '国家的',
+    'international': '国际的',
+    'lokal': '本地的',
+    'sozial': '社会的',
+    'kulturell': '文化的',
+    'historisch': '历史的',
+    'politisch': '政治的',
+    'wirtschaftlich': '经济的',
+    'ökologisch': '生态的',
+    'technisch': '技术的',
+    'wissenschaftlich': '科学的',
+    'lang': '长的',
+    'kurz': '短的',
+    'leicht': '轻的/容易的',
+    'bunt': '彩色的',
+    'gefährlich': '危险的',
+    'fertig': '完成的',
+    'lustig': '有趣的/好笑的',
+    'ernst': '严肃的',
+    'nett': '友好的/好的',
+    'schlecht': '坏的',
+    'super': '超级的',
+    'prima': '很好的',
+    'verrückt': '疯狂的',
+    'klug': '聪明的',
+    'dumm': '笨的',
+    'faul': '懒惰的',
+    'fleißig': '勤奋的',
+    'unhöflich': '不礼貌的',
+    'geduldig': '耐心的',
+    'ungeduldig': '不耐烦的',
+    'ehrlich': '诚实的',
+    'unehrlich': '不诚实的',
+    'böse': '坏的/恶的',
+    'unfreundlich': '不友好的',
+    'wunderschön': '极美的',
+    'schrecklich': '可怕的/糟糕的',
+    'bequem': '舒适的',
+    'unbequem': '不舒服的',
+    'teuer': '贵的',
+    'ginstig': '便宜的',
+    'gewöhnlich': '通常的',
+    'außergewöhnlich': '非凡的',
+    'ähnlich': '相似的',
+    'gleich': '相同的',
+    'verschieden': '不同的',
+    'einzig': '唯一的',
+    'nötig': '必要的',
+    'überflüssig': '多余的',
+    'genug': '足够的',
+    'spät': '晚的',
+    'früh': '早的',
+    'neu': '新的',
+    'alt': '旧的',
+    'jung': '年轻的',
+    'gefährlich': '危险的',
+    'sicher': '安全的',
+
+    // ---- Adverbs & function words ----
+    'jetzt': '现在',
+    'bald': '很快',
+    'später': '以后',
+    'immer': '总是',
+    'nie': '从不',
+    'niemals': '从不',
+    'manchmal': '有时',
+    'oft': '经常',
+    'hier': '这里',
+    'da': '那里/那儿',
+    'dort': '那里',
+    'oben': '上面',
+    'unten': '下面',
+    'links': '左边',
+    'rechts': '右边',
+    'zusammen': '一起',
+    'allein': '独自',
+    'auch': '也',
+    'nur': '只/仅',
+    'noch': '还',
+    'schon': '已经',
+    'trotzdem': '尽管如此',
+    'deshalb': '因此',
+    'deswegen': '因此',
+    'vielleicht': '也许',
+    'natürlich': '当然',
+    'sogar': '甚至',
+    'besonders': '特别地',
+    'ungefähr': '大约',
+    'fast': '几乎',
+    'gern': '乐意地',
+    'lieber': '更喜欢',
+    'am liebsten': '最喜欢',
+    'sofort': '立即',
+    'endlich': '终于',
+    'leider': '可惜',
+    'übrigens': '顺便说一下',
+    'hoffentlich': '但愿',
+    'bestimmt': '肯定',
+    'wirklich': '真的',
+    'sehr': '非常',
+    'ziemlich': '相当',
+    'ganz': '完全/十分',
+    'echt': '真的',
+    'absolut': '绝对',
+    'etwa': '大约',
+    'ansonsten': '否则',
+    'dagegen': '反对',
+    'dabei': '在旁/同时',
+    'dadurch': '通过此',
+    'dafür': '为此',
+    'dahinter': '在后面',
+    'damit': '以便',
+    'davon': '由此',
+    'dazwischen': '在中间',
+    'deswegen': '因此',
+    'trotzdem': '尽管如此',
+    'außerdem': '此外',
+    'jedoch': '然而',
+    'dennoch': '尽管如此',
+    'vielmehr': '更确切地说',
+    'zumindest': '至少',
+    'vielleicht': '也许',
+    'tatsächlich': '事实上',
+    'eigentlich': '本来/其实',
+    'nämlich': '即/因为',
+    'wohl': '大概/或许',
+    'eben': '正是/刚才',
+    'halt': '就是(口语)',
+
+    // ---- Prepositions ----
+    'in': '在...里',
+    'an': '在...旁',
+    'auf': '在...上',
+    'mit': '和/用',
+    'von': '从',
+    'zu': '到/向',
+    'bei': '在...旁/在...家',
+    'nach': '去/在...之后',
+    'vor': '在...前',
+    'über': '在...上方/关于',
+    'unter': '在...下面',
+    'durch': '通过',
+    'für': '为了',
+    'gegen': '反对/对着',
+    'ohne': '没有',
+    'um': '围绕/在',
+    'aus': '从...出',
+    'seit': '自从',
+    'trotz': '尽管',
+    'während': '在...期间',
+    'wegen': '因为',
+    'bis': '直到',
+    'ab': '从...起',
+    'gegenüber': '面对',
+    'hinter': '在...后面',
+    'neben': '在...旁边',
+    'innerhalb': '在...之内',
+    'außerhalb': '在...之外',
+    'statt': '代替',
+    'entlang': '沿着',
+    'außer': '除了',
+    'binnen': '在...之内',
+    'inklusive': '包括',
+    'exklusive': '不包括',
+
+    // ---- Conjunctions ----
+    'und': '和/与',
+    'oder': '或',
+    'aber': '但是',
+    'sondern': '而是',
+    'weil': '因为',
+    'dass': 'that(连词)',
+    'wenn': '如果/当',
+    'als': '当...时/比',
+    'ob': '是否',
+    'obwohl': '尽管',
+    'damit': '以便',
+    'bevor': '在...之前',
+    'nachdem': '在...之后',
+    'bis': '直到',
+    'sobald': '一...就',
+    'solange': '只要',
+    'falls': '如果',
+    'sodass': '以至于',
+    'jedoch': '然而',
+    'jedoch': '但是',
+    'entweder': '要么',
+    'weder': '既不',
+    'noch': '也不',
+    'sowohl': '既',
+    'einerseits': '一方面',
+    'andererseits': '另一方面',
+    'nämlich': '即/因为',
+    'zwar': '虽然',
+    'denn': '因为',
+    'doch': '但是/还是',
+    'allerdings': '不过',
+    'hingegen': '相反',
+
+    // ---- TestDaF-specific vocabulary ----
+    'die vorbereitungszeit': '准备时间',
+    'die sprechzeit': '说话时间',
+    'die aufgabenstellung': '题目要求',
+    'die situationsbeschreibung': '情境描述',
+    'das schaubild': '图表',
+    'das diagramm': '图表/图',
+    'die quelle': '来源',
+    'der prozentsatz': '百分比',
+    'der vergleich': '比较',
+    'die darstellung': '描述/展示',
+    'das argument': '论据',
+    'das fazit': '结论',
+    'die begründung': '理由',
+    'der standpunkt': '立场',
+    // TestDaF nouns also without article (for lookup flexibility)
+    'vorbereitungszeit': '准备时间',
+    'sprechzeit': '说话时间',
+    'aufgabenstellung': '题目要求',
+    'situationsbeschreibung': '情境描述',
+    'schaubild': '图表',
+    'diagramm': '图表/图',
+    'quelle': '来源',
+    'prozentsatz': '百分比',
+    'vergleich': '比较',
+    'darstellung': '描述/展示',
+    'argument': '论据',
+    'fazit': '结论',
+    'begründung': '理由',
+    'standpunkt': '立场',
+    'meinung': '观点/意见',
+    'vorteil': '优点',
+    'nachteil': '缺点',
+    'überzeugen': '说服',
+    'darstellen': '描述/展示',
+    'abwägen': '权衡',
+    'begründen': '说明理由',
+    'zusammenfassen': '总结',
+    'vorstellen': '介绍/想象',
+    'argumentieren': '论证',
+    'belegen': '证明/引用',
+    'erwähnen': '提及',
+    'hervorheben': '强调',
+    'hervorgehen': '得出',
+    'darüber': '关于那',
+    'außerdem': '此外',
+    'dennoch': '尽管如此',
+    'jedoch': '然而',
+    'einerseits': '一方面',
+    'andererseits': '另一方面',
+    'zum einen': '一方面',
+    'zum anderen': '另一方面',
+    'sowohl': '既',
+    'als auch': '也/以及',
+    'entweder': '要么',
+    'oder': '或',
+    'weder': '既不',
+    'noch': '也不',
+    'zunächst': '首先',
+    'anschließend': '随后',
+    'schließlich': '最后',
+    'zuletzt': '最后',
+    'zudem': '此外',
+    'ferner': '此外',
+    'fernerhin': '此外',
+    'obendrein': '此外',
+    'gleichfalls': '同样地',
+    'ebenso': '同样',
+    'daher': '因此',
+    'somit': '因此',
+    'folglich': '因此',
+    'infolgedessen': '因此',
+    'mithin': '因此',
+    'mithin': '那么',
+    'demnach': '因此',
+    'demzufolge': '据此',
+    'indessen': '然而',
+    'inzwischen': '与此同时',
+    'unterdessen': '与此同时',
+    'gleichzeitig': '同时',
+    'derzeit': '目前',
+    'heutzutage': '如今',
+    'künftig': '将来',
+    'künftig': '将来',
+    'zukünftig': '未来的',
+    'bisher': '到目前为止',
+    'seither': '从那时起',
+    'vorher': '之前',
+    'nachher': '之后',
+    'zuvor': '此前',
+    'danach': '此后',
+    'später': '以后',
+    'früher': '以前',
+    'damals': '那时',
+    'seitdem': '从那时起',
+    'solange': '只要',
+    'sowie': '以及/一旦',
+    'sobald': '一...就',
+    'sobaldd': '一...就',
+
+    // ---- Additional common everyday words ----
+    'der abschied': '告别',
+    'der anfang': '开始',
+    'das ende': '结束',
+    'der erfolg': '成功',
+    'die gefahr': '危险',
+    'die hoffnung': '希望',
+    'die liebe': '爱',
+    'die angst': '恐惧',
+    'die freude': '快乐',
+    'der schmerz': '疼痛',
+    'die ruhe': '安静',
+    'die lust': '兴趣/兴致',
+    'der mut': '勇气',
+    'die geduld': '耐心',
+    'die erfahrung': '经验',
+    'das wissen': '知识',
+    'die kenntnis': '认识/了解',
+    'die fähigkeit': '能力',
+    'die möglichkeit': '可能性',
+    'die chance': '机会',
+    'das ziel': '目标',
+    'der plan': '计划',
+    'der traum': '梦/梦想',
+    'die wahrheit': '真相',
+    'die lüge': '谎言',
+    'der erfolg': '成功',
+    'der misserfolg': '失败',
+    'die pflicht': '义务',
+    'die pflicht': '责任',
+    'das recht': '权利',
+    'das gesetz': '法律',
+    'die regel': '规则',
+    'die pflicht': '义务',
+    'der rat': '建议',
+    'der tipp': '提示',
+    'der hinweis': '提示',
+    'die nachricht': '消息',
+    'die neuigkeit': '新闻',
+    'die ankündigung': '通知',
+    'diewarnung': '警告',
+    'die warnung': '警告',
+    'die bitte': '请求',
+    'der wunsch': '愿望',
+    'die ordnung': '秩序',
+    'das system': '系统',
+    'die methode': '方法',
+    'das verfahren': '方法/程序',
+    'der prozess': '过程',
+    'der schritt': '步骤',
+    'das ergebnis': '结果',
+    'die folge': '后果',
+    'die wirkung': '影响/效果',
+    'der einfluss': '影响',
+    'die ursache': '原因',
+    'der anlass': '起因',
+    'der grund': '原因',
+    'der zweck': '目的',
+    'der sinn': '意义',
+    'der inhalt': '内容',
+    'die form': '形式',
+    'der stil': '风格',
+    'die art': '方式/种类',
+    'die weise': '方式',
+    'das niveau': '水平',
+    'das niveau': '水准',
+    'die stufe': '等级/阶段',
+    'die klasse': '班级/等级',
+    'die gruppe': '组/群',
+    'die menge': '数量',
+    'das maß': '尺寸/程度',
+    'der grad': '程度',
+    'die stärke': '强度',
+    'die schwäche': '弱点',
+    'die qualität': '质量',
+    'die quantität': '数量',
+    'der wert': '价值',
+    'der nutzen': '用途/利益',
+    'der schaden': '损害',
+    'das risiko': '风险',
+    'die gefahr': '危险',
+    'die sicherheit': '安全',
+    'die unsicherheit': '不确定性',
+    'der zweifel': '怀疑',
+    'die gewissheit': '确信',
+    'die überzeugung': '信念',
+    'das vertrauen': '信任',
+    'das misstrauen': '不信任',
+    'die hoffnung': '希望',
+    'die erwartung': '期望',
+    'die befürchtung': '担忧',
+    'die angst': '恐惧',
+    'die sorge': '担忧',
+    'die freude': '快乐',
+    'der kummer': '忧愁',
+    'die trauer': '悲伤',
+    'die wut': '愤怒',
+    'der ärger': '恼怒',
+    'das glück': '幸福/幸运',
+    'das pech': '倒霉',
+    'das schicksal': '命运',
+    'das gefühl': '感觉',
+    'die empfindung': '感受',
+    'der gedanke': '想法',
+    'die meinung': '观点',
+    'die ansicht': '看法',
+    'die auffassung': '理解/看法',
+    'der standpunkt': '立场',
+    'die position': '立场/位置',
+    'die einstellung': '态度',
+    'die haltung': '态度/姿势',
+    'das verhalten': '行为',
+    'die handlung': '行动',
+    'die tat': '行为/事迹',
+    'der schritt': '步骤',
+    'die maßnahme': '措施',
+    'die entscheidung': '决定',
+    'die wahl': '选择',
+    'die auswahl': '选择/挑选',
+    'die möglichkeit': '可能性',
+    'die alternative': '替代方案',
+    'der vorschlag': '建议',
+    'der plan': '计划',
+    'das projekt': '项目',
+    'das vorhaben': '计划/打算',
+    'das ziel': '目标',
+    'der zweck': '目的',
+    'die absicht': '意图',
+    'der wille': '意志',
+    'der mut': '勇气',
+    'die geduld': '耐心',
+    'die ausdauer': '毅力',
+    'die energie': '精力/能源',
+    'die kraft': '力量',
+    'die stärke': '强度/长处',
+    'die macht': '权力',
+    'die gewalt': '暴力/权力',
+    'das recht': '权利/法',
+    'die pflicht': '义务',
+    'die verantwortung': '责任',
+    'die aufgabe': '任务',
+    'die funktion': '功能',
+    'die rolle': '角色',
+    'der teil': '部分',
+    'der anteil': '份额',
+    'der beitrag': '贡献',
+    'die leistung': '成绩/服务',
+    'das ergebnis': '结果',
+    'der erfolg': '成功',
+    'der fortschritt': '进步',
+    'die verbesserung': '改善',
+    'die änderung': '变更',
+    'die entwicklung': '发展',
+    'das wachstum': '增长',
+    'der zuwachs': '增加',
+    'der rückgang': '下降',
+    'der abfall': '下降/废物',
+    'der anstieg': '上升',
+    'die zunahme': '增加',
+    'die abnahme': '减少',
+    'der unterschied': '差异',
+    'der gegensatz': '对立',
+    'der kontrast': '对比',
+    'der vergleich': '比较',
+    'das verhältnis': '关系/比例',
+    'die beziehung': '关系',
+    'die verbindung': '联系',
+    'der kontakt': '接触',
+    'die kommunikation': '交流',
+    'das gespräch': '谈话',
+    'die diskussion': '讨论',
+    'die debatte': '辩论',
+    'das argument': '论据',
+    'die begründung': '理由',
+    'der beweis': '证据',
+    'das zeichen': '标志/符号',
+    'das signal': '信号',
+    'die nachricht': '消息',
+    'die information': '信息',
+    'die auskunft': '信息/答复',
+    'die mitteilung': '通知',
+    'die ankündigung': '预告',
+    'die erklärung': '解释',
+    'die beschreibung': '描述',
+    'die darstellung': '展示/描述',
+    'die zusammenfassung': '总结',
+    'die bewertung': '评价',
+    'das urteil': '判断',
+    'die entscheidung': '决定',
+    'der schluss': '结论',
+    'das fazit': '结论',
+    'das ergebnis': '结果',
+    'die folgerung': '推论',
+    'die konsequenz': '后果',
+    'die auswirkung': '影响',
+    'die wirkung': '效果',
+    'der effekt': '效果',
+    'der einfluss': '影响',
+    'die ursache': '原因',
+    'der grund': '原因',
+    'der anlass': '起因',
+    'die bedingung': '条件',
+    'die voraussetzung': '前提',
+    'die anforderung': '要求',
+    'der bedarf': '需求',
+    'das bedürfnis': '需要',
+    'der wunsch': '愿望',
+    'die anfrage': '询问',
+    'die frage': '问题',
+    'die antwort': '回答',
+    'die lösung': '解决方案',
+    'das mittel': '手段/方法',
+    'der weg': '途径/方式',
+    'die art': '方式',
+    'die methode': '方法',
+    'das verfahren': '方法/程序',
+    'das prinzip': '原则',
+    'die regel': '规则',
+    'das gesetz': '法律',
+    'die vorschrift': '规定',
+    'der standard': '标准',
+    'das niveau': '水平',
+    'die stufe': '等级',
+    'die klasse': '等级/班级',
+    'die kategorie': '类别',
+    'die sorte': '种类',
+    'die art': '种类',
+    'die gruppe': '组',
+    'die reihe': '排/系列',
+    'die zahl': '数字',
+    'die anzahl': '数量',
+    'die menge': '量',
+    'das maß': '程度/尺寸',
+    'der grad': '度',
+    'das prozent': '百分比',
+    'der anteil': '比例/份额',
+    'der quotient': '商/比率',
+    'die rate': '比率',
+    'das verhältnis': '比例',
+    'der durchschnitt': '平均',
+    'der wert': '值',
+    'das ergebnis': '结果',
+    'die summe': '总和',
+    'das total': '总计',
+    'das ganze': '整体',
+    'der rest': '剩余',
+    'der unterschied': '差别',
+    'der abstand': '间距',
+    'die entfernung': '距离',
+    'die weite': '宽度/距离',
+    'die länge': '长度',
+    'die breite': '宽度',
+    'die höhe': '高度',
+    'die tiefe': '深度',
+    'die dicke': '厚度',
+    'das gewicht': '重量',
+    'das volumen': '体积',
+    'der inhalt': '内容/容量',
+    'die größe': '大小',
+    'das format': '格式/尺寸',
+    'das maß': '度量',
+    'die einheit': '单位',
+    'das element': '元素',
+    'der faktor': '因素',
+    'der aspekt': '方面',
+    'die seite': '方面/边',
+    'der bereich': '领域/范围',
+    'das feld': '领域/田地',
+    'die branche': '行业',
+    'der zweig': '分支',
+    'die richtung': '方向',
+    'der weg': '道路/途径',
+    'die spur': '踪迹',
+    'die linie': '线',
+    'der punkt': '点',
+    'die stelle': '位置',
+    'der ort': '地点',
+    'der platz': '广场/位置',
+    'die position': '位置',
+    'der standort': '所在地',
+    'der raum': '空间/房间',
+    'die fläche': '面积',
+    'das gebiet': '地区/领域',
+    'die zone': '区域',
+    'der bezirk': '区',
+    'der kreis': '圈/县',
+    'das land': '国家/土地',
+    'die region': '区域',
+    'der kontinent': '大陆',
+    'die welt': '世界',
+    'das universum': '宇宙',
+    'die erde': '地球',
+    'der planet': '行星',
+    'der mond': '月亮',
+    'die sonne': '太阳',
+    'der stern': '星星',
+    'der himmel': '天空',
+    'die wolke': '云',
+    'das wetter': '天气',
+    'der wind': '风',
+    'der regen': '雨',
+    'der schnee': '雪',
+    'der sturm': '风暴',
+    'das eis': '冰/冰淇淋',
+    'das feuer': '火',
+    'das wasser': '水',
+    'die luft': '空气',
+    'die erde': '泥土',
+    'der stein': '石头',
+    'das metall': '金属',
+    'das holz': '木头',
+    'das glas': '玻璃',
+    'das papier': '纸',
+    'der stoff': '布料/物质',
+    'die natur': '自然',
+    'die umwelt': '环境',
+    'die landschaft': '风景',
+    'das tier': '动物',
+    'die pflanze': '植物',
+    'der baum': '树',
+    'die blume': '花',
+    'das gras': '草',
+    'das blatt': '叶子',
+    'die wurzel': '根',
+    'der stamm': '树干',
+    'der ast': '树枝',
+    'die frucht': '果实',
+    'der sam': '种子',
+    'der samen': '种子'
+};
+
+/* ===========================================================================
+ * 2. Async lookup: builtin → API → heuristic
+ * ========================================================================= */
+
+/**
+ * Look up a German word and return its Chinese translation.
+ * Strategy:
+ *   1. Check the built-in dictionary (case-insensitive).
+ *   2. Try the free dictionary API (German definitions, not Chinese — used as fallback info).
+ *   3. Heuristically strip common prefixes/suffixes and try again.
+ *
+ * @param {string} word - The German word to look up.
+ * @returns {Promise<{word:string, translation:string, source:string,
+ *           partOfSpeech?:string}|null>}
+ */
+async function lookupGermanWord(word) {
+    if (!word || typeof word !== 'string') return null;
+
+    var cleanWord = word.toLowerCase().trim();
+
+    // 1. Built-in dictionary
+    if (DE_ZH_DICT[cleanWord]) {
+        return { word: word, translation: DE_ZH_DICT[cleanWord], source: 'builtin' };
+    }
+
+    // 2. Try the free dictionary API for German definitions
+    var apiResult = await fetchGermanTranslation(word);
+    if (apiResult) {
+        return apiResult;
+    }
+
+    // 3. Heuristic: strip common prefixes/suffixes and re-check built-in dict
+    var heuristicResult = heuristicLookup(cleanWord);
+    if (heuristicResult) {
+        return heuristicResult;
+    }
+
+    return null; // Not found
+}
+
+/**
+ * Heuristic lookup: attempts to identify the base form of a German word
+ * by removing common inflectional prefixes/suffixes and compound separators,
+ * then checking the built-in dictionary again.
+ */
+function heuristicLookup(word) {
+    if (!word) return null;
+
+    // Try a series of transformations, first match wins
+    var candidates = [];
+
+    // Remove separable verb prefixes that appear when separated
+    var separablePrefixes = ['ab', 'an', 'auf', 'aus', 'bei', 'ein', 'entgegen',
+        'fort', 'her', 'hin', 'los', 'mit', 'nach', 'nieder', 'vor', 'weg',
+        'zu', 'zurück', 'zusammen', 'durch', 'über', 'um', 'unter', 'wieder'];
+    for (var i = 0; i < separablePrefixes.length; i++) {
+        var p = separablePrefixes[i];
+        if (word.indexOf(p) === 0 && word.length > p.length + 2) {
+            // Try removing the prefix
+            candidates.push(word.substring(p.length));
+            // Try with the prefix attached (ge-form etc.)
+            candidates.push('ge' + word.substring(p.length));
+        }
+    }
+
+    // Remove common adjective endings
+    var adjEndings = ['er', 'e', 'es', 'em', 'en', 'ere', 'erer', 'esten', 'este'];
+    for (var j = 0; j < adjEndings.length; j++) {
+        var e = adjEndings[j];
+        if (word.length > e.length + 2 && word.lastIndexOf(e) === word.length - e.length) {
+            candidates.push(word.substring(0, word.length - e.length));
+        }
+    }
+
+    // Remove common verb endings (infinitive/participle suffixes)
+    var verbSuffixes = ['en', 'n', 'st', 't', 'te', 'ten', 'test', 'tet',
+        'et', 'est', 'e', 'ge', 'end', 'ung', 'heit', 'keit'];
+    for (var k = 0; k < verbSuffixes.length; k++) {
+        var s = verbSuffixes[k];
+        if (word.length > s.length + 2 && word.lastIndexOf(s) === word.length - s.length) {
+            candidates.push(word.substring(0, word.length - s.length));
+            // Also try adding "en" to form an infinitive
+            candidates.push(word.substring(0, word.length - s.length) + 'en');
+        }
+    }
+
+    // Try compound splitting on hyphens/underscores
+    if (word.indexOf('-') !== -1) {
+        var parts = word.split(/[-_]/);
+        for (var m = 0; m < parts.length; m++) {
+            candidates.push(parts[m].toLowerCase());
+        }
+    }
+
+    // Check each candidate against the dictionary
+    for (var c = 0; c < candidates.length; c++) {
+        var cand = candidates[c].toLowerCase().trim();
+        if (DE_ZH_DICT[cand]) {
+            return { word: word, translation: DE_ZH_DICT[cand], source: 'heuristic' };
+        }
+    }
+
+    return null;
+}
+
+/* ===========================================================================
+ * 3. Free API translation fetch
+ * ========================================================================= */
+
+/**
+ * Look up a German word using free online APIs.
+ *  1. https://api.dictionaryapi.dev/api/v1/entries/de/{word} — German definitions
+ *  2. If the API call fails or returns nothing, fall back to the built-in dict.
+ *  3. As a last resort, run the heuristic lookup.
+ *
+ * @param {string} word - The German word to translate.
+ * @returns {Promise<{word:string, translation:string, source:string,
+ *           partOfSpeech?:string}|null>}
+ */
+async function fetchGermanTranslation(word) {
+    if (!word || typeof word !== 'string') return null;
+
+    var cleanWord = word.toLowerCase().trim();
+
+    // 1. Try the free dictionary API
+    try {
+        var resp = await fetch(
+            'https://api.dictionaryapi.dev/api/v1/entries/de/' + encodeURIComponent(cleanWord)
+        );
+        if (resp.ok) {
+            var data = await resp.json();
+            // Extract the first definition
+            if (data && data[0] && data[0].meanings && data[0].meanings[0]) {
+                var meaning = data[0].meanings[0];
+                var def = meaning.definitions && meaning.definitions[0];
+                if (def && def.definition) {
+                    var partOfSpeech = meaning.partOfSpeech || '';
+                    return {
+                        word: word,
+                        translation: def.definition,
+                        source: 'api',
+                        partOfSpeech: partOfSpeech
+                    };
+                }
+            }
+        }
+    } catch (e) {
+        // Network or parse error — fall through to built-in dict
+    }
+
+    // 2. Check built-in dictionary
+    if (DE_ZH_DICT[cleanWord]) {
+        return { word: word, translation: DE_ZH_DICT[cleanWord], source: 'builtin' };
+    }
+
+    // 3. Heuristic last resort
+    var heuristicResult = heuristicLookup(cleanWord);
+    if (heuristicResult) {
+        return heuristicResult;
+    }
+
+    return null;
+}
+
+/* ===========================================================================
+ * 4. Dictionary popup UI
+ * ========================================================================= */
+
+var _lcDictPopupEl = null; // singleton reference
+
+/**
+ * Show (or update) the dictionary popup at the given screen coordinates.
+ * Looks up the word asynchronously and updates the popup content in place.
+ *
+ * @param {string} word  - The German word to display/translate.
+ * @param {number} x     - Left position in pixels (clientX).
+ * @param {number} y     - Top position in pixels (clientY).
+ */
+function showDictPopup(word, x, y) {
+    _ensureDictPopupCSS();
+
+    // Close any existing popup first
+    hideDictPopup();
+
+    // Create the popup element
+    var popup = document.createElement('div');
+    popup.className = 'lc-dict-popup';
+    popup.innerHTML =
+        '<div class="lc-dict-popup-header">' +
+            '<span class="lc-dict-popup-word"></span>' +
+            '<button class="lc-dict-popup-close" title="关闭">&times;</button>' +
+        '</div>' +
+        '<div class="lc-dict-popup-body">' +
+            '<div class="lc-dict-popup-loading">' +
+                '<span class="lc-dict-spinner"></span>' +
+                '<span>正在查词…</span>' +
+            '</div>' +
+        '</div>';
+
+    // Populate word
+    popup.querySelector('.lc-dict-popup-word').textContent = word;
+
+    // Position the popup, keeping it on-screen
+    document.body.appendChild(popup);
+    var rect = popup.getBoundingClientRect();
+    var px = (typeof x === 'number') ? x : (window.innerWidth / 2 - 180);
+    var py = (typeof y === 'number') ? y : 100;
+    if (px + rect.width > window.innerWidth - 8) {
+        px = window.innerWidth - rect.width - 8;
+    }
+    if (px < 8) px = 8;
+    if (py + rect.height > window.innerHeight - 8) {
+        py = window.innerHeight - rect.height - 8;
+    }
+    if (py < 8) py = 8;
+    popup.style.left = px + 'px';
+    popup.style.top = py + 'px';
+
+    _lcDictPopupEl = popup;
+
+    // Close button
+    popup.querySelector('.lc-dict-popup-close').addEventListener('click', function () {
+        hideDictPopup();
+    });
+
+    // Click outside to close
+    setTimeout(function () {
+        document.addEventListener('click', _lcDictPopupOutsideClick, true);
+    }, 0);
+
+    // Escape to close
+    document.addEventListener('keydown', _lcDictPopupEscKey);
+
+    // Async lookup
+    _updateDictPopupContent(popup, word);
+}
+
+/**
+ * Asynchronously look up the word and fill the popup body.
+ */
+async function _updateDictPopupContent(popup, word) {
+    var body = popup.querySelector('.lc-dict-popup-body');
+    if (!body) return;
+
+    try {
+        var result = await lookupGermanWord(word);
+        if (!result) {
+            body.innerHTML =
+                '<div class="lc-dict-popup-translation">未找到翻译</div>' +
+                '<div class="lc-dict-popup-source">source: not found</div>';
+            return;
+        }
+
+        var translationHtml = '<div class="lc-dict-popup-translation">' +
+            _escapeHtml(result.translation) + '</div>';
+
+        var metaHtml = '';
+        if (result.partOfSpeech) {
+            metaHtml += '<div class="lc-dict-popup-meta">词性: ' +
+                _escapeHtml(result.partOfSpeech) + '</div>';
+        }
+
+        var sourceLabel = {
+            builtin: '内置词典',
+            api: '在线 API',
+            heuristic: '推断(词根)'
+        }[result.source] || result.source;
+
+        body.innerHTML = translationHtml + metaHtml +
+            '<div class="lc-dict-popup-source">来源: ' + sourceLabel + '</div>';
+    } catch (err) {
+        body.innerHTML =
+            '<div class="lc-dict-popup-translation">查询出错</div>' +
+            '<div class="lc-dict-popup-source">' + _escapeHtml(String(err)) + '</div>';
+    }
+}
+
+/* ----- Popup helpers ----- */
+
+function hideDictPopup() {
+    if (_lcDictPopupEl && _lcDictPopupEl.parentNode) {
+        _lcDictPopupEl.parentNode.removeChild(_lcDictPopupEl);
+    }
+    _lcDictPopupEl = null;
+    document.removeEventListener('click', _lcDictPopupOutsideClick, true);
+    document.removeEventListener('keydown', _lcDictPopupEscKey);
+}
+
+function _lcDictPopupOutsideClick(e) {
+    if (_lcDictPopupEl && !_lcDictPopupEl.contains(e.target)) {
+        // Don't close if the click originated from a lookup button
+        if (e.target && e.target.classList && e.target.classList.contains('lc-dict-lookup-btn')) {
+            return;
+        }
+        hideDictPopup();
+    }
+}
+
+function _lcDictPopupEscKey(e) {
+    if (e.key === 'Escape' || e.keyCode === 27) {
+        hideDictPopup();
+    }
+}
+
+function _escapeHtml(str) {
+    if (str == null) return '';
+    return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+}
+
+/* ===========================================================================
+ * 5. Attach "查词" buttons to vocabulary items
+ * ========================================================================= */
+
+/**
+ * Add a "查词" (lookup) button next to each vocabulary word found on the page.
+ *
+ * By default this looks for elements with the class `.lc-vocab-word` or
+ * `[data-vocab]` and appends a small lookup button after each one. The
+ * button shows the dictionary popup when clicked.
+ *
+ * @param {Object} [opts] - Optional configuration.
+ * @param {string} [opts.selector='.lc-vocab-word, [data-vocab]'] - CSS selector for vocab elements.
+ * @param {string} [opts.wordAttr] - Attribute to read the word from (defaults to textContent).
+ */
+function addDictLookupToVocab(opts) {
+    _ensureDictPopupCSS();
+
+    opts = opts || {};
+    var selector = opts.selector || '.lc-vocab-word, [data-vocab]';
+    var wordAttr = opts.wordAttr || null;
+
+    var vocabEls = document.querySelectorAll(selector);
+    for (var i = 0; i < vocabEls.length; i++) {
+        (function (el) {
+            // Avoid adding duplicate buttons
+            if (el.querySelector('.lc-dict-lookup-btn') || el.nextElementSibling && el.nextElementSibling.classList && el.nextElementSibling.classList.contains('lc-dict-lookup-btn')) {
+                return;
+            }
+
+            var word = wordAttr ? el.getAttribute(wordAttr) : el.textContent;
+            word = (word || '').trim();
+            if (!word) return;
+
+            var btn = document.createElement('button');
+            btn.className = 'lc-dict-lookup-btn';
+            btn.type = 'button';
+            btn.textContent = '查词';
+            btn.title = '查找 "' + word + '" 的翻译';
+
+            btn.addEventListener('click', function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+                var rect = btn.getBoundingClientRect();
+                showDictPopup(word, rect.left, rect.bottom + 6);
+            });
+
+            // Insert right after the vocab element
+            if (el.parentNode) {
+                el.parentNode.insertBefore(btn, el.nextSibling);
+            }
+        })(vocabEls[i]);
+    }
+}
+
+/**
+ * Convenience: re-scan the DOM for new vocabulary items and add buttons.
+ * Safe to call multiple times (skips items that already have a button).
+ */
+function refreshDictLookupButtons() {
+    addDictLookupToVocab();
+}
+
+/* ===========================================================================
+ * Exports (browser global + module/AMD compatible)
+ * ========================================================================= */
+
+if (typeof window !== 'undefined') {
+    window.DE_ZH_DICT = DE_ZH_DICT;
+    window.lookupGermanWord = lookupGermanWord;
+    window.fetchGermanTranslation = fetchGermanTranslation;
+    window.showDictPopup = showDictPopup;
+    window.hideDictPopup = hideDictPopup;
+    window.addDictLookupToVocab = addDictLookupToVocab;
+    window.refreshDictLookupButtons = refreshDictLookupButtons;
+}
+
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = {
+        DE_ZH_DICT: DE_ZH_DICT,
+        lookupGermanWord: lookupGermanWord,
+        fetchGermanTranslation: fetchGermanTranslation,
+        showDictPopup: showDictPopup,
+        hideDictPopup: hideDictPopup,
+        addDictLookupToVocab: addDictLookupToVocab,
+        refreshDictLookupButtons: refreshDictLookupButtons,
+        heuristicLookup: heuristicLookup
+    };
+}
+
+// Add dictionary lookup buttons to vocabulary items
+function addDictButtonsToVocab() {
+    document.querySelectorAll('.lc-vocab-word').forEach(function(el) {
+        if (el.querySelector('.lc-vocab-dict-btn')) return;
+        var word = el.dataset.word || el.textContent.trim().split(' ')[0];
+        if (!word) return;
+        var btn = document.createElement('button');
+        btn.className = 'lc-vocab-dict-btn';
+        btn.innerHTML = '<i data-lucide="search" style="width:11px;height:11px;"></i> 查词';
+        btn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            var rect = btn.getBoundingClientRect();
+            if (State.lang === 'de') {
+                lookupGermanWord(word).then(function(result) {
+                    if (result) {
+                        showDictPopupResult(word, result, rect.left, rect.bottom);
+                    } else {
+                        showDictPopupResult(word, { translation: '未找到释义', source: 'builtin' }, rect.left, rect.bottom);
+                    }
+                });
+            } else {
+                showDictPopupResult(word, { translation: '仅德语支持查词', source: 'builtin' }, rect.left, rect.bottom);
+            }
+        });
+        el.appendChild(btn);
+    });
+    refreshIcons();
+}
+
+function showDictPopupResult(word, result, x, y) {
+    var existing = document.getElementById('lc-dict-popup');
+    if (existing) existing.remove();
+    var popup = document.createElement('div');
+    popup.id = 'lc-dict-popup';
+    popup.className = 'lc-dict-popup';
+    popup.style.left = Math.min(x, window.innerWidth - 380) + 'px';
+    popup.style.top = (y + 8) + 'px';
+    popup.innerHTML = '<div class="lc-dict-popup-header"><span class="lc-dict-popup-word">' + escapeHtml(word) + '</span><button class="lc-dict-popup-close" onclick="this.parentElement.parentElement.remove()">×</button></div>' +
+        '<div class="lc-dict-popup-translation">' + escapeHtml(result.translation || '未找到') + '</div>' +
+        '<div class="lc-dict-popup-source">来源: ' + (result.source || 'builtin') + '</div>';
+    document.body.appendChild(popup);
+    setTimeout(function() {
+        document.addEventListener('click', function closePopup(e) {
+            if (!popup.contains(e.target)) {
+                popup.remove();
+                document.removeEventListener('click', closePopup);
+            }
+        });
+    }, 100);
+}
+
+function renderVocabulary() {
+    var langVocab = getLangVocab();
+    var words = langVocab.words; var phrases = langVocab.phrases;
+    var mastered = words.filter(function(w) { return w.status === '已掌握'; }).length;
+    var dueCount = getDueWords().length;
+    var statsHtml = [
+        { icon: 'book-open', val: words.length, label: '生词总数', color: 'var(--lc-color-primary)' },
+        { icon: 'check-circle', val: mastered, label: '已掌握', color: 'var(--lc-state-success)' },
+        { icon: 'clock', val: dueCount, label: '今日待复习', color: 'var(--lc-state-warning)' },
+        { icon: 'layers', val: phrases.length, label: '短语收录', color: 'var(--lc-state-info)' },
+    ].map(function(s) { return '<div class="lc-stat-card"><i data-lucide="' + s.icon + '" style="color:' + s.color + '"></i><div><div class="lc-stat-val">' + s.val + '</div><div class="lc-stat-label">' + s.label + '</div></div></div>'; }).join('');
+    document.getElementById('vocab-stats').innerHTML = statsHtml;
+    var langBadge = document.getElementById('vocab-lang-badge');
+    if (langBadge) langBadge.textContent = getCurrentLangConfig().name;
+    document.getElementById('tab-word-count').textContent = words.length;
+    document.getElementById('tab-phrase-count').textContent = phrases.length;
+    document.getElementById('tab-review-count').textContent = dueCount;
+    var search = (document.getElementById('vocab-search') ? document.getElementById('vocab-search').value : '').toLowerCase();
+    var filter = document.getElementById('vocab-filter') ? document.getElementById('vocab-filter').value : 'all';
+    var filtered = words.filter(function(w) { return (w.word.toLowerCase().includes(search) || w.meaning.toLowerCase().includes(search)) && (filter === 'all' || w.status === filter); });
+    if (filtered.length === 0) { document.getElementById('vocab-tbody').innerHTML = ''; document.getElementById('vocab-empty').style.display = words.length === 0 ? 'block' : 'none'; }
+    else {
+        document.getElementById('vocab-empty').style.display = 'none';
+        document.getElementById('vocab-tbody').innerHTML = filtered.map(function(w) {
+            var bc = w.status === '已掌握' ? 'lc-badge-success' : w.status === '待复习' ? 'lc-badge-warning' : 'lc-badge-neutral';
+            return '<tr><td><span class="lc-word-cell">' + escapeHtml(w.word) + '</span><span class="lc-phonetic">' + escapeHtml(w.phonetic || '') + '</span></td><td style="font-size:13px;color:var(--lc-color-text-secondary);">' + escapeHtml(w.meaning || '—') + '</td><td style="font-size:12px;color:var(--lc-color-text-tertiary);">' + escapeHtml(w.source) + '</td><td><span class="lc-mono">第' + w.line + '行</span></td><td><span class="lc-badge ' + bc + '">' + w.status + '</span></td><td><button class="lc-action-btn" onclick="cycleWordStatus(\'' + w.id + '\')" title="切换状态"><i data-lucide="refresh-cw"></i></button><button class="lc-action-btn" onclick="deleteWord(\'' + w.id + '\')" title="删除"><i data-lucide="trash-2"></i></button></td></tr>';
+        }).join('');
+    }
+    if (phrases.length === 0) { document.getElementById('phrase-groups').innerHTML = ''; document.getElementById('phrase-empty').style.display = 'block'; }
+    else {
+        document.getElementById('phrase-empty').style.display = 'none';
+        var groups = {};
+        phrases.forEach(function(p) { if (!groups[p.topic]) groups[p.topic] = []; groups[p.topic].push(p); });
+        var html = '';
+        var allTopics = getAllTopics();
+        var generalTopic = { id: 'general', name: '通用', color: '#837868', bg: '#EFE7D6', icon: 'folder' };
+        var order = allTopics.map(function(t) { return t.id; }).concat(['general']);
+        order.forEach(function(tid) {
+            if (!groups[tid] || groups[tid].length === 0) return;
+            var t = tid === 'general' ? generalTopic : findTopicById(tid);
+            if (!t) t = generalTopic;
+            var tName = t.name;
+            var tColor = t.color;
+            var tBg = t.bg;
+            var tIcon = t.icon || 'folder';
+            var isDefault = t.isDefault && tid !== 'general';
+            var items = groups[tid];
+            html += '<div style="margin-bottom:24px;">';
+            html += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;padding:6px 12px;border-radius:8px;background:' + tBg + ';">';
+            html += '<i data-lucide="' + tIcon + '" style="width:16px;height:16px;color:' + tColor + ';"></i>';
+            html += '<h3 class="lc-h3" style="color:' + tColor + ';">' + tName + '</h3>';
+            html += '<span class="lc-badge lc-badge-neutral">' + items.length + ' 条</span>';
+            html += '<div style="margin-left:auto;display:flex;gap:4px;">';
+            html += '<button class="lc-cat-chip-btn" onclick="renamePhraseCategory(\'' + tid + '\')" title="重命名"><i data-lucide="pencil"></i></button>';
+            html += '<button class="lc-cat-chip-btn" onclick="openColorPicker(\'' + tid + '\')" title="更换颜色"><i data-lucide="palette"></i></button>';
+            if (!isDefault) {
+                html += '<button class="lc-cat-chip-btn" onclick="deletePhraseCategory(\'' + tid + '\')" title="删除分类" style="color:var(--lc-state-error);"><i data-lucide="trash-2"></i></button>';
+            }
+            html += '</div>';
+            html += '</div><div class="lc-phrase-grid">';
+            var selectMode = State._phraseSelectMode || false;
+            html += items.map(function(p) {
+                var cardStyle = 'border-left:3px solid ' + (p.topicColor || tColor) + ';';
+                var tagStyle = 'background:' + (p.topicBg || tBg) + ';color:' + (p.topicColor || tColor) + ';';
+                var cardClass = 'lc-phrase-card' + (selectMode ? ' show-checkbox' : '');
+                var isSelected = State._phraseSelected && State._phraseSelected.indexOf(p.id) >= 0;
+                if (isSelected) cardClass += ' selected';
+                var checkboxHtml = selectMode ? '<input type="checkbox" class="lc-phrase-checkbox" data-phrase-id="' + p.id + '"' + (isSelected ? ' checked' : '') + ' onclick="event.stopPropagation()">' : '';
+                var cardClickAttr = selectMode ? ' onclick="togglePhraseSelect(\'' + p.id + '\')"' : '';
+                return '<div class="' + cardClass + '" style="' + cardStyle + '"' + cardClickAttr + ' data-phrase-card-id="' + p.id + '">'
+                    + checkboxHtml
+                    + '<div class="phrase-text">' + escapeHtml(p.phrase) + '</div>'
+                    + '<div class="phrase-phonetic">' + escapeHtml(p.phonetic || '') + '</div>'
+                    + '<div class="phrase-meaning">' + escapeHtml(p.meaning || '—') + '</div>'
+                    + '<div class="phrase-meta">'
+                    + '<span class="lc-phrase-tag" style="' + tagStyle + '" onclick="reassignPhraseTopic(\'' + p.id + '\')" title="点击更换分类">' + escapeHtml(p.topicName || tName) + '</span>'
+                    + '<span class="lc-mono" style="color:var(--lc-color-text-tertiary);font-size:11px;">' + escapeHtml(p.source) + '</span>'
+                    + '<button class="lc-cat-chip-btn" onclick="deletePhrase(\'' + p.id + '\')" title="删除短语" style="margin-left:auto;color:var(--lc-state-error);"><i data-lucide="trash-2"></i></button>'
+                    + '</div></div>';
+            }).join('');
+            html += '</div></div>';
+        });
+        document.getElementById('phrase-groups').innerHTML = html;
+    }
+    // Render category chips
+    var chipHtml = '';
+    var allTopicsChips = getAllTopics();
+    var chipOrder = allTopicsChips.concat([{ id: 'general', name: '通用', color: '#837868', bg: '#EFE7D6', isDefault: false }]);
+    chipOrder.forEach(function(t) {
+        var count = phrases.filter(function(p) { return p.topic === t.id; }).length;
+        if (count === 0 && !State.customTopics.some(function(ct) { return ct.id === t.id; })) return;
+        chipHtml += '<span class="lc-cat-chip" style="background:' + t.bg + ';color:' + t.color + ';">';
+        chipHtml += '<span class="lc-tag-option-dot" style="background:' + t.color + ';width:8px;height:8px;border-radius:50%;"></span>';
+        chipHtml += escapeHtml(t.name) + ' (' + count + ')';
+        chipHtml += '</span>';
+    });
+    var chipsEl = document.getElementById('phrase-cat-chips');
+    if (chipsEl) chipsEl.innerHTML = chipHtml;
+    renderReviewStartScreen();
+    refreshIcons();
+}
+    addDictButtonsToVocab();
+
+window.cycleWordStatus = function(id) {
+    var w = State.vocabulary.words.find(function(w) { return w.id === id; });
+    if (!w) return;
+    var cycle = { '未开始': '待复习', '待复习': '已掌握', '已掌握': '未开始' };
+    w.status = cycle[w.status] || '未开始';
+    if (w.status === '已掌握') { w.reviewCount = 8; w.nextReview = null; }
+    if (w.status === '未开始') { w.reviewCount = 0; w.nextReview = null; }
+    renderVocabulary(); saveUserData();
+};
+
+window.deleteWord = function(id) { State.vocabulary.words = State.vocabulary.words.filter(function(w) { return w.id !== id; }); renderVocabulary(); saveUserData(); showToast('已删除', 'info'); };
+
+// ===== MY LEARNING (Check-in & Reminders) =====
+function getTodayKey() {
+    var d = new Date();
+    return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+}
+
+function getYesterdayKey() {
+    var d = new Date(); d.setDate(d.getDate() - 1);
+    return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+}
+
+function isCheckedToday() {
+    return (State.learning.checkinDates || []).indexOf(getTodayKey()) !== -1;
+}
+
+function calculateStreak() {
+    var dates = (State.learning.checkinDates || []).slice().sort().reverse();
+    if (dates.length === 0) return 0;
+    var today = getTodayKey();
+    var yesterday = getYesterdayKey();
+    if (dates[0] !== today && dates[0] !== yesterday) return 0;
+    var streak = 0;
+    var expected = new Date();
+    if (dates[0] === yesterday) expected.setDate(expected.getDate() - 1);
+    for (var i = 0; i < dates.length; i++) {
+        var key = expected.getFullYear() + '-' + String(expected.getMonth()+1).padStart(2,'0') + '-' + String(expected.getDate()).padStart(2,'0');
+        if (dates[i] === key) { streak++; expected.setDate(expected.getDate() - 1); }
+        else break;
+    }
+    return streak;
+}
+
+window.doCheckin = function() {
+    if (isCheckedToday()) { showToast('今日已打卡！', 'info'); return; }
+    var today = getTodayKey();
+    if (!State.learning.checkinDates) State.learning.checkinDates = [];
+    State.learning.checkinDates.push(today);
+    var yesterday = getYesterdayKey();
+    if (State.learning.lastCheckin === yesterday) { State.learning.streak = (State.learning.streak || 0) + 1; }
+    else { State.learning.streak = 1; }
+    State.learning.lastCheckin = today;
+    State.learning.totalDays = State.learning.checkinDates.length;
+    saveUserData();
+    renderLearning();
+    showToast('🔥 打卡成功！连续 ' + State.learning.streak + ' 天', 'success');
+};
+
+function renderLearning() {
+    if (!State.learning) State.learning = { checkinDates: [], streak: 0, lastCheckin: null, dailyReminder: false, reminderTime: '20:00', reviewReminder: false, totalDays: 0 };
+    var streak = calculateStreak();
+    State.learning.streak = streak;
+    document.getElementById('streak-num').textContent = streak;
+    var langVocab = getLangVocab();
+    document.getElementById('stat-words').textContent = langVocab.words.length;
+    document.getElementById('stat-phrases').textContent = langVocab.phrases.length;
+    document.getElementById('stat-total-days').textContent = (State.learning.checkinDates || []).length;
+
+    var btn = document.getElementById('btn-checkin');
+    if (isCheckedToday()) {
+        btn.className = 'lc-checkin-btn done';
+        btn.innerHTML = '<i data-lucide="check-circle" style="width:20px;height:20px;vertical-align:middle;margin-right:6px;"></i>今日已打卡';
+    } else {
+        btn.className = 'lc-checkin-btn';
+        btn.innerHTML = '<i data-lucide="flame" style="width:20px;height:20px;vertical-align:middle;margin-right:6px;"></i>今日打卡';
+    }
+
+    // Build week grid (Monday-start)
+    var grid = document.getElementById('checkin-grid');
+    var now = new Date();
+    var dayOfWeek = now.getDay(); // 0=Sun
+    var mondayOffset = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
+    var weekStart = new Date(now); weekStart.setDate(now.getDate() - mondayOffset);
+    var todayKey = getTodayKey();
+    var html = '';
+    for (var i = 0; i < 7; i++) {
+        var d = new Date(weekStart); d.setDate(weekStart.getDate() + i);
+        var key = d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+        var isChecked = (State.learning.checkinDates || []).indexOf(key) !== -1;
+        var isToday = key === todayKey;
+        var isFuture = d > now;
+        var classes = 'lc-checkin-day';
+        if (isChecked) classes += ' checked';
+        if (isToday) classes += ' today';
+        if (isFuture) classes += '';
+        html += '<div class="' + classes + '" title="' + key + '">' + (isChecked ? '✓' : d.getDate()) + '</div>';
+    }
+    grid.innerHTML = html;
+
+    var dailyCb = document.getElementById('reminder-daily');
+    var reviewCb = document.getElementById('reminder-review');
+    var timeInput = document.getElementById('reminder-time');
+    if (dailyCb) dailyCb.checked = !!State.learning.dailyReminder;
+    if (reviewCb) reviewCb.checked = !!State.learning.reviewReminder;
+    if (timeInput) timeInput.value = State.learning.reminderTime || '20:00';
+    var dueCount = getDueWords().length;
+    var reviewLabel = document.getElementById('review-count-label');
+    if (reviewLabel) reviewLabel.textContent = '今日待复习 ' + dueCount;
+
+    refreshIcons();
+}
+
+window.toggleReminder = function(enabled) {
+    if (enabled && 'Notification' in window && Notification.permission !== 'granted') {
+        Notification.requestPermission().then(function(perm) {
+            if (perm !== 'granted') { showToast('通知权限未授权', 'error'); document.getElementById('reminder-daily').checked = false; return; }
+        });
+    }
+    State.learning.dailyReminder = enabled;
+    saveUserData();
+    showToast(enabled ? '每日提醒已开启' : '每日提醒已关闭', 'success');
+};
+
+window.saveReminderTime = function(val) {
+    State.learning.reminderTime = val;
+    saveUserData();
+};
+
+window.toggleReviewReminder = function(enabled) {
+    if (enabled && 'Notification' in window && Notification.permission !== 'granted') {
+        Notification.requestPermission().then(function(perm) {
+            if (perm !== 'granted') { showToast('通知权限未授权', 'error'); document.getElementById('reminder-review').checked = false; return; }
+        });
+    }
+    State.learning.reviewReminder = enabled;
+    saveUserData();
+    showToast(enabled ? '复习提醒已开启' : '复习提醒已关闭', 'success');
+};
+
+function checkReminders() {
+    if (!State.learning) return;
+    var now = new Date();
+    var currentTime = String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0');
+    if (State.learning.dailyReminder && State.learning.reminderTime === currentTime && !isCheckedToday() && !State._remindedToday) {
+        State._remindedToday = true;
+        if ('Notification' in window && Notification.permission === 'granted') {
+            new Notification('听空 ListenCloze', { body: '该学习啦！今天还没打卡呢 🔥' });
+        }
+    }
+    if (State.learning.reviewReminder) {
+        var dueCount = getDueWords().length;
+        if (dueCount > 0 && !State._remindedReview) {
+            State._remindedReview = true;
+            if ('Notification' in window && Notification.permission === 'granted') {
+                new Notification('听空 ListenCloze', { body: '有 ' + dueCount + ' 个生词待复习哦！' });
+            }
+        }
+    }
+    // Reset reminded flags at midnight
+    if (State._remindedToday && currentTime === '00:01') { State._remindedToday = false; State._remindedReview = false; }
+}
+
+window.deletePhrase = function(id) {
+    var p = State.vocabulary.phrases.find(function(x) { return x.id === id; });
+    if (p && p.hideId) {
+        var hiddenItem = State.hiddenItems.find(function(h) { return h.id === p.hideId; });
+        if (hiddenItem) unhideItem(p.hideId);
+    }
+    State.vocabulary.phrases = State.vocabulary.phrases.filter(function(x) { return x.id !== id; });
+    renderVocabulary(); saveUserData(); showToast('短语已删除', 'info');
+};
+
+// ===== Phrase Batch Selection =====
+window.togglePhraseSelect = function(phraseId) {
+    if (!State._phraseSelected) State._phraseSelected = [];
+    var idx = State._phraseSelected.indexOf(phraseId);
+    if (idx >= 0) State._phraseSelected.splice(idx, 1);
+    else State._phraseSelected.push(phraseId);
+    // Update checkbox and card state without full re-render
+    var card = document.querySelector('[data-phrase-card-id="' + phraseId + '"]');
+    if (card) {
+        var cb = card.querySelector('.lc-phrase-checkbox');
+        var isSelected = State._phraseSelected.indexOf(phraseId) >= 0;
+        if (cb) cb.checked = isSelected;
+        card.classList.toggle('selected', isSelected);
+    }
+    updatePhraseBatchCount();
+};
+
+function updatePhraseBatchCount() {
+    var count = State._phraseSelected ? State._phraseSelected.length : 0;
+    var countEl = document.getElementById('phrase-batch-count');
+    if (countEl) countEl.textContent = '已选 ' + count + ' 条';
+}
+
+function enterPhraseSelectMode() {
+    State._phraseSelectMode = true;
+    if (!State._phraseSelected) State._phraseSelected = [];
+    var bar = document.getElementById('phrase-batch-bar');
+    if (bar) bar.style.display = 'flex';
+    var selectModeBtn = document.getElementById('btn-phrase-select-mode');
+    if (selectModeBtn) { selectModeBtn.innerHTML = '<i data-lucide="square-dashed-mouse-pointer" style="width:14px;height:14px;"></i> 退出多选'; }
+    // Populate topic dropdown
+    var topicSelect = document.getElementById('phrase-batch-topic');
+    if (topicSelect) {
+        var allTopics = getAllTopics().concat([{ id: 'general', name: '通用', color: '#837868', bg: '#EFE7D6' }]);
+        topicSelect.innerHTML = allTopics.map(function(t) { return '<option value="' + t.id + '">' + escapeHtml(t.name) + '</option>'; }).join('');
+    }
+    renderVocabulary();
+}
+
+function exitPhraseSelectMode() {
+    State._phraseSelectMode = false;
+    State._phraseSelected = [];
+    var bar = document.getElementById('phrase-batch-bar');
+    if (bar) bar.style.display = 'none';
+    var selectModeBtn = document.getElementById('btn-phrase-select-mode');
+    if (selectModeBtn) { selectModeBtn.innerHTML = '<i data-lucide="square-dashed-mouse-pointer" style="width:14px;height:14px;"></i> 多选模式'; }
+    renderVocabulary();
+}
+
+window.batchAssignPhrases = function() {
+    if (!State._phraseSelected || State._phraseSelected.length === 0) { showToast('请先选择短语', 'info'); return; }
+    var topicSelect = document.getElementById('phrase-batch-topic');
+    var topicId = topicSelect ? topicSelect.value : 'general';
+    var topicObj = findTopicById(topicId) || { name: '通用', color: '#837868', bg: '#EFE7D6' };
+    var count = 0;
+    State._phraseSelected.forEach(function(pid) {
+        var p = State.vocabulary.phrases.find(function(x) { return x.id === pid; });
+        if (p) {
+            p.topic = topicId;
+            p.topicName = topicObj.name;
+            p.topicColor = topicObj.color;
+            p.topicBg = topicObj.bg;
+            count++;
+        }
+    });
+    saveUserData();
+    showToast(count + ' 条短语已分入「' + topicObj.name + '」', 'success');
+    exitPhraseSelectMode();
+};
+
+window.batchDeletePhrases = function() {
+    if (!State._phraseSelected || State._phraseSelected.length === 0) { showToast('请先选择短语', 'info'); return; }
+    var count = State._phraseSelected.length;
+    State._phraseSelected.forEach(function(pid) {
+        var p = State.vocabulary.phrases.find(function(x) { return x.id === pid; });
+        if (p && p.hideId) {
+            var hiddenItem = State.hiddenItems.find(function(h) { return h.id === p.hideId; });
+            if (hiddenItem) {
+                // Unhide without re-rendering (batch)
+                document.querySelectorAll('[data-hide-id="' + p.hideId + '"]').forEach(function(el) {
+                    el.classList.remove('lc-blank', 'lc-phrase-blank'); el.style.display = ''; el.textContent = el.dataset.originalText || '';
+                    delete el.dataset.hideId; delete el.dataset.originalText;
+                });
+                State.hiddenItems = State.hiddenItems.filter(function(i) { return i.id !== p.hideId; });
+            }
+        }
+    });
+    State.vocabulary.phrases = State.vocabulary.phrases.filter(function(x) { return State._phraseSelected.indexOf(x.id) < 0; });
+    saveUserData();
+    showToast(count + ' 条短语已删除', 'info');
+    exitPhraseSelectMode();
+    renderAnswerRail(); updateHiddenCount();
+};
+
+window.selectAllPhrases = function() {
+    if (!State._phraseSelectMode) enterPhraseSelectMode();
+    State._phraseSelected = getLangVocab().phrases.map(function(p) { return p.id; });
+    renderVocabulary();
+    updatePhraseBatchCount();
+};
+
+window.renamePhraseCategory = function(topicId) {
+    var topic = findTopicById(topicId) || (topicId === 'general' ? { id: 'general', name: '通用', color: '#837868', bg: '#EFE7D6', isDefault: false } : null);
+    if (!topic) return;
+    var newName = prompt('重命名分类「' + topic.name + '」：', topic.name);
+    if (!newName || !newName.trim()) return;
+    newName = newName.trim();
+    var allTopics = getAllTopics();
+    if (allTopics.some(function(t) { return t.name === newName && t.id !== topicId; }) || (newName === '通用' && topicId !== 'general')) {
+        showToast('分类名称已存在', 'error');
+        return;
+    }
+    var isDefaultTopic = TOPICS.some(function(t) { return t.id === topicId; });
+    if (isDefaultTopic) {
+        if (!State.topicNameOverrides) State.topicNameOverrides = {};
+        State.topicNameOverrides[topicId] = newName;
+    } else if (topicId === 'general') {
+        if (!State.topicNameOverrides) State.topicNameOverrides = {};
+        State.topicNameOverrides['general'] = newName;
+    } else {
+        var ct = (State.customTopics || []).find(function(t) { return t.id === topicId; });
+        if (ct) ct.name = newName;
+    }
+    State.vocabulary.phrases.forEach(function(p) {
+        if (p.topic === topicId) { p.topicName = newName; }
+    });
+    saveUserData(); populateTopicSelect(); renderTopicFolders(); renderVocabulary();
+    showToast('已重命名', 'success');
+};
+
+window.deletePhraseCategory = function(topicId) {
+    var topic = findTopicById(topicId);
+    if (!topic) return;
+    var phrasesInTopic = State.vocabulary.phrases.filter(function(p) { return p.topic === topicId; });
+    var msg = '确定删除分类「' + topic.name + '」？';
+    if (phrasesInTopic.length > 0) {
+        msg += '其中的 ' + phrasesInTopic.length + ' 条短语将移至「通用」分类。';
+    }
+    if (!confirm(msg)) return;
+    var generalObj = { name: State.topicNameOverrides['general'] || '通用', color: '#837868', bg: '#EFE7D6' };
+    phrasesInTopic.forEach(function(p) { p.topic = 'general'; p.topicName = generalObj.name; p.topicColor = generalObj.color; p.topicBg = generalObj.bg; });
+    var docsInTopic = (State.documents || []).filter(function(d) { return d.topic === topicId; });
+    docsInTopic.forEach(function(d) { d.topic = 'general'; });
+    State.customTopics = (State.customTopics || []).filter(function(t) { return t.id !== topicId; });
+    saveUserData(); populateTopicSelect(); renderTopicFolders(); renderVocabulary(); renderTopicList();
+    showToast('分类已删除', 'info');
+};
+
+var COLOR_PALETTE = ['#B06A36','#6F8390','#6E8A5A','#BE8A45','#9B5C8F','#5A7A9E','#8B5E3C','#4A6B7C','#7A6B8B','#5C8A6E','#C75C5C','#D4A03C','#7B8C6A','#8C6BA3','#4E8A9E','#A65D7B','#5E8F7A','#B87333','#687788','#9C7C4A'];
+
+var _colorPickerContext = null;
+
+window.openColorPicker = function(topicId) {
+    var topic = findTopicById(topicId);
+    if (!topic) return;
+    _colorPickerContext = { mode: 'edit', topicId: topicId, currentColor: topic.color };
+    showColorPickerOverlay(topic.name, topic.color);
+};
+
+window.openColorPickerForNew = function() {
+    _colorPickerContext = { mode: 'new', currentColor: COLOR_PALETTE[0] };
+    showColorPickerOverlay('新建分类', COLOR_PALETTE[0]);
+};
+
+function showColorPickerOverlay(title, selectedColor) {
+    var overlay = document.createElement('div');
+    overlay.className = 'lc-color-picker-overlay';
+    overlay.id = 'color-picker-overlay';
+    var html = '<div class="lc-color-picker">';
+    html += '<h3>' + (title === '新建分类' ? '新建短语分类' : '编辑分类颜色') + '</h3>';
+    if (_colorPickerContext.mode === 'new') {
+        html += '<input type="text" class="lc-color-picker-input" id="color-picker-name" placeholder="分类名称" maxlength="12">';
+    }
+    html += '<div class="lc-color-picker-grid" id="color-swatch-grid">';
+    COLOR_PALETTE.forEach(function(c) {
+        var sel = c === selectedColor ? ' selected' : '';
+        html += '<div class="lc-color-swatch' + sel + '" data-color="' + c + '" style="background:' + c + ';" onclick="selectColorSwatch(\'' + c + '\')"></div>';
+    });
+    html += '</div>';
+    html += '<div style="margin-bottom:12px;display:flex;align-items:center;gap:8px;">';
+    html += '<span style="font-size:12px;color:var(--lc-color-text-tertiary);">自定义：</span>';
+    html += '<input type="color" id="color-picker-custom" value="' + selectedColor + '" style="width:40px;height:32px;border:none;border-radius:6px;cursor:pointer;background:none;">';
+    html += '</div>';
+    html += '<div class="lc-color-picker-actions">';
+    html += '<button class="lc-btn lc-btn-ghost" onclick="closeColorPicker()">取消</button>';
+    html += '<button class="lc-btn lc-btn-primary" onclick="confirmColorPicker()">' + (_colorPickerContext.mode === 'new' ? '创建' : '确认') + '</button>';
+    html += '</div></div>';
+    overlay.innerHTML = html;
+    overlay.addEventListener('click', function(e) { if (e.target === overlay) closeColorPicker(); });
+    document.body.appendChild(overlay);
+    requestAnimationFrame(function() { overlay.classList.add('show'); });
+    var customInput = document.getElementById('color-picker-custom');
+    if (customInput) customInput.addEventListener('input', function() { selectColorSwatch(this.value); });
+    refreshIcons();
+}
+
+window.selectColorSwatch = function(color) {
+    _colorPickerContext.currentColor = color;
+    document.querySelectorAll('#color-swatch-grid .lc-color-swatch').forEach(function(el) {
+        el.classList.toggle('selected', el.dataset.color === color);
+    });
+    var customInput = document.getElementById('color-picker-custom');
+    if (customInput) customInput.value = color;
+};
+
+window.closeColorPicker = function() {
+    var overlay = document.getElementById('color-picker-overlay');
+    if (overlay) { overlay.classList.remove('show'); setTimeout(function() { overlay.remove(); }, 200); }
+    _colorPickerContext = null;
+};
+
+window.confirmColorPicker = function() {
+    if (!_colorPickerContext) return;
+    var color = _colorPickerContext.currentColor;
+    var bg = hexToRgba(color, 0.12);
+    if (_colorPickerContext.mode === 'new') {
+        var nameInput = document.getElementById('color-picker-name');
+        var name = nameInput ? nameInput.value.trim() : '';
+        if (!name) { showToast('请输入分类名称', 'error'); return; }
+        var allTopics = getAllTopics();
+        if (allTopics.some(function(t) { return t.name === name; }) || name === '通用') {
+            showToast('分类名称已存在', 'error'); return;
+        }
+        var newTopic = {
+            id: 'custom-' + Date.now(),
+            name: name, icon: 'tag', color: color, bg: bg
+        };
+        if (!State.customTopics) State.customTopics = [];
+        State.customTopics.push(newTopic);
+        saveUserData(); populateTopicSelect(); renderTopicFolders(); renderVocabulary(); renderTopicList();
+        showToast('分类「' + name + '」已创建', 'success');
+    } else {
+        var tid = _colorPickerContext.topicId;
+        var isDefault = TOPICS.some(function(t) { return t.id === tid; });
+        if (isDefault) {
+            var t = TOPICS.find(function(x) { return x.id === tid; });
+            t.color = color; t.bg = bg;
+        } else if (tid === 'general') {
+            // Update general color
+            var generalOverride = { color: color, bg: bg };
+            if (!State.topicNameOverrides) State.topicNameOverrides = {};
+            State.topicNameOverrides['_general_color'] = color;
+        } else {
+            var ct = (State.customTopics || []).find(function(t) { return t.id === tid; });
+            if (ct) { ct.color = color; ct.bg = bg; }
+        }
+        State.vocabulary.phrases.forEach(function(p) {
+            if (p.topic === tid) { p.topicColor = color; p.topicBg = bg; }
+        });
+        saveUserData(); populateTopicSelect(); renderTopicFolders(); renderVocabulary();
+        showToast('颜色已更新', 'success');
+    }
+    closeColorPicker();
+};
+
+window.reassignPhraseTopic = function(phraseId) {
+    var p = State.vocabulary.phrases.find(function(x) { return x.id === phraseId; });
+    if (!p) return;
+    var allTopics = getAllTopics();
+    var options = allTopics.concat([{ id: 'general', name: State.topicNameOverrides['general'] || '通用', color: '#837868', bg: '#EFE7D6' }]);
+    var choice = prompt('请输入目标分类编号：\n' + options.map(function(t, i) { return (i+1) + '. ' + t.name; }).join('\n') + '\n\n当前分类：' + (p.topicName || '未知'));
+    if (!choice) return;
+    var idx = parseInt(choice) - 1;
+    if (isNaN(idx) || idx < 0 || idx >= options.length) { showToast('无效选择', 'error'); return; }
+    var target = options[idx];
+    p.topic = target.id; p.topicName = target.name; p.topicColor = target.color; p.topicBg = target.bg;
+    renderVocabulary(); saveUserData();
+    showToast('短语已移至「' + target.name + '」', 'success');
+};
+
+// ===== VOCABULARY EXPORT (Word, compatible with 墨墨背单词) =====
+function exportVocabToWord(type) {
+    var langVocab = getLangVocab();
+    var items = type === 'words' ? langVocab.words : langVocab.phrases;
+    if (items.length === 0) { showToast('没有可导出的内容', 'info'); return; }
+    
+    // Build Word-compatible HTML — only export the word/phrase itself (no phonetic, no meaning)
+    var lines = items.map(function(item) {
+        return type === 'words' ? item.word : item.phrase;
+    });
+    
+    // Create as .doc (Word HTML format)
+    var html = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40">';
+    html += '<head><meta charset="utf-8"><title>ListenCloze Vocabulary</title>';
+    html += '<style>body{font-family:"Times New Roman",serif;font-size:12pt;line-height:2.0;}p{margin:6pt 0;}</style></head><body>';
+    lines.forEach(function(line) {
+        html += '<p>' + escapeHtml(line) + '</p>';
+    });
+    html += '</body></html>';
+    
+    var blob = new Blob(['\ufeff' + html], { type: 'application/msword' });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = 'ListenCloze_' + (type === 'words' ? '生词本' : '短语本') + '_' + new Date().toISOString().slice(0, 10) + '.doc';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    showToast('已导出 ' + items.length + ' 条到 Word', 'success');
+}
+
+window.exportVocabToWord = exportVocabToWord;
+
+// ===== REVIEW =====
+function getDueWords() {
+    var now = Date.now();
+    var lang = State.lang || 'en';
+    return State.vocabulary.words.filter(function(w) { return (w.lang || 'en') === lang && w.status !== '已掌握' && (w.nextReview === null || w.nextReview <= now); });
+}
+
+function renderReviewStartScreen() {
+    var langVocab = getLangVocab();
+    var dueWords = getDueWords();
+    var mastered = langVocab.words.filter(function(w) { return w.status === '已掌握'; }).length;
+    var total = langVocab.words.length;
+    var statsDiv = document.getElementById('review-stats');
+    if (!statsDiv) return;
+    statsDiv.innerHTML = [
+        { label: '今日待复习', val: dueWords.length, color: 'var(--lc-state-warning)' },
+        { label: '已掌握', val: mastered, color: 'var(--lc-state-success)' },
+        { label: '总计', val: total, color: 'var(--lc-color-primary)' },
+    ].map(function(s) { return '<div style="text-align:center;"><div style="font-size:28px;font-weight:700;font-family:var(--lc-font-mono);color:' + s.color + ';">' + s.val + '</div><div style="font-size:12px;color:var(--lc-color-text-secondary);margin-top:4px;">' + s.label + '</div></div>'; }).join('');
+    var startBtn = document.getElementById('btn-start-review');
+    if (startBtn) startBtn.disabled = dueWords.length === 0;
+}
+
+function startReview() {
+    var dueWords = getDueWords();
+    if (dueWords.length === 0) { showToast('没有需要复习的单词', 'info'); return; }
+    State.review.reviewQueue = dueWords.slice();
+    State.review.sessionStats = { correct: 0, wrong: 0, total: dueWords.length };
+    State.review.currentCard = null;
+    document.getElementById('review-start-screen').style.display = 'none';
+    document.getElementById('review-complete-screen').style.display = 'none';
+    document.getElementById('review-active-screen').style.display = 'block';
+    showNextCard();
+}
+
+function showNextCard() {
+    if (State.review.reviewQueue.length === 0) { showReviewComplete(); return; }
+    var word = State.review.reviewQueue.shift();
+    State.review.currentCard = word;
+    document.getElementById('flashcard-front').style.display = 'flex';
+    document.getElementById('flashcard-back').style.display = 'none';
+    document.getElementById('flashcard-actions').style.display = 'none';
+    document.getElementById('flashcard-word').textContent = word.word;
+    document.getElementById('flashcard-word-back').textContent = word.word;
+    document.getElementById('flashcard-phonetic').textContent = word.phonetic || '';
+    document.getElementById('flashcard-meaning').textContent = word.meaning || '暂无释义';
+    document.getElementById('flashcard-example').textContent = word.example || '';
+    var reviewed = State.review.sessionStats.correct + State.review.sessionStats.wrong;
+    var total = State.review.sessionStats.total;
+    document.getElementById('review-progress-text').textContent = '进度: ' + reviewed + ' / ' + total;
+    document.getElementById('review-progress-fill').style.width = (total > 0 ? (reviewed / total * 100) : 0) + '%';
+    refreshIcons();
+    setTimeout(function() { speakText(word.word); }, 300);
+}
+
+function flipCard() {
+    var front = document.getElementById('flashcard-front');
+    var back = document.getElementById('flashcard-back');
+    var actions = document.getElementById('flashcard-actions');
+    if (front.style.display !== 'none') {
+        front.style.display = 'none'; back.style.display = 'flex'; actions.style.display = 'flex';
+        if (State.review.currentCard) speakText(State.review.currentCard.word);
+    }
+}
+
+function reviewCard(remembered) {
+    var word = State.review.currentCard;
+    if (!word) return;
+    var now = Date.now();
+    if (remembered) {
+        State.review.sessionStats.correct++;
+        word.reviewCount = Math.min(word.reviewCount + 1, REVIEW_INTERVALS.length - 1);
+        if (word.reviewCount >= REVIEW_INTERVALS.length - 1) { word.status = '已掌握'; word.nextReview = null; }
+        else { word.status = '待复习'; word.nextReview = now + REVIEW_INTERVALS[word.reviewCount]; }
+    } else {
+        State.review.sessionStats.wrong++;
+        word.reviewCount = 0; word.status = '待复习'; word.nextReview = now + REVIEW_INTERVALS[0];
+    }
+    word.lastReview = now;
+    saveUserData();
+    showNextCard();
+}
+
+function showReviewComplete() {
+    document.getElementById('review-active-screen').style.display = 'none';
+    document.getElementById('review-complete-screen').style.display = 'block';
+    var stats = State.review.sessionStats;
+    document.getElementById('review-complete-text').textContent = '本次复习 ' + stats.total + ' 个单词，认识 ' + stats.correct + ' 个，不认识 ' + stats.wrong + ' 个。';
+    refreshIcons();
+}
+
+function finishReview() {
+    document.getElementById('review-complete-screen').style.display = 'none';
+    document.getElementById('review-start-screen').style.display = 'block';
+    State.review.currentCard = null; State.review.reviewQueue = [];
+    renderVocabulary();
+}
+
+// ===== TTS / STT =====
+function speakText(text, lang) {
+    var langMap = { en: 'en-US', de: 'de-DE', ja: 'ja-JP' };
+    lang = lang || langMap[State.lang] || 'en-US';
+    if (!window.speechSynthesis) { return; }
+    window.speechSynthesis.cancel();
+    var utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = lang; utterance.rate = 0.9; utterance.pitch = 1;
+    var voices = window.speechSynthesis.getVoices();
+    var langPrefix = lang.split('-')[0];
+    var matchedVoice = voices.find(function(v) { return v.lang.startsWith(langPrefix); });
+    if (matchedVoice) utterance.voice = matchedVoice;
+    utterance.onstart = function() { showSpeakingIndicator(); };
+    utterance.onend = function() { hideSpeakingIndicator(); };
+    utterance.onerror = function() { hideSpeakingIndicator(); };
+    window.speechSynthesis.speak(utterance);
+}
+
+function showSpeakingIndicator() {
+    var messages = document.getElementById('conv-messages');
+    if (!messages) return;
+    var existing = document.getElementById('speaking-indicator');
+    if (existing) existing.remove();
+    var ind = document.createElement('div');
+    ind.id = 'speaking-indicator';
+    ind.style.cssText = 'align-self:flex-start;padding:4px 12px;font-size:12px;color:var(--lc-color-text-tertiary);display:flex;align-items:center;gap:6px;';
+    ind.textContent = '正在朗读';
+    var dots = document.createElement('span');
+    dots.className = 'lc-speaking-indicator';
+    dots.innerHTML = '<span></span><span></span><span></span>';
+    ind.appendChild(dots);
+    messages.appendChild(ind);
+    messages.scrollTop = messages.scrollHeight;
+}
+
+function hideSpeakingIndicator() { var ind = document.getElementById('speaking-indicator'); if (ind) ind.remove(); }
+
+var speechRecognition = null; var isRecording = false;
+
+function initSpeechRecognition() {
+    var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SR) return null;
+    var rec = new SR();
+    var langMap = { en: 'en-US', de: 'de-DE', ja: 'ja-JP' };
+    rec.lang = langMap[State.lang] || 'en-US';
+    rec.continuous = false; rec.interimResults = true;
+    return rec;
+}
+
+function startRecording() {
+    if (!speechRecognition) { showToast('当前浏览器不支持语音识别', 'error'); return; }
+    if (isRecording) return;
+    try {
+        speechRecognition.start(); isRecording = true;
+        var micBtn = document.getElementById('btn-mic');
+        micBtn.classList.add('recording');
+        swapLucideIcon(micBtn, 'square', 20);
+        document.getElementById('recording-hint').classList.add('show');
+    } catch(e) { console.error('Recording error:', e); }
+}
+
+function stopRecording() {
+    if (!isRecording) return;
+    try { speechRecognition.stop(); } catch(e) {}
+    isRecording = false;
+    var micBtn = document.getElementById('btn-mic');
+    micBtn.classList.remove('recording');
+    swapLucideIcon(micBtn, 'mic', 20);
+    document.getElementById('recording-hint').classList.remove('show');
+}
+
+// ===== ORAL =====
+function renderTopicList() {
+    var list = document.getElementById('topic-list');
+    var corpusTopic = State.corpus ? State.corpus.topic : (getTopicsForLang()[0] ? getTopicsForLang()[0].id : 'education');
+    var allTopics = getAllTopics();
+    list.innerHTML = allTopics.map(function(t) {
+        var count = t.id === corpusTopic && State.corpus ? 1 : 0;
+        return '<div class="lc-topic-item ' + (t.id === State.oral.topic ? 'active' : '') + '" data-topic="' + t.id + '"><i data-lucide="' + (t.icon || 'folder') + '"></i><span>' + escapeHtml(t.name) + '</span><span class="lc-topic-count">' + count + ' 篇</span></div>';
+    }).join('');
+    list.querySelectorAll('.lc-topic-item').forEach(function(el) {
+        el.addEventListener('click', function() { State.oral.topic = el.dataset.topic; State.oral.started = false; State.oral.messages = []; renderTopicList(); renderConversation(); });
+    });
+    refreshIcons();
+}
+
+function startOralPractice() {
+    State.oral.started = true; State.oral.messages = []; State.oral.qIndex = 0;
+    var q = getQuestion();
+    if (q) { State.oral.messages.push({ role: 'examiner', text: q }); renderConversation(); renderVocabHint(); setTimeout(function() { speakText(q); }, 500); }
+    saveUserData();
+}
+
+function nextQuestion() {
+    if (!State.oral.started) { startOralPractice(); return; }
+    State.oral.qIndex++;
+    var q = getQuestion();
+    if (q) { State.oral.messages.push({ role: 'examiner', text: q }); renderConversation(); renderVocabHint(); setTimeout(function() { speakText(q); }, 500); }
+    else { State.oral.messages.push({ role: 'examiner', text: '练习结束！你已回答完所有题目。可以切换主题或题型继续练习。' }); renderConversation(); }
+    saveUserData();
+}
+
+function renderTestDaFTasks() {
+    var container = document.getElementById('testdaf-tasks');
+    if (!container) return;
+    var testNum = State.oral.testdafNum || 1;
+    container.innerHTML = TESTDAF_TASK_TYPES.map(function(t) {
+        return '<button class="lc-testdaf-task-btn' + (t.num === State.oral.testdafTask ? ' active' : '') + '" data-task="' + t.num + '">' + t.num + '</button>';
+    }).join('');
+    container.querySelectorAll('.lc-testdaf-task-btn').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            State.oral.testdafTask = parseInt(btn.dataset.task);
+            State.oral.started = false;
+            State.oral.messages = [];
+            renderOralParts();
+            renderConversation();
+        });
+    });
+}
+
+function getTestDaFQuestion() {
+    var testNum = State.oral.testdafNum || 1;
+    var taskNum = State.oral.testdafTask || 1;
+    var task = getTestDaFTask(testNum, taskNum);
+    if (!task) return null;
+    var qText = '【' + task.title + ' - ' + task.type + ' (' + task.level + ')】\n\n';
+    qText += 'Situation:\n' + task.situation + '\n\n';
+    qText += 'Aufgabenstellung:\n' + task.requirements + '\n\n';
+    qText += 'Vorbereitungszeit: ' + task.prepTime + ' Sekunden | Sprechzeit: ' + task.speakTime + ' Sekunden';
+    return qText;
+}
+
+function getQuestion() {
+    // TestDaF mode for German
+    if (State.lang === 'de' && State.oral.testdafMode !== false) {
+        return getTestDaFQuestion();
+    }
+    var bank = ORAL_BANK[State.oral.topic];
+    if (!bank) {
+        var genericBank = {
+            1: ['Can you describe this topic in your own words?', 'How does this topic relate to your personal experience?', 'What are the most interesting aspects of this topic?', 'Why do you think this topic is important?', 'How has this topic changed over time?'],
+            2: ['Describe something related to this topic that you find interesting. You should say: what it is, how you encountered it, why it interests you, and explain its significance.', 'Describe a personal experience related to this topic. You should say: what happened, when it occurred, who was involved, and how it affected you.'],
+            3: ['How might this topic evolve in the future?', 'What are the main challenges associated with this topic?', 'How does this topic compare across different cultures?', 'What role does technology play in this area?', 'Do you think people\'s attitudes toward this topic will change?']
+        };
+        bank = genericBank;
+    }
+    if (!bank[State.oral.part]) return null;
+    var qs = bank[State.oral.part];
+    if (State.oral.qIndex >= qs.length) return null;
+    return qs[State.oral.qIndex];
+}
+
+async function sendUserResponse() {
+    var input = document.getElementById('conv-input');
+    var text = input.value.trim();
+    if (!text) return;
+    State.oral.messages.push({ role: 'user', text: text });
+    input.value = '';
+    renderConversation();
+    try {
+        var aiResp = await getAIExaminerResponse(text);
+        var fallbackPool = State.lang === 'de' ? (State.oral.testdafTask >= 4 && State.oral.testdafTask <= 6 ? FALLBACK_RESPONSES.de.probing : FALLBACK_RESPONSES.de.positive) : (State.oral.part === 3 ? FALLBACK_RESPONSES.probing : FALLBACK_RESPONSES.positive);
+        var followUp = aiResp ? aiResp : fallbackPool[Math.floor(Math.random() * 5)];
+        State.oral.messages.push({ role: 'examiner', text: followUp });
+        renderConversation();
+        setTimeout(function() { speakText(followUp); }, 300);
+    } catch(err) {
+        var pool = State.oral.part === 3 ? FALLBACK_RESPONSES.probing : FALLBACK_RESPONSES.positive;
+        var fu = pool[Math.floor(Math.random() * pool.length)];
+        State.oral.messages.push({ role: 'examiner', text: fu });
+        renderConversation();
+        setTimeout(function() { speakText(fu); }, 300);
+    }
+    saveUserData();
+}
+
+async function getAIExaminerResponse(userText) {
+    var config = State.oral.aiConfig;
+    if (!config.apiKey) return null;
+    var topicName = (findTopicById(State.oral.topic) || {}).name || 'general';
+    var systemPrompt;
+    if (State.lang === 'de') {
+        systemPrompt = 'Du bist ein TestDaF-Prüfer (德福口语考官). Du führst einen mündlichen Test durch, Aufgabe ' + State.oral.testdafTask + '. Der Prüfling hat gerade geantwortet. Reagiere natürlich als Prüfer. - Bestätige kurz die Antwort. - Stelle eine Nachfrage zum Thema. - Gib Feedback auf Deutsch. Maximal 2 Sätze. Sei natürlich und ermutigend.';
+    } else {
+        systemPrompt = 'You are an IELTS speaking examiner conducting a Part ' + State.oral.part + ' interview on the topic of ' + topicName + '. The candidate just responded. Provide a natural follow-up response as the examiner. - Part 1: Brief acknowledgment + simple follow-up question. - Part 2: Ask about specific aspects of their topic card. - Part 3: Ask deeper, more analytical questions. Keep your response to 1-2 sentences. Be natural and encouraging.';
+    }
+    var messages = [{ role: 'system', content: systemPrompt }];
+    State.oral.messages.forEach(function(m) { messages.push({ role: m.role === 'examiner' ? 'assistant' : 'user', content: m.text }); });
+    var baseUrl = config.baseUrl || 'https://api.openai.com/v1';
+    var resp = await fetch(baseUrl + '/chat/completions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + config.apiKey },
+        body: JSON.stringify({ model: config.model || 'gpt-4o-mini', messages: messages, max_tokens: 150, temperature: 0.7 }),
+    });
+    if (!resp.ok) throw new Error('API error: ' + resp.status);
+    var data = await resp.json();
+    return data.choices && data.choices[0] && data.choices[0].message ? data.choices[0].message.content : null;
+}
+
+function renderVocabHint() {
+    var panel = document.getElementById('vocab-hint-panel');
+    if (!panel) return;
+    var langVocab = getLangVocab();
+    var words = langVocab.words.filter(function(w) { return w.status !== '已掌握'; });
+    var phrases = langVocab.phrases;
+    if (words.length === 0 && phrases.length === 0) { panel.style.display = 'none'; return; }
+    
+    panel.style.display = 'block';
+    var body = document.getElementById('vocab-hint-body');
+    
+    // Pick up to 6 random non-mastered words as suggestions
+    var shuffled = words.slice().sort(function() { return Math.random() - 0.5; });
+    var suggested = shuffled.slice(0, Math.min(6, shuffled.length));
+    
+    // Pick up to 3 phrases
+    var shuffledPhrases = phrases.slice().sort(function() { return Math.random() - 0.5; });
+    var suggestedPhrases = shuffledPhrases.slice(0, Math.min(3, shuffledPhrases.length));
+    
+    var html = '';
+    if (suggested.length > 0) {
+        html += '<div class="lc-vocab-hint-words">';
+        html += '<div style="font-size:12px;color:var(--lc-color-text-tertiary);margin-bottom:4px;width:100%;">试试在回答中使用这些生词:</div>';
+        suggested.forEach(function(w) {
+            var meaning = w.meaning ? ' (' + w.meaning + ')' : '';
+            html += '<span class="lc-vocab-hint-word" onclick="insertVocabWord(\'' + escapeHtml(w.word).replace(/'/g, "\\'") + '\')" title="' + escapeHtml(w.word + meaning) + '">' + escapeHtml(w.word) + '</span>';
+        });
+        html += '</div>';
+    }
+    if (suggestedPhrases.length > 0) {
+        html += '<div class="lc-vocab-hint-phrases">';
+        html += '<div style="font-size:12px;color:var(--lc-color-text-tertiary);margin-bottom:4px;">可用的短语:</div>';
+        suggestedPhrases.forEach(function(p) {
+            var meaning = p.meaning ? ' — ' + p.meaning : '';
+            html += '<div class="lc-vocab-hint-phrase" onclick="insertVocabWord(\'' + escapeHtml(p.phrase).replace(/'/g, "\\'") + '\')" title="' + escapeHtml(p.phrase + meaning) + '">' + escapeHtml(p.phrase) + '</div>';
+        });
+        html += '</div>';
+    }
+    
+    // Motivational messages
+    var motivations = [
+        '主动使用积累的生词，让它们从"认识"变成"会用"！',
+        '每多用一个生词，你就离 fluent 更近一步。',
+        '别怕用错，大胆尝试才是进步的关键。',
+        '尝试在回答中串联 2-3 个生词，效果更佳。',
+    ];
+    html += '<div class="lc-vocab-hint-motivate">' + motivations[Math.floor(Math.random() * motivations.length)] + '</div>';
+    
+    body.innerHTML = html;
+}
+
+window.insertVocabWord = function(word) {
+    var input = document.getElementById('conv-input');
+    if (input) {
+        var current = input.value.trim();
+        input.value = current ? current + ' ' + word : word;
+        input.focus();
+    }
+};
+
+function renderConversation() {
+    var div = document.getElementById('conv-messages');
+    if (State.oral.messages.length === 0) { div.innerHTML = '<div class="lc-empty-hint"><i data-lucide="message-square"></i><p>选择主题和题型后点击「开始练习」</p></div>'; refreshIcons(); return; }
+    div.innerHTML = State.oral.messages.map(function(m, idx) {
+        var role = m.role === 'examiner' ? '考官' : '你';
+        var cls = m.role === 'examiner' ? 'lc-msg-examiner' : 'lc-msg-user';
+        var speakBtn = m.role === 'examiner' ? '<button class="lc-msg-speak" onclick="speakMessage(' + idx + ')" title="重新朗读"><i data-lucide="volume-2"></i></button>' : '';
+        return '<div class="lc-msg ' + cls + '"><div class="lc-msg-role">' + role + speakBtn + '</div>' + escapeHtml(m.text) + '</div>';
+    }).join('');
+    div.scrollTop = div.scrollHeight;
+    refreshIcons();
+}
+
+window.speakMessage = function(idx) { var msg = State.oral.messages[idx]; if (msg) speakText(msg.text); };
+
+// ===== EXPORT =====
+function renderExportPreview() {
+    var preview = document.getElementById('export-preview');
+    if (!State.corpus) { preview.innerHTML = '<p style="text-align:center;color:#999;padding:40px;">请先导入语料</p>'; return; }
+    var includeAnswers = document.getElementById('export-answers') ? document.getElementById('export-answers').checked : true;
+    var includeLineNums = document.getElementById('export-line-numbers') ? document.getElementById('export-line-numbers').checked : true;
+    var html = '<h2 style="font-size:18px;font-weight:700;margin-bottom:16px;">' + escapeHtml(State.corpus.title) + '</h2>';
+    State.corpus.pages.forEach(function(page, pageIdx) {
+        if (pageIdx > 0) html += '<div class="preview-page-sep">—— 第 ' + page.pageNum + ' 页 ——</div>';
+        page.lines.forEach(function(line, lineIdx) {
+            var ln = lineIdx + 1;
+            var showNum = includeLineNums && (ln === 1 || ln % 5 === 0);
+            if (line.isTranslation) {
+                html += '<div>'; if (includeLineNums) html += '<span class="preview-gutter">' + (showNum ? ln : '') + '</span>';
+                html += '<span class="preview-translation">' + escapeHtml(line.text) + '</span></div>';
+            } else {
+                var rendered = renderLineForExport(line.text, ln, page.pageNum);
+                html += '<div>'; if (includeLineNums) html += '<span class="preview-gutter">' + (showNum ? ln : '') + '</span>';
+                html += '<span>' + rendered + '</span></div>';
+            }
+        });
+    });
+    if (includeAnswers && State.hiddenItems.length > 0) {
+        html += '<div style="margin-top:32px;padding-top:16px;border-top:2px solid #333;"><h3 style="font-size:16px;font-weight:600;margin-bottom:10px;">答案归纳</h3>';
+        State.hiddenItems.forEach(function(item, i) { html += '<div style="margin:6px 0;">' + (i + 1) + '. ' + escapeHtml(item.text) + ' <span style="color:#999;font-family:monospace;font-size:12px;">— 第' + item.line + '行</span></div>'; });
+        html += '</div>';
+    }
+    // Add phrases organized by topic
+    var _langPhrases = getLangVocab().phrases;
+    if (_langPhrases.length > 0) {
+        var phraseGroups = {};
+        _langPhrases.forEach(function(p) { if (!phraseGroups[p.topic]) phraseGroups[p.topic] = []; phraseGroups[p.topic].push(p); });
+        html += '<div style="margin-top:32px;padding-top:16px;border-top:2px solid #333;">';
+        html += '<h3 style="font-size:16px;font-weight:600;margin-bottom:12px;">短语积累（按主题归纳）</h3>';
+        var allTopics = getAllTopics();
+        var order = allTopics.map(function(t) { return t.id; }).concat(['general']);
+        order.forEach(function(tid) {
+            if (!phraseGroups[tid] || phraseGroups[tid].length === 0) return;
+            var t = findTopicById(tid);
+            var tName = t ? t.name : '通用';
+            html += '<div style="margin-bottom:16px;"><div style="font-weight:600;font-size:14px;margin-bottom:6px;color:' + (t ? t.color : '#666') + ';">' + tName + ' (' + phraseGroups[tid].length + ')</div>';
+            phraseGroups[tid].forEach(function(p) {
+                html += '<div style="margin:4px 0;padding-left:16px;font-size:13px;"><strong>' + escapeHtml(p.phrase) + '</strong>';
+                if (p.meaning) html += ' — ' + escapeHtml(p.meaning);
+                html += ' <span style="color:#999;font-size:11px;">(' + escapeHtml(p.source || '') + ')</span></div>';
+            });
+            html += '</div>';
+        });
+        html += '</div>';
+    }
+    preview.innerHTML = html;
+}
+
+function renderLineForExport(line, lineNum, pageNum, blankClass) {
+    blankClass = blankClass || 'preview-blank';
+    var tokens = tokenizeLine(line);
+    var wordEls = Array.from(document.querySelectorAll('.lc-word[data-line="' + lineNum + '"][data-page="' + pageNum + '"]'));
+    var wordIdx = 0; var result = '';
+    for (var i = 0; i < tokens.length; i++) {
+        var tok = tokens[i];
+        if (tok.type === 'text') result += escapeHtml(tok.value);
+        else {
+            var el = wordEls[wordIdx];
+            if (el && el.dataset.hideId) { if (el.style.display !== 'none') result += '<span class="' + blankClass + '"></span>'; }
+            else result += escapeHtml(tok.value);
+            wordIdx++;
+        }
+    }
+    return result;
+}
+
+function exportDocument() {
+    if (!State.corpus) { showToast('请先导入语料', 'error'); return; }
+    var format = document.querySelector('input[name="format"]:checked').value;
+    var includeAnswers = document.getElementById('export-answers').checked;
+    var includeLineNums = document.getElementById('export-line-numbers').checked;
+    var html = '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>' + escapeHtml(State.corpus.title) + '</title><style>';
+    html += 'body{font-family:"Noto Serif SC",Georgia,serif;font-size:14px;line-height:2.0;color:#333;max-width:800px;margin:40px auto;padding:0 20px;}';
+    html += 'h2{font-size:18px;font-weight:700;margin-bottom:16px;}.line{margin-bottom:2px;}';
+    html += '.gutter{display:inline-block;width:30px;text-align:right;padding-right:10px;color:#999;font-family:monospace;font-size:11px;}';
+    html += '.blank{display:inline-block;min-width:50px;border-bottom:2px solid #B06A36;}';
+    html += '.page-sep{text-align:center;color:#999;padding:16px 0;border-top:1px dashed #ccc;border-bottom:1px dashed #ccc;margin:16px 0;font-family:monospace;font-size:12px;}';
+    html += '.translation{font-family:"Noto Serif SC",Georgia,serif;font-size:13px;color:#666;padding:4px 0 4px 30px;}';
+    html += '.answers{margin-top:40px;padding-top:16px;border-top:2px solid #333;page-break-before:always;}';
+    html += '.answers h3{font-size:16px;font-weight:600;margin-bottom:10px;}.answer-item{margin:6px 0;}.loc{color:#999;font-family:monospace;font-size:12px;}';
+    html += '.phrase-section{margin-top:40px;padding-top:16px;border-top:2px solid #333;page-break-before:always;}';
+    html += '.phrase-section h3{font-size:16px;font-weight:600;margin-bottom:12px;}';
+    html += '.phrase-topic-group{margin-bottom:16px;}';
+    html += '.phrase-topic-title{font-weight:600;font-size:14px;margin-bottom:6px;}';
+    html += '.phrase-item{margin:4px 0;padding-left:16px;font-size:13px;}';
+    html += '@media print{body{margin:20px;}}';
+    html += '</style></head><body>';
+    html += '<h2>' + escapeHtml(State.corpus.title) + '</h2>';
+    State.corpus.pages.forEach(function(page, pageIdx) {
+        if (pageIdx > 0) html += '<div class="page-sep">—— 第 ' + page.pageNum + ' 页 ——</div>';
+        page.lines.forEach(function(line, lineIdx) {
+            var ln = lineIdx + 1;
+            var showNum = includeLineNums && (ln === 1 || ln % 5 === 0);
+            html += '<div class="line">';
+            if (includeLineNums) html += '<span class="gutter">' + (showNum ? ln : '') + '</span>';
+            if (line.isTranslation) html += '<span class="translation">' + escapeHtml(line.text) + '</span>';
+            else html += renderLineForExport(line.text, ln, page.pageNum, 'blank');
+            html += '</div>';
+        });
+    });
+    if (includeAnswers && State.hiddenItems.length > 0) {
+        html += '<div class="answers"><h3>答案归纳</h3>';
+        State.hiddenItems.forEach(function(item, i) { html += '<div class="answer-item">' + (i + 1) + '. ' + escapeHtml(item.text) + ' <span class="loc">— 第' + item.line + '行</span></div>'; });
+        html += '</div>';
+    }
+    // Add phrases organized by topic
+    var _langPhrases2 = getLangVocab().phrases;
+    if (_langPhrases2.length > 0) {
+        var phraseGroups = {};
+        _langPhrases2.forEach(function(p) { if (!phraseGroups[p.topic]) phraseGroups[p.topic] = []; phraseGroups[p.topic].push(p); });
+        html += '<div class="phrase-section"><h3>短语积累（按主题归纳）</h3>';
+        var allTopics = getAllTopics();
+        var order = allTopics.map(function(t) { return t.id; }).concat(['general']);
+        order.forEach(function(tid) {
+            if (!phraseGroups[tid] || phraseGroups[tid].length === 0) return;
+            var t = findTopicById(tid);
+            var tName = t ? t.name : '通用';
+            html += '<div class="phrase-topic-group"><div class="phrase-topic-title" style="color:' + (t ? t.color : '#666') + ';">' + tName + ' (' + phraseGroups[tid].length + ')</div>';
+            phraseGroups[tid].forEach(function(p) {
+                html += '<div class="phrase-item"><strong>' + escapeHtml(p.phrase) + '</strong>';
+                if (p.meaning) html += ' — ' + escapeHtml(p.meaning);
+                html += ' <span class="loc">(' + escapeHtml(p.source || '') + ')</span></div>';
+            });
+            html += '</div>';
+        });
+        html += '</div>';
+    }
+    html += '</body></html>';
+    if (format === 'pdf') {
+        var w = window.open('', '_blank');
+        if (!w) { showToast('请允许弹出窗口以导出 PDF', 'error'); return; }
+        w.document.write(html); w.document.close(); w.focus();
+        setTimeout(function() { w.print(); }, 500);
+        showToast('PDF 导出已打开，请在打印对话框中选择"保存为 PDF"', 'success');
+    } else {
+        var blob = new Blob(['\ufeff' + html], { type: 'application/msword' });
+        var url = URL.createObjectURL(blob);
+        var a = document.createElement('a');
+        a.href = url; a.download = (State.corpus.title || '挖空练习') + '.doc';
+        document.body.appendChild(a); a.click(); document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        showToast('Word 文档已下载', 'success');
+    }
+}
+
+// ===== INIT =====
+function init() {
+    document.querySelectorAll('.lc-nav-item').forEach(function(btn) { btn.addEventListener('click', function() { switchView(btn.dataset.view); }); });
+    document.getElementById('toggle-theme').addEventListener('click', toggleTheme);
+    try { var saved = localStorage.getItem('lc-theme'); if (saved === 'dark') { document.documentElement.classList.add('dark'); document.documentElement.classList.remove('light'); } } catch(e) {}
+
+    var zone = document.getElementById('upload-zone');
+    var fileInput = document.getElementById('file-input');
+    zone.addEventListener('click', function() { fileInput.click(); });
+    fileInput.addEventListener('change', function(e) { if (e.target.files[0]) handleFile(e.target.files[0]); });
+    zone.addEventListener('dragover', function(e) { e.preventDefault(); zone.classList.add('dragover'); });
+    zone.addEventListener('dragleave', function() { zone.classList.remove('dragover'); });
+    zone.addEventListener('drop', function(e) { e.preventDefault(); zone.classList.remove('dragover'); if (e.dataTransfer.files[0]) handleFile(e.dataTransfer.files[0]); });
+    document.getElementById('btn-parse-text').addEventListener('click', handleTextParse);
+    document.getElementById('btn-load-sample').addEventListener('click', loadSample);
+
+    document.getElementById('btn-undo').addEventListener('click', undoLastHide);
+    document.getElementById('btn-reset').addEventListener('click', resetAllHides);
+    document.getElementById('btn-go-export').addEventListener('click', function() { switchView('export'); });
+    document.getElementById('btn-toggle-translation').addEventListener('click', toggleTranslationCollapse);
+    document.getElementById('btn-save-progress').addEventListener('click', saveProgress);
+    document.getElementById('btn-edit-mode').addEventListener('click', toggleEditMode);
+    populateTopicSelect();
+
+    document.querySelectorAll('.lc-tab').forEach(function(tab) {
+        tab.addEventListener('click', function() {
+            document.querySelectorAll('.lc-tab').forEach(function(t) { t.classList.remove('active'); });
+            tab.classList.add('active');
+            var vtab = tab.dataset.vtab;
+            document.getElementById('vocab-words-panel').style.display = vtab === 'words' ? 'block' : 'none';
+            document.getElementById('vocab-phrases-panel').style.display = vtab === 'phrases' ? 'block' : 'none';
+            document.getElementById('vocab-review-panel').style.display = vtab === 'review' ? 'block' : 'none';
+            if (vtab === 'review') renderReviewStartScreen();
+        });
+    });
+    var searchEl = document.getElementById('vocab-search');
+    if (searchEl) searchEl.addEventListener('input', debounce(renderVocabulary, 200));
+    var filterEl = document.getElementById('vocab-filter');
+    if (filterEl) filterEl.addEventListener('change', renderVocabulary);
+    document.getElementById('btn-export-vocab-word').addEventListener('click', function() { exportVocabToWord('words'); });
+    document.getElementById('btn-export-vocab-phrase').addEventListener('click', function() { exportVocabToWord('phrases'); });
+
+    // Phrase batch selection handlers
+    var selectModeBtn = document.getElementById('btn-phrase-select-mode');
+    if (selectModeBtn) selectModeBtn.addEventListener('click', function() {
+        if (State._phraseSelectMode) exitPhraseSelectMode();
+        else enterPhraseSelectMode();
+    });
+    var selectAllBtn = document.getElementById('btn-phrase-select-all');
+    if (selectAllBtn) selectAllBtn.addEventListener('click', function() { window.selectAllPhrases(); });
+    var batchAssignBtn = document.getElementById('btn-phrase-batch-assign');
+    if (batchAssignBtn) batchAssignBtn.addEventListener('click', function() { window.batchAssignPhrases(); });
+    var batchDeleteBtn = document.getElementById('btn-phrase-batch-delete');
+    if (batchDeleteBtn) batchDeleteBtn.addEventListener('click', function() { window.batchDeletePhrases(); });
+    var batchCancelBtn = document.getElementById('btn-phrase-batch-cancel');
+    if (batchCancelBtn) batchCancelBtn.addEventListener('click', function() { exitPhraseSelectMode(); });
+
+    document.getElementById('btn-start-review').addEventListener('click', startReview);
+    document.getElementById('flashcard').addEventListener('click', function(e) { if (e.target.closest('.lc-flashcard-speak')) return; flipCard(); });
+    document.getElementById('btn-review-wrong').addEventListener('click', function() { reviewCard(false); });
+    document.getElementById('btn-review-right').addEventListener('click', function() { reviewCard(true); });
+    document.getElementById('btn-review-finish').addEventListener('click', finishReview);
+    document.getElementById('flashcard-speak-front').addEventListener('click', function(e) { e.stopPropagation(); if (State.review.currentCard) speakText(State.review.currentCard.word); });
+    document.getElementById('flashcard-speak-back').addEventListener('click', function(e) { e.stopPropagation(); if (State.review.currentCard) speakText(State.review.currentCard.word); });
+
+    document.querySelectorAll('.lc-part-card').forEach(function(card) {
+        card.addEventListener('click', function() {
+            document.querySelectorAll('.lc-part-card').forEach(function(c) { c.classList.remove('active'); });
+            card.classList.add('active');
+            State.oral.part = parseInt(card.dataset.part);
+            State.oral.started = false; State.oral.messages = [];
+            renderConversation(); saveUserData();
+        });
+    });
+    // TestDaF mode toggle
+    document.getElementById('testdaf-select')?.addEventListener('change', function(e) {
+        State.oral.testdafNum = parseInt(e.target.value);
+        State.oral.started = false;
+        State.oral.messages = [];
+        renderOralParts();
+        renderConversation();
+    });
+    document.getElementById('btn-start-oral').addEventListener('click', startOralPractice);
+    document.getElementById('btn-next-question').addEventListener('click', nextQuestion);
+    document.getElementById('btn-send').addEventListener('click', sendUserResponse);
+    document.getElementById('conv-input').addEventListener('keydown', function(e) { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendUserResponse(); } });
+    document.getElementById('btn-go-vocab').addEventListener('click', function() { switchView('vocabulary'); });
+
+    document.getElementById('ai-settings-toggle').addEventListener('click', function() {
+        var body = document.getElementById('ai-settings-body');
+        var isHidden = body.style.display === 'none';
+        body.style.display = isHidden ? 'block' : 'none';
+        if (isHidden) {
+            document.getElementById('ai-api-key').value = State.oral.aiConfig.apiKey || '';
+            document.getElementById('ai-base-url').value = State.oral.aiConfig.baseUrl || '';
+            document.getElementById('ai-model').value = State.oral.aiConfig.model || 'gpt-4o-mini';
+        }
+    });
+    document.getElementById('btn-save-ai-config').addEventListener('click', function() {
+        State.oral.aiConfig.apiKey = document.getElementById('ai-api-key').value.trim();
+        State.oral.aiConfig.baseUrl = document.getElementById('ai-base-url').value.trim();
+        State.oral.aiConfig.model = document.getElementById('ai-model').value.trim() || 'gpt-4o-mini';
+        document.getElementById('ai-status').textContent = '已保存';
+        saveUserData();
+        showToast('AI 配置已保存', 'success');
+        setTimeout(function() { document.getElementById('ai-status').textContent = ''; }, 2000);
+    });
+
+    // Export
+    document.querySelectorAll('input[name="format"]').forEach(function(r) {
+        r.addEventListener('change', function() { document.querySelectorAll('.lc-format-option').forEach(function(o) { o.classList.remove('selected'); }); r.closest('.lc-format-option').classList.add('selected'); });
+    });
+    document.getElementById('export-answers').addEventListener('change', renderExportPreview);
+    document.getElementById('export-line-numbers').addEventListener('change', renderExportPreview);
+    document.getElementById('btn-do-export').addEventListener('click', exportDocument);
+
+    // Auth
+    document.getElementById('user-account-btn').addEventListener('click', function(e) {
+        e.stopPropagation();
+        if (State.user) { document.getElementById('user-dropdown').classList.toggle('show'); }
+        else { openAuthModal(); }
+    });
+    document.addEventListener('click', function(e) {
+        var menu = document.getElementById('user-menu');
+        if (menu && !menu.contains(e.target)) document.getElementById('user-dropdown').classList.remove('show');
+    });
+    document.querySelectorAll('.lc-auth-tab').forEach(function(tab) {
+        tab.addEventListener('click', function() {
+            document.querySelectorAll('.lc-auth-tab').forEach(function(t) { t.classList.remove('active'); });
+            tab.classList.add('active');
+            _authMode = tab.dataset.mode;
+            document.getElementById('btn-auth-submit').textContent = _authMode === 'register' ? '注册' : '登录';
+            // Show/hide confirm password field
+            var confirmWrap = document.getElementById('confirm-password-wrap');
+            if (confirmWrap) confirmWrap.style.display = _authMode === 'register' ? 'block' : 'none';
+            // Update autocomplete attribute
+            var pwdInput = document.getElementById('auth-password');
+            if (pwdInput) pwdInput.setAttribute('autocomplete', _authMode === 'register' ? 'new-password' : 'current-password');
+        });
+    });
+    document.getElementById('btn-auth-submit').addEventListener('click', doAuth);
+    document.getElementById('auth-password').addEventListener('keydown', function(e) { if (e.key === 'Enter') doAuth(); });
+    document.getElementById('auth-username').addEventListener('keydown', function(e) { if (e.key === 'Enter') document.getElementById('auth-password').focus(); });
+    var confirmPwdInput = document.getElementById('auth-password-confirm');
+    if (confirmPwdInput) confirmPwdInput.addEventListener('keydown', function(e) { if (e.key === 'Enter') doAuth(); });
+
+    // Password visibility toggle
+    function bindPwdToggle(btnId, inputId) {
+        var btn = document.getElementById(btnId);
+        var input = document.getElementById(inputId);
+        if (!btn || !input) return;
+        btn.addEventListener('click', function() {
+            var isHidden = input.type === 'password';
+            input.type = isHidden ? 'text' : 'password';
+            swapLucideIcon(btn, isHidden ? 'eye-off' : 'eye', 18);
+        });
+    }
+    bindPwdToggle('btn-toggle-pwd', 'auth-password');
+    bindPwdToggle('btn-toggle-pwd2', 'auth-password-confirm');
+
+    // Auth log
+    var authLogLink = document.getElementById('btn-view-auth-log');
+    if (authLogLink) authLogLink.addEventListener('click', function(e) { e.preventDefault(); showAuthLog(); });
+    var clearLogBtn = document.getElementById('btn-clear-auth-log');
+    if (clearLogBtn) clearLogBtn.addEventListener('click', clearAuthLog);
+    document.getElementById('btn-my-learning').addEventListener('click', function() { switchView('learning'); document.getElementById('user-dropdown').classList.remove('show'); });
+    document.getElementById('btn-export-backup').addEventListener('click', function() { exportBackup(); document.getElementById('user-dropdown').classList.remove('show'); });
+    document.getElementById('btn-import-backup').addEventListener('click', function() { document.getElementById('backup-import-input').click(); document.getElementById('user-dropdown').classList.remove('show'); });
+    document.getElementById('backup-import-input').addEventListener('change', function(e) { if (e.target.files[0]) importBackup(e.target.files[0]); e.target.value = ''; });
+    document.getElementById('btn-logout').addEventListener('click', logout);
+    document.getElementById('btn-login').addEventListener('click', function() { document.getElementById('user-dropdown').classList.remove('show'); openAuthModal(); });
+    var cloudSyncBtn = document.getElementById('btn-cloud-sync-settings');
+    if (cloudSyncBtn) cloudSyncBtn.addEventListener('click', function() { document.getElementById('user-dropdown').classList.remove('show'); openCloudSyncModal(); });
+
+    // Sync controls
+    var syncIndicator = document.getElementById('sync-indicator');
+    if (syncIndicator) syncIndicator.addEventListener('click', function() { manualSync(); });
+    var syncNowBtn = document.getElementById('btn-sync-now');
+    if (syncNowBtn) syncNowBtn.addEventListener('click', function() { document.getElementById('user-dropdown').classList.remove('show'); manualSync(); });
+
+    // Cloud sync settings handlers
+    var toggleApikeyBtn = document.getElementById('btn-toggle-apikey');
+    if (toggleApikeyBtn) toggleApikeyBtn.addEventListener('click', function() {
+        var inp = document.getElementById('cloud-api-key-input');
+        if (!inp) return;
+        inp.type = inp.type === 'password' ? 'text' : 'password';
+        swapLucideIcon(toggleApikeyBtn, inp.type === 'password' ? 'eye' : 'eye-off', 18);
+    });
+
+    var saveApikeyBtn = document.getElementById('btn-save-apikey');
+    if (saveApikeyBtn) saveApikeyBtn.addEventListener('click', function() {
+        var inp = document.getElementById('cloud-api-key-input');
+        var status = document.getElementById('cloud-sync-status');
+        var syncCodeSection = document.getElementById('sync-code-section');
+        var key = inp ? inp.value.trim() : '';
+        if (!key) { if (status) status.textContent = '请输入 API Key'; return; }
+        if (!key.startsWith('$2a$')) { if (status) status.textContent = 'API Key 格式不正确（应以 $2a$ 开头）'; return; }
+        try { localStorage.setItem('lc-jsonbin-key', key); } catch(e) {}
+        if (syncCodeSection) syncCodeSection.style.display = '';
+        // Auto-create registry if no sync code exists
+        if (!getSyncCode()) {
+            if (status) status.textContent = '正在生成同步码...';
+            getCloudRegistry().then(function(registry) {
+                var code = getSyncCode();
+                var codeInput = document.getElementById('cloud-sync-code-input');
+                if (codeInput) codeInput.value = code;
+                if (status) status.textContent = 'API Key 已保存，同步码已生成：' + code;
+                logAuthEvent('cloud_sync_enabled', { syncCode: code });
+                // If user is logged in, trigger background sync
+                if (State.user && State.user.username !== '__guest__') {
+                    syncCloudInBackground(State.user.username, '');
+                }
+            }).catch(function(e) {
+                if (status) status.textContent = 'API Key 保存成功，但同步码生成失败：' + e.message;
+            });
+        } else {
+            if (status) status.textContent = 'API Key 已保存';
+            // Re-fill sync code input
+            var codeInput = document.getElementById('cloud-sync-code-input');
+            if (codeInput) codeInput.value = getSyncCode();
+        }
+    });
+
+    var testApikeyBtn = document.getElementById('btn-test-apikey');
+    if (testApikeyBtn) testApikeyBtn.addEventListener('click', function() {
+        var inp = document.getElementById('cloud-api-key-input');
+        var status = document.getElementById('cloud-sync-status');
+        var key = inp ? inp.value.trim() : '';
+        if (!key) { if (status) status.textContent = '请先输入 API Key'; return; }
+        if (status) status.textContent = '测试中...';
+        // Temporarily set the key for testing
+        var oldKey = getApiKey();
+        try { localStorage.setItem('lc-jsonbin-key', key); } catch(e) {}
+        // Try to create a test bin
+        cloudCreate({ type: 'lc-test', ts: Date.now() }).then(function(id) {
+            if (status) status.textContent = '连接成功！API Key 有效。';
+            // Clean up test bin by updating it with empty data (can't delete on free tier)
+            // Revert key if it wasn't saved
+            if (!oldKey) { try { localStorage.removeItem('lc-jsonbin-key'); } catch(e) {} }
+            else { try { localStorage.setItem('lc-jsonbin-key', oldKey); } catch(e) {} }
+        }).catch(function(e) {
+            if (status) status.textContent = '连接失败：' + e.message;
+            // Revert key
+            if (!oldKey) { try { localStorage.removeItem('lc-jsonbin-key'); } catch(e) {} }
+            else { try { localStorage.setItem('lc-jsonbin-key', oldKey); } catch(e) {} }
+        });
+    });
+
+    var clearApikeyBtn = document.getElementById('btn-clear-apikey');
+    if (clearApikeyBtn) clearApikeyBtn.addEventListener('click', function() {
+        try {
+            localStorage.removeItem('lc-jsonbin-key');
+            localStorage.removeItem('lc-sync-code');
+        } catch(e) {}
+        _cloudRegistryId = null;
+        var inp = document.getElementById('cloud-api-key-input');
+        var codeInput = document.getElementById('cloud-sync-code-input');
+        var syncCodeSection = document.getElementById('sync-code-section');
+        var status = document.getElementById('cloud-sync-status');
+        if (inp) inp.value = '';
+        if (codeInput) codeInput.value = '';
+        if (syncCodeSection) syncCodeSection.style.display = 'none';
+        if (status) status.textContent = '云端同步已禁用';
+        updateUserUI();
+        showToast('已清除云端同步设置', 'info');
+    });
+
+    var saveSynccodeBtn = document.getElementById('btn-save-synccode');
+    if (saveSynccodeBtn) saveSynccodeBtn.addEventListener('click', function() {
+        var codeInput = document.getElementById('cloud-sync-code-input');
+        var status = document.getElementById('cloud-sync-status');
+        var code = codeInput ? codeInput.value.trim() : '';
+        if (code) {
+            // User entered a sync code — verify it
+            if (status) status.textContent = '验证同步码...';
+            _cloudRegistryId = code;
+            cloudGet(code).then(function(data) {
+                if (data && data.type === 'listencloze-registry') {
+                    try { localStorage.setItem('lc-sync-code', code); } catch(e) {}
+                    if (status) status.textContent = '同步码已验证并保存！';
+                    showToast('同步码已保存', 'success');
+                    // If logged in, try to sync
+                    if (State.user && State.user.username !== '__guest__') {
+                        syncCloudInBackground(State.user.username, '');
+                    }
+                } else {
+                    if (status) status.textContent = '同步码无效（不是有效的注册表）';
+                    _cloudRegistryId = null;
+                }
+            }).catch(function(e) {
+                if (status) status.textContent = '同步码验证失败：' + e.message;
+                _cloudRegistryId = null;
+            });
+        } else {
+            // Empty — auto-create new registry
+            if (status) status.textContent = '正在生成新同步码...';
+            // Clear existing sync code to force creation
+            try { localStorage.removeItem('lc-sync-code'); } catch(e) {}
+            _cloudRegistryId = null;
+            getCloudRegistry().then(function() {
+                var newCode = getSyncCode();
+                if (codeInput) codeInput.value = newCode;
+                if (status) status.textContent = '新同步码已生成：' + newCode;
+            }).catch(function(e) {
+                if (status) status.textContent = '同步码生成失败：' + e.message;
+            });
+        }
+    });
+
+    var copySynccodeBtn = document.getElementById('btn-copy-synccode');
+    if (copySynccodeBtn) copySynccodeBtn.addEventListener('click', function() {
+        var codeInput = document.getElementById('cloud-sync-code-input');
+        var code = codeInput ? codeInput.value.trim() : '';
+        if (!code) { showToast('暂无同步码', 'error'); return; }
+        if (navigator.clipboard) {
+            navigator.clipboard.writeText(code).then(function() { showToast('同步码已复制到剪贴板', 'success'); });
+        } else {
+            codeInput.select();
+            document.execCommand('copy');
+            showToast('同步码已复制', 'success');
+        }
+    });
+
+    // Periodic background sync (every 15s when page is visible — faster cross-device sync)
+    _cloudPullTimer = setInterval(function() {
+        if (!document.hidden && State.user && State.user.cloudBlobId && State.user.username !== '__guest__' && hasCloudSync()) {
+            fullCloudSync();
+        }
+    }, 15000);
+
+    // Sync on page focus (tab switch back, window refocus)
+    window.addEventListener('focus', function() {
+        if (State.user && State.user.cloudBlobId && State.user.username !== '__guest__' && hasCloudSync()) {
+            fullCloudSync();
+        }
+    });
+    document.addEventListener('visibilitychange', function() {
+        if (!document.hidden && State.user && State.user.cloudBlobId && State.user.username !== '__guest__' && hasCloudSync()) {
+            fullCloudSync();
+        }
+    });
+
+    // Language switcher
+    var langBtn = document.getElementById('lang-current-btn');
+    var langDropdown = document.getElementById('lang-dropdown');
+    langBtn.addEventListener('click', function(e) { e.stopPropagation(); langDropdown.classList.toggle('show'); });
+    document.addEventListener('click', function(e) { if (!e.target.closest('#lang-switcher')) langDropdown.classList.remove('show'); });
+    document.querySelectorAll('.lc-lang-option').forEach(function(opt) {
+        opt.addEventListener('click', function() {
+            langDropdown.classList.remove('show');
+            switchLanguage(opt.dataset.lang);
+        });
+    });
+    updateLangSwitcherUI();
+
+    // Mic (push-to-talk)
+    var micBtn = document.getElementById('btn-mic');
+    micBtn.addEventListener('mousedown', startRecording);
+    micBtn.addEventListener('mouseup', stopRecording);
+    micBtn.addEventListener('mouseleave', stopRecording);
+    micBtn.addEventListener('touchstart', function(e) { e.preventDefault(); startRecording(); });
+    micBtn.addEventListener('touchend', function(e) { e.preventDefault(); stopRecording(); });
+
+    // Init speech recognition
+    speechRecognition = initSpeechRecognition();
+    if (speechRecognition) {
+        var finalTranscript = '';
+        speechRecognition.onresult = function(event) {
+            var interim = '';
+            for (var i = event.resultIndex; i < event.results.length; i++) {
+                if (event.results[i].isFinal) finalTranscript += event.results[i][0].transcript;
+                else interim += event.results[i][0].transcript;
+            }
+            var input = document.getElementById('conv-input');
+            input.value = finalTranscript + interim;
+        };
+        speechRecognition.onend = function() { isRecording = false; micBtn.classList.remove('recording'); swapLucideIcon(micBtn, 'mic', 20); document.getElementById('recording-hint').classList.remove('show'); };
+        speechRecognition.onerror = function(event) { console.error('Speech recognition error:', event.error); };
+    }
+
+    // Load voices
+    if (window.speechSynthesis) {
+        window.speechSynthesis.onvoiceschanged = function() {};
+        window.speechSynthesis.getVoices();
+    }
+
+    // Auto-login or guest (with session verification)
+    try {
+        var savedUser = localStorage.getItem('lc-current-user');
+        var session = getSession();
+        var localUsers = getUsers();
+        if (savedUser && session && session.username === savedUser && session.expiresAt > Date.now() && localUsers[savedUser]) {
+            // Valid session — restore user
+            var blobId = localStorage.getItem('lc-cloud-blob-' + savedUser) || localUsers[savedUser].cloudBlobId || '';
+            State.user = { username: savedUser, cloudBlobId: blobId };
+            logAuthEvent('session_restore', { username: savedUser });
+            updateUserUI();
+            loadUserData();
+        } else if (savedUser) {
+            // Stale session — clean up
+            logAuthEvent('session_expired', { username: savedUser, hasSession: !!session, userExists: !!localUsers[savedUser] });
+            localStorage.removeItem('lc-current-user');
+            clearSession();
+            State.user = { username: '__guest__', cloudBlobId: '' };
+            updateUserUI();
+            loadUserData();
+        } else {
+            // Guest user for local persistence
+            State.user = { username: '__guest__', cloudBlobId: '' };
+            updateUserUI();
+            loadUserData();
+        }
+    } catch(e) {
+        console.error('Auto-login error:', e);
+        State.user = { username: '__guest__', cloudBlobId: '' };
+        updateUserUI();
+        loadUserData();
+    }
+
+    // Apply current language settings
+    updateTopicSelect();
+    renderOralParts();
+    var _config = getCurrentLangConfig();
+    var _titleInput = document.getElementById('corpus-title');
+    if (_titleInput) _titleInput.placeholder = _config.corpusTitlePlaceholder;
+    var _oralSub = document.querySelector('#view-oral .lc-subtitle');
+    if (_oralSub) _oralSub.textContent = _config.oralSubtitle;
+
+    // Defer non-critical rendering to next frame for faster first paint
+    requestAnimationFrame(function() {
+        renderTopicList();
+        renderVocabulary();
+        renderAnswerRail();
+        renderTopicFolders();
+        updateHiddenCount();
+        updateTranslationToggleUI();
+        refreshIcons();
+    });
+
+    // Reminder checker (every minute)
+    setInterval(checkReminders, 60000);
+    checkReminders();
+}
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+} else {
+    init();
+}
+</script>
+</body>
+</html>
