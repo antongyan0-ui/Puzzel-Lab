@@ -46,10 +46,10 @@
         "group": 0,
         "layoutSnapshot": {
           "version": 1,
-          "contentHeight": 967,
+          "contentHeight": 900,
           "viewportWidth": 1440,
           "sourceHash": "fnv1a-7d00d203",
-          "measuredAt": 1787280483814
+          "measuredAt": 1787536322155
         }
       },
       "devMetadata": {
