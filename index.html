@@ -815,6 +815,9 @@ body { font-family: var(--lc-font-sans); background: var(--lc-color-bg); color: 
                     <option value="待复习">待复习</option>
                     <option value="已掌握">已掌握</option>
                 </select>
+                <select class="lc-select" id="vocab-source-filter">
+                    <option value="all">全部来源</option>
+                </select>
                 <button class="lc-btn lc-btn-ghost lc-btn-sm" id="btn-batch-lookup" title="为所有无释义单词批量查词"><i data-lucide="search-check" style="width:14px;height:14px;"></i> 批量查词</button>
                 <button class="lc-btn lc-btn-ghost lc-btn-sm" id="btn-export-vocab-word" style="margin-left:auto;"><i data-lucide="download" style="width:14px;height:14px;"></i> 导出Word</button>
             </div>
@@ -9508,7 +9511,29 @@ function renderVocabulary() {
     document.getElementById('tab-review-count').textContent = dueCount;
     var search = (document.getElementById('vocab-search') ? document.getElementById('vocab-search').value : '').toLowerCase();
     var filter = document.getElementById('vocab-filter') ? document.getElementById('vocab-filter').value : 'all';
-    var filtered = words.filter(function(w) { return (w.word.toLowerCase().includes(search) || w.meaning.toLowerCase().includes(search)) && (filter === 'all' || w.status === filter); });
+    // Dynamically populate source filter options
+    var sourceFilterEl = document.getElementById('vocab-source-filter');
+    var currentSourceVal = sourceFilterEl ? sourceFilterEl.value : 'all';
+    if (sourceFilterEl) {
+        var uniqueSources = [];
+        words.forEach(function(w) { if (w.source && uniqueSources.indexOf(w.source) === -1) uniqueSources.push(w.source); });
+        // Preserve selection if still valid, otherwise reset to 'all'
+        var sourceOptions = '<option value="all">全部来源</option>';
+        uniqueSources.forEach(function(s) {
+            sourceOptions += '<option value="' + escapeHtml(s) + '"' + (s === currentSourceVal ? ' selected' : '') + '>' + escapeHtml(s) + '</option>';
+        });
+        // Only rebuild if options changed (avoid losing focus on the select)
+        if (sourceFilterEl.innerHTML !== sourceOptions) {
+            sourceFilterEl.innerHTML = sourceOptions;
+        }
+    }
+    var sourceFilter = currentSourceVal || 'all';
+    var filtered = words.filter(function(w) {
+        var matchSearch = w.word.toLowerCase().includes(search) || w.meaning.toLowerCase().includes(search);
+        var matchStatus = filter === 'all' || w.status === filter;
+        var matchSource = sourceFilter === 'all' || w.source === sourceFilter;
+        return matchSearch && matchStatus && matchSource;
+    });
     if (filtered.length === 0) { document.getElementById('vocab-tbody').innerHTML = ''; document.getElementById('vocab-empty').style.display = words.length === 0 ? 'block' : 'none'; }
     else {
         document.getElementById('vocab-empty').style.display = 'none';
@@ -10634,6 +10659,8 @@ function init() {
     if (searchEl) searchEl.addEventListener('input', debounce(renderVocabulary, 200));
     var filterEl = document.getElementById('vocab-filter');
     if (filterEl) filterEl.addEventListener('change', renderVocabulary);
+    var sourceFilterEl2 = document.getElementById('vocab-source-filter');
+    if (sourceFilterEl2) sourceFilterEl2.addEventListener('change', renderVocabulary);
     var batchLookupBtn = document.getElementById('btn-batch-lookup');
     if (batchLookupBtn) batchLookupBtn.addEventListener('click', batchLookupVocab);
     document.getElementById('btn-export-vocab-word').addEventListener('click', function() { exportVocabToWord('words'); });
