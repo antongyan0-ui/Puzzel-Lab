@@ -235,9 +235,18 @@ body { font-family: var(--lc-font-sans); background: var(--lc-color-bg); color: 
 .lc-toolbar { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 16px; }
 .lc-hint-banner { display: flex; align-items: center; gap: 10px; padding: 10px 16px; background: var(--lc-state-info-bg); border-radius: 8px; font-size: 13px; color: var(--lc-state-info); margin-bottom: 16px; }
 .lc-hint-banner i { width: 16px; height: 16px; flex-shrink: 0; }
-.lc-workbench-grid { display: grid; grid-template-columns: 1fr; gap: 24px; }
-@media (min-width: 1024px) { .lc-workbench-grid { grid-template-columns: 62fr 38fr; } }
-.lc-corpus-panel { background: var(--lc-color-surface); border: 1px solid var(--lc-color-border); border-radius: 12px; padding: 24px; max-height: 70vh; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+.lc-workbench-grid { display: flex; flex-direction: row; gap: 0; position: relative; min-height: 0; }
+.lc-corpus-panel { flex: 0 0 auto; width: 62%; min-width: 280px; max-width: 80%; background: var(--lc-color-surface); border: 1px solid var(--lc-color-border); border-radius: 12px; padding: 24px; max-height: 70vh; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+.lc-answer-rail { flex: 1 1 auto; min-width: 240px; max-width: 50%; }
+.lc-workbench-resizer { flex: 0 0 auto; width: 12px; margin: 0 4px; cursor: col-resize; position: relative; border-radius: 6px; transition: background 0.15s; display: flex; align-items: center; justify-content: center; }
+.lc-workbench-resizer::before { content: ''; display: block; width: 4px; height: 48px; border-radius: 2px; background: var(--lc-color-border); transition: background 0.15s; }
+.lc-workbench-resizer:hover::before, .lc-workbench-resizer.dragging::before { background: var(--lc-color-primary); }
+@media (max-width: 1023px) {
+    .lc-workbench-grid { flex-direction: column; }
+    .lc-corpus-panel { width: 100% !important; max-width: none; max-height: none; }
+    .lc-answer-rail { width: 100%; max-width: none; }
+    .lc-workbench-resizer { display: none; }
+}
 .lc-corpus-line { display: flex; align-items: baseline; padding: 1px 0; }
 .lc-gutter { flex-shrink: 0; width: 40px; text-align: right; padding-right: 14px; font-family: var(--lc-font-mono); font-size: 12px; color: var(--lc-color-text-tertiary); user-select: none; }
 .lc-corpus-text { flex: 1; font-family: var(--lc-font-serif); font-size: 16px; line-height: 2.1; color: var(--lc-color-text); }
@@ -684,13 +693,14 @@ body { font-family: var(--lc-font-sans); background: var(--lc-color-bg); color: 
             <i data-lucide="info"></i>
             <span id="wb-hint-text">单击单词即可隐藏 · 长按拖动选择短语可整段隐藏 · 答案自动归纳至右侧并标注行号 · 点击空白处可恢复 · 双击右侧词条可删除 · 译文行自动折叠</span>
         </div>
-        <div class="lc-workbench-grid">
+        <div class="lc-workbench-grid" id="workbench-grid">
             <div class="lc-corpus-panel" id="corpus-panel">
                 <div class="lc-empty-hint" id="wb-empty">
                     <i data-lucide="file-text"></i>
                     <p>请先在「导入」页面上传文档或粘贴文本</p>
                 </div>
             </div>
+            <div class="lc-workbench-resizer" id="workbench-resizer" title="拖动调节左右宽度"></div>
             <div class="lc-answer-rail" id="answer-rail">
                 <div class="lc-rail-header">
                     <i data-lucide="list-checks"></i>
@@ -7198,6 +7208,67 @@ function findPhraseTranslation(phrase) {
     return bestMatch;
 }
 
+// ===== Workbench resizer =====
+function initWorkbenchResizer() {
+    var grid = document.getElementById('workbench-grid');
+    var resizer = document.getElementById('workbench-resizer');
+    var leftPanel = document.getElementById('corpus-panel');
+    if (!grid || !resizer || !leftPanel) return;
+
+    var isDragging = false;
+    var startX = 0;
+    var startWidth = 0;
+
+    function onPointerDown(e) {
+        if (window.innerWidth < 1024) return;
+        isDragging = true;
+        startX = e.clientX;
+        startWidth = leftPanel.offsetWidth;
+        resizer.classList.add('dragging');
+        document.body.style.cursor = 'col-resize';
+        document.body.style.userSelect = 'none';
+        resizer.setPointerCapture(e.pointerId);
+    }
+
+    function onPointerMove(e) {
+        if (!isDragging) return;
+        var delta = e.clientX - startX;
+        var gridWidth = grid.clientWidth;
+        var newWidth = startWidth + delta;
+        var minWidth = Math.max(280, gridWidth * 0.25);
+        var maxWidth = Math.min(gridWidth * 0.78, gridWidth - 280);
+        if (newWidth < minWidth) newWidth = minWidth;
+        if (newWidth > maxWidth) newWidth = maxWidth;
+        leftPanel.style.width = newWidth + 'px';
+    }
+
+    function onPointerUp(e) {
+        if (!isDragging) return;
+        isDragging = false;
+        resizer.classList.remove('dragging');
+        document.body.style.cursor = '';
+        document.body.style.userSelect = '';
+        try {
+            localStorage.setItem('lc-workbench-left-width', leftPanel.offsetWidth + 'px');
+        } catch(err) {}
+        if (e && e.pointerId) resizer.releasePointerCapture(e.pointerId);
+    }
+
+    resizer.addEventListener('pointerdown', onPointerDown);
+    resizer.addEventListener('pointermove', onPointerMove);
+    resizer.addEventListener('pointerup', onPointerUp);
+    resizer.addEventListener('pointercancel', onPointerUp);
+}
+
+function restoreWorkbenchPanelWidth() {
+    var leftPanel = document.getElementById('corpus-panel');
+    if (!leftPanel) return;
+    try {
+        var saved = localStorage.getItem('lc-workbench-left-width');
+        if (saved) leftPanel.style.width = saved;
+    } catch(e) {}
+}
+
 var _pendingPhrase = null;
 
 function showPhraseTagPopup(phraseText, hideId, line, page) {
@@ -11404,6 +11475,8 @@ function init() {
         updateHiddenCount();
         updateTranslationToggleUI();
         refreshIcons();
+        restoreWorkbenchPanelWidth();
+        initWorkbenchResizer();
     });
 
     // Reminder checker (every minute)
