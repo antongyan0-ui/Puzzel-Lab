@@ -307,6 +307,9 @@ body { font-family: var(--lc-font-sans); background: var(--lc-color-bg); color: 
 .lc-phrase-checkbox { position: absolute; top: 10px; right: 10px; width: 20px; height: 20px; cursor: pointer; accent-color: var(--lc-color-primary); opacity: 0; transition: opacity 0.15s; }
 .lc-phrase-card.show-checkbox .lc-phrase-checkbox { opacity: 1; }
 .lc-phrase-card.show-checkbox { cursor: pointer; }
+.lc-row-selected { background: var(--lc-color-primary-tint) !important; }
+.lc-row-checkbox { width: 16px; height: 16px; cursor: pointer; accent-color: var(--lc-color-primary); }
+.lc-th-checkbox input { width: 16px; height: 16px; cursor: pointer; accent-color: var(--lc-color-primary); }
 .lc-phrase-tag { display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; border-radius: 6px; font-size: 11px; font-weight: 500; cursor: pointer; transition: opacity 0.15s; }
 .lc-phrase-tag:hover { opacity: 0.8; }
 .lc-phrase-card { border-left: 3px solid var(--lc-color-border); }
@@ -821,6 +824,18 @@ body { font-family: var(--lc-font-sans); background: var(--lc-color-bg); color: 
                 <button class="lc-btn lc-btn-ghost lc-btn-sm" id="btn-batch-lookup" title="为所有无释义单词批量查词"><i data-lucide="search-check" style="width:14px;height:14px;"></i> 批量查词</button>
                 <button class="lc-btn lc-btn-ghost lc-btn-sm" id="btn-export-vocab-word" style="margin-left:auto;"><i data-lucide="download" style="width:14px;height:14px;"></i> 导出Word</button>
             </div>
+            <!-- Word batch selection toolbar -->
+            <div id="word-batch-bar" style="display:none;margin-bottom:12px;padding:10px 16px;border-radius:8px;background:var(--lc-color-primary-tint);border:1px solid var(--lc-color-primary);align-items:center;gap:8px;flex-wrap:wrap;">
+                <i data-lucide="check-square" style="width:16px;height:16px;color:var(--lc-color-primary);"></i>
+                <span id="word-batch-count" style="font-size:13px;font-weight:600;color:var(--lc-color-primary);">已选 0 条</span>
+                <button class="lc-btn lc-btn-primary lc-btn-sm" id="btn-word-batch-export" style="margin-left:auto;"><i data-lucide="download" style="width:14px;height:14px;"></i> 导出选中</button>
+                <button class="lc-btn lc-btn-ghost lc-btn-sm" id="btn-word-batch-delete" style="color:var(--lc-color-error,#ef4444);"><i data-lucide="trash-2" style="width:14px;height:14px;"></i> 批量删除</button>
+                <button class="lc-btn lc-btn-ghost lc-btn-sm" id="btn-word-batch-cancel"><i data-lucide="x" style="width:14px;height:14px;"></i> 取消</button>
+            </div>
+            <div style="margin-bottom:8px;display:flex;align-items:center;gap:8px;">
+                <button class="lc-btn lc-btn-ghost lc-btn-sm" id="btn-word-select-mode"><i data-lucide="square-dashed-mouse-pointer" style="width:14px;height:14px;"></i> 多选模式</button>
+                <button class="lc-btn lc-btn-ghost lc-btn-sm" id="btn-word-select-all"><i data-lucide="check-square" style="width:14px;height:14px;"></i> 全选</button>
+            </div>
             <div class="lc-table-wrap">
                 <table class="lc-table" id="vocab-table">
                     <thead><tr><th>单词</th><th>释义</th><th>来源</th><th>行号</th><th>状态</th><th>操作</th></tr></thead>
@@ -844,6 +859,7 @@ body { font-family: var(--lc-font-sans); background: var(--lc-color-bg); color: 
                 <span id="phrase-batch-count" style="font-size:13px;font-weight:600;color:var(--lc-color-primary);">已选 0 条</span>
                 <select id="phrase-batch-topic" class="lc-select" style="flex:1;min-width:140px;padding:4px 8px;font-size:13px;"></select>
                 <button class="lc-btn lc-btn-primary lc-btn-sm" id="btn-phrase-batch-assign"><i data-lucide="folder-input" style="width:14px;height:14px;"></i> 批量分组</button>
+                <button class="lc-btn lc-btn-primary lc-btn-sm" id="btn-phrase-batch-export" style="margin-left:auto;"><i data-lucide="download" style="width:14px;height:14px;"></i> 导出选中</button>
                 <button class="lc-btn lc-btn-ghost lc-btn-sm" id="btn-phrase-batch-delete" style="color:var(--lc-color-error,#ef4444);"><i data-lucide="trash-2" style="width:14px;height:14px;"></i> 批量删除</button>
                 <button class="lc-btn lc-btn-ghost lc-btn-sm" id="btn-phrase-batch-cancel"><i data-lucide="x" style="width:14px;height:14px;"></i> 取消</button>
             </div>
@@ -9534,6 +9550,18 @@ function renderVocabulary() {
         var matchSource = sourceFilter === 'all' || w.source === sourceFilter;
         return matchSearch && matchStatus && matchSource;
     });
+    var wordSelectMode = State._wordSelectMode || false;
+    // Update table header to include checkbox column in select mode
+    var tableHead = document.querySelector('#vocab-table thead tr');
+    if (tableHead) {
+        var firstTh = tableHead.querySelector('th');
+        if (wordSelectMode && firstTh && !firstTh.classList.contains('lc-th-checkbox')) {
+            var thHtml = '<th class="lc-th-checkbox" style="width:36px;"><input type="checkbox" id="word-select-all-cb" onclick="toggleAllWordSelect(this.checked)"></th>';
+            tableHead.insertAdjacentHTML('afterbegin', thHtml);
+        } else if (!wordSelectMode && firstTh && firstTh.classList.contains('lc-th-checkbox')) {
+            firstTh.remove();
+        }
+    }
     if (filtered.length === 0) { document.getElementById('vocab-tbody').innerHTML = ''; document.getElementById('vocab-empty').style.display = words.length === 0 ? 'block' : 'none'; }
     else {
         document.getElementById('vocab-empty').style.display = 'none';
@@ -9542,8 +9570,18 @@ function renderVocabulary() {
             var lookupBtn = (!w.meaning || w.meaning === '—' || w.meaning === '') 
                 ? '<button class="lc-action-btn" onclick="lookupVocabWord(\'' + w.id + '\', this)" title="查释义"><i data-lucide="search"></i></button>' 
                 : '';
-            return '<tr><td><span class="lc-word-cell">' + escapeHtml(w.word) + '</span><span class="lc-phonetic">' + escapeHtml(w.phonetic || '') + '</span></td><td style="font-size:13px;color:var(--lc-color-text-secondary);">' + escapeHtml(w.meaning || '—') + '</td><td style="font-size:12px;color:var(--lc-color-text-tertiary);">' + escapeHtml(w.source) + '</td><td><span class="lc-mono">第' + w.line + '行</span></td><td><span class="lc-badge ' + bc + '">' + w.status + '</span></td><td>' + lookupBtn + '<button class="lc-action-btn" onclick="cycleWordStatus(\'' + w.id + '\')" title="切换状态"><i data-lucide="refresh-cw"></i></button><button class="lc-action-btn" onclick="deleteWord(\'' + w.id + '\')" title="删除"><i data-lucide="trash-2"></i></button></td></tr>';
+            var isSelected = State._wordSelected && State._wordSelected.indexOf(w.id) >= 0;
+            var checkboxCell = wordSelectMode ? '<td style="text-align:center;"><input type="checkbox" class="lc-row-checkbox" data-word-id="' + w.id + '"' + (isSelected ? ' checked' : '') + ' onclick="event.stopPropagation()"></td>' : '';
+            var rowClickAttr = wordSelectMode ? ' onclick="toggleWordSelect(\'' + w.id + '\')"' : '';
+            var rowClass = wordSelectMode && isSelected ? ' class="lc-row-selected"' : '';
+            var actionCell = wordSelectMode ? '' : '<td>' + lookupBtn + '<button class="lc-action-btn" onclick="cycleWordStatus(\'' + w.id + '\')" title="切换状态"><i data-lucide="refresh-cw"></i></button><button class="lc-action-btn" onclick="deleteWord(\'' + w.id + '\')" title="删除"><i data-lucide="trash-2"></i></button></td>';
+            return '<tr' + rowClass + rowClickAttr + '>' + checkboxCell + '<td><span class="lc-word-cell">' + escapeHtml(w.word) + '</span><span class="lc-phonetic">' + escapeHtml(w.phonetic || '') + '</span></td><td style="font-size:13px;color:var(--lc-color-text-secondary);">' + escapeHtml(w.meaning || '—') + '</td><td style="font-size:12px;color:var(--lc-color-text-tertiary);">' + escapeHtml(w.source) + '</td><td><span class="lc-mono">第' + w.line + '行</span></td><td><span class="lc-badge ' + bc + '">' + w.status + '</span></td>' + actionCell + '</tr>';
         }).join('');
+    }
+    // Sync header "select all" checkbox state
+    if (wordSelectMode) {
+        var headerCb = document.getElementById('word-select-all-cb');
+        if (headerCb) headerCb.checked = (State._wordSelected && State._wordSelected.length > 0 && filtered.length > 0 && filtered.every(function(w) { return State._wordSelected.indexOf(w.id) >= 0; }));
     }
     if (phrases.length === 0) { document.getElementById('phrase-groups').innerHTML = ''; document.getElementById('phrase-empty').style.display = 'block'; }
     else {
@@ -9893,6 +9931,104 @@ window.selectAllPhrases = function() {
     updatePhraseBatchCount();
 };
 
+// ===== Word Batch Selection =====
+window.toggleWordSelect = function(wordId) {
+    if (!State._wordSelected) State._wordSelected = [];
+    var idx = State._wordSelected.indexOf(wordId);
+    if (idx >= 0) State._wordSelected.splice(idx, 1);
+    else State._wordSelected.push(wordId);
+    var row = document.querySelector('[data-word-id="' + wordId + '"]');
+    if (row) {
+        var tr = row.closest('tr');
+        var isSelected = State._wordSelected.indexOf(wordId) >= 0;
+        row.checked = isSelected;
+        if (tr) tr.classList.toggle('lc-row-selected', isSelected);
+    }
+    updateWordBatchCount();
+    // Sync header checkbox
+    var headerCb = document.getElementById('word-select-all-cb');
+    if (headerCb) {
+        var langVocab = getLangVocab();
+        headerCb.checked = (State._wordSelected.length > 0 && langVocab.words.length > 0 && langVocab.words.every(function(w) { return State._wordSelected.indexOf(w.id) >= 0; }));
+    }
+};
+
+window.toggleAllWordSelect = function(checked) {
+    var langVocab = getLangVocab();
+    if (checked) {
+        State._wordSelected = langVocab.words.map(function(w) { return w.id; });
+    } else {
+        State._wordSelected = [];
+    }
+    renderVocabulary();
+    updateWordBatchCount();
+};
+
+function updateWordBatchCount() {
+    var count = State._wordSelected ? State._wordSelected.length : 0;
+    var countEl = document.getElementById('word-batch-count');
+    if (countEl) countEl.textContent = '已选 ' + count + ' 条';
+}
+
+function enterWordSelectMode() {
+    State._wordSelectMode = true;
+    if (!State._wordSelected) State._wordSelected = [];
+    var bar = document.getElementById('word-batch-bar');
+    if (bar) bar.style.display = 'flex';
+    var selectModeBtn = document.getElementById('btn-word-select-mode');
+    if (selectModeBtn) { selectModeBtn.innerHTML = '<i data-lucide="square-dashed-mouse-pointer" style="width:14px;height:14px;"></i> 退出多选'; }
+    renderVocabulary();
+}
+
+function exitWordSelectMode() {
+    State._wordSelectMode = false;
+    State._wordSelected = [];
+    var bar = document.getElementById('word-batch-bar');
+    if (bar) bar.style.display = 'none';
+    var selectModeBtn = document.getElementById('btn-word-select-mode');
+    if (selectModeBtn) { selectModeBtn.innerHTML = '<i data-lucide="square-dashed-mouse-pointer" style="width:14px;height:14px;"></i> 多选模式'; }
+    renderVocabulary();
+}
+
+window.selectAllWords = function() {
+    if (!State._wordSelectMode) enterWordSelectMode();
+    State._wordSelected = getLangVocab().words.map(function(w) { return w.id; });
+    renderVocabulary();
+    updateWordBatchCount();
+};
+
+window.batchDeleteWords = function() {
+    if (!State._wordSelected || State._wordSelected.length === 0) { showToast('请先选择单词', 'info'); return; }
+    var count = State._wordSelected.length;
+    State.vocabulary.words = State.vocabulary.words.filter(function(w) { return State._wordSelected.indexOf(w.id) < 0; });
+    saveUserData();
+    showToast(count + ' 条单词已删除', 'info');
+    exitWordSelectMode();
+};
+
+window.batchExportWords = function() {
+    if (!State._wordSelected || State._wordSelected.length === 0) { showToast('请先选择单词', 'info'); return; }
+    var langVocab = getLangVocab();
+    var selectedWords = langVocab.words.filter(function(w) { return State._wordSelected.indexOf(w.id) >= 0; });
+    if (selectedWords.length === 0) { showToast('没有可导出的单词', 'info'); return; }
+    var lines = selectedWords.map(function(w) { return w.word; });
+    var html = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40">';
+    html += '<head><meta charset="utf-8"><title>ListenCloze Vocabulary</title>';
+    html += '<style>body{font-family:"Times New Roman",serif;font-size:12pt;line-height:2.0;}p{margin:6pt 0;}</style></head><body>';
+    lines.forEach(function(line) { html += '<p>' + escapeHtml(line) + '</p>'; });
+    html += '</body></html>';
+    var blob = new Blob(['\ufeff' + html], { type: 'application/msword' });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = 'ListenCloze_生词本_选中_' + new Date().toISOString().slice(0, 10) + '.doc';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    showToast('已导出 ' + selectedWords.length + ' 条选中单词到 Word', 'success');
+};
+
 window.renamePhraseCategory = function(topicId) {
     var topic = findTopicById(topicId) || (topicId === 'general' ? { id: 'general', name: '通用', color: '#837868', bg: '#EFE7D6', isDefault: false } : null);
     if (!topic) return;
@@ -10065,8 +10201,17 @@ window.reassignPhraseTopic = function(phraseId) {
 // ===== VOCABULARY EXPORT (Word, compatible with 墨墨背单词) =====
 function exportVocabToWord(type) {
     var langVocab = getLangVocab();
-    var items = type === 'words' ? langVocab.words : langVocab.phrases;
+    var allItems = type === 'words' ? langVocab.words : langVocab.phrases;
+    if (allItems.length === 0) { showToast('没有可导出的内容', 'info'); return; }
+    
+    // If in batch select mode with selected items, export only selected
+    var selected = type === 'words' ? State._wordSelected : State._phraseSelected;
+    var selectMode = type === 'words' ? State._wordSelectMode : State._phraseSelectMode;
+    var items = (selectMode && selected && selected.length > 0) 
+        ? allItems.filter(function(item) { return selected.indexOf(item.id) >= 0; })
+        : allItems;
     if (items.length === 0) { showToast('没有可导出的内容', 'info'); return; }
+    var label = (selectMode && selected && selected.length > 0) ? '选中' : '';
     
     // Build Word-compatible HTML — only export the word/phrase itself (no phonetic, no meaning)
     var lines = items.map(function(item) {
@@ -10086,12 +10231,12 @@ function exportVocabToWord(type) {
     var url = URL.createObjectURL(blob);
     var a = document.createElement('a');
     a.href = url;
-    a.download = 'ListenCloze_' + (type === 'words' ? '生词本' : '短语本') + '_' + new Date().toISOString().slice(0, 10) + '.doc';
+    a.download = 'ListenCloze_' + (type === 'words' ? '生词本' : '短语本') + (label ? '_' + label : '') + '_' + new Date().toISOString().slice(0, 10) + '.doc';
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
-    showToast('已导出 ' + items.length + ' 条到 Word', 'success');
+    showToast('已导出 ' + items.length + ' 条' + (label ? '选中' : '') + ' 到 Word', 'success');
 }
 
 window.exportVocabToWord = exportVocabToWord;
@@ -10666,6 +10811,21 @@ function init() {
     document.getElementById('btn-export-vocab-word').addEventListener('click', function() { exportVocabToWord('words'); });
     document.getElementById('btn-export-vocab-phrase').addEventListener('click', function() { exportVocabToWord('phrases'); });
 
+    // Word batch selection handlers
+    var wordSelectModeBtn = document.getElementById('btn-word-select-mode');
+    if (wordSelectModeBtn) wordSelectModeBtn.addEventListener('click', function() {
+        if (State._wordSelectMode) exitWordSelectMode();
+        else enterWordSelectMode();
+    });
+    var wordSelectAllBtn = document.getElementById('btn-word-select-all');
+    if (wordSelectAllBtn) wordSelectAllBtn.addEventListener('click', function() { window.selectAllWords(); });
+    var wordBatchExportBtn = document.getElementById('btn-word-batch-export');
+    if (wordBatchExportBtn) wordBatchExportBtn.addEventListener('click', function() { window.batchExportWords(); });
+    var wordBatchDeleteBtn = document.getElementById('btn-word-batch-delete');
+    if (wordBatchDeleteBtn) wordBatchDeleteBtn.addEventListener('click', function() { window.batchDeleteWords(); });
+    var wordBatchCancelBtn = document.getElementById('btn-word-batch-cancel');
+    if (wordBatchCancelBtn) wordBatchCancelBtn.addEventListener('click', function() { exitWordSelectMode(); });
+
     // Phrase batch selection handlers
     var selectModeBtn = document.getElementById('btn-phrase-select-mode');
     if (selectModeBtn) selectModeBtn.addEventListener('click', function() {
@@ -10676,6 +10836,8 @@ function init() {
     if (selectAllBtn) selectAllBtn.addEventListener('click', function() { window.selectAllPhrases(); });
     var batchAssignBtn = document.getElementById('btn-phrase-batch-assign');
     if (batchAssignBtn) batchAssignBtn.addEventListener('click', function() { window.batchAssignPhrases(); });
+    var phraseBatchExportBtn = document.getElementById('btn-phrase-batch-export');
+    if (phraseBatchExportBtn) phraseBatchExportBtn.addEventListener('click', function() { exportVocabToWord('phrases'); });
     var batchDeleteBtn = document.getElementById('btn-phrase-batch-delete');
     if (batchDeleteBtn) batchDeleteBtn.addEventListener('click', function() { window.batchDeletePhrases(); });
     var batchCancelBtn = document.getElementById('btn-phrase-batch-cancel');
