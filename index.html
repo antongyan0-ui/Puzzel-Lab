@@ -295,6 +295,7 @@ body { font-family: var(--lc-font-sans); background: var(--lc-color-bg); color: 
 .lc-table td { padding: 10px 12px; border-bottom: 1px solid var(--lc-color-border); color: var(--lc-color-text); vertical-align: middle; }
 .lc-table tr:hover td { background: var(--lc-color-primary-soft); }
 .lc-word-cell { font-family: var(--lc-font-serif); font-size: 15px; font-weight: 500; }
+.lc-word-freq { display: inline-flex; align-items: center; justify-content: center; min-width: 18px; height: 18px; padding: 0 5px; margin-left: 6px; border-radius: 9px; background: var(--lc-color-primary); color: #fff; font-size: 11px; font-weight: 600; font-family: var(--lc-font-mono); vertical-align: middle; }
 .lc-phonetic { font-family: var(--lc-font-mono); font-size: 12px; color: var(--lc-color-text-tertiary); display: block; }
 .lc-mono { font-family: var(--lc-font-mono); font-size: 12px; }
 .lc-action-btn { width: 30px; height: 30px; display: inline-flex; align-items: center; justify-content: center; border: 1px solid var(--lc-color-border); border-radius: 6px; background: var(--lc-color-surface); cursor: pointer; color: var(--lc-color-text-secondary); transition: all 0.15s; }
@@ -3500,20 +3501,44 @@ function mergeData(localData, cloudData) {
     // --- vocabulary: merge words and phrases by id, UPDATE existing with newer version ---
     var vocab = { words: [], phrases: [] };
     var wordMap = {};
-    (localData.vocabulary && localData.vocabulary.words || []).forEach(function(w) { if (w.id) wordMap[w.id] = w; });
-    (cloudData.vocabulary && cloudData.vocabulary.words || []).forEach(function(w) {
-        if (w.id) {
-            if (!wordMap[w.id]) {
-                wordMap[w.id] = w;
-            } else {
-                // Take the newer version (by addedAt or lastModified)
-                var localW = wordMap[w.id];
-                var localWts = localW.addedAt || localW.lastModified || 0;
-                var cloudWts = w.addedAt || w.lastModified || 0;
-                if (cloudWts > localWts) wordMap[w.id] = w;
-            }
+    function addWordToMergeMap(w) {
+        if (!w || !w.id) return;
+        if (!Array.isArray(w.hideIds)) {
+            // Legacy compatibility
+            w.hideIds = w.hideId ? [w.hideId] : [];
+            delete w.hideId;
         }
-    });
+        var key = ((w.word || '') + '|' + (w.lang || 'en')).toLowerCase();
+        var existing = wordMap[key];
+        if (!existing) {
+            wordMap[key] = Object.assign({}, w);
+            return;
+        }
+        // Merge hideIds and sources from both entries
+        (w.hideIds || []).forEach(function(hid) { if (existing.hideIds.indexOf(hid) < 0) existing.hideIds.push(hid); });
+        if (w.sources) {
+            if (!existing.sources) existing.sources = [];
+            w.sources.forEach(function(s) {
+                var dup = existing.sources.find(function(es) { return es.source === s.source && es.line === s.line; });
+                if (!dup) existing.sources.push(s);
+            });
+        }
+        existing.frequency = existing.hideIds.length;
+        // Take newer metadata
+        var localWts = existing.lastModified || existing.addedAt || 0;
+        var cloudWts = w.lastModified || w.addedAt || 0;
+        if (cloudWts > localWts) {
+            existing.meaning = w.meaning || existing.meaning;
+            existing.phonetic = w.phonetic || existing.phonetic;
+            existing.status = w.status || existing.status;
+            existing.reviewCount = typeof w.reviewCount === 'number' ? w.reviewCount : existing.reviewCount;
+            existing.nextReview = w.nextReview !== undefined ? w.nextReview : existing.nextReview;
+            existing.lastReview = w.lastReview !== undefined ? w.lastReview : existing.lastReview;
+            existing.lastModified = cloudWts;
+        }
+    }
+    (localData.vocabulary && localData.vocabulary.words || []).forEach(addWordToMergeMap);
+    (cloudData.vocabulary && cloudData.vocabulary.words || []).forEach(addWordToMergeMap);
     vocab.words = Object.keys(wordMap).map(function(k) { return wordMap[k]; });
     var phraseMap = {};
     (localData.vocabulary && localData.vocabulary.phrases || []).forEach(function(p) { if (p.id) phraseMap[p.id] = p; });
@@ -3834,6 +3859,57 @@ function applyUserDataSilent(data) {
     }
     if (typeof data.translationCollapsed === 'boolean') State.translationCollapsed = data.translationCollapsed;
     if (data.learning) { State.learning = Object.assign({ checkinDates: [], streak: 0, lastCheckin: null, dailyReminder: false, reminderTime: '20:00', reviewReminder: false, totalDays: 0 }, data.learning); }
+    migrateVocabularyWords();
+}
+
+// Migrate legacy word entries to frequency-aware structure
+function migrateVocabularyWords() {
+    if (!State.vocabulary || !State.vocabulary.words) return;
+    var lang = State.lang || 'en';
+    var words = State.vocabulary.words;
+    var needsMigration = words.some(function(w) { return !Array.isArray(w.hideIds); });
+    if (!needsMigration) return;
+
+    var wordMap = {};
+    words.forEach(function(w) {
+        if (!w.word) return;
+        var key = (w.word || '').toLowerCase();
+        var existing = wordMap[key];
+        if (!existing) {
+            wordMap[key] = Object.assign({}, w);
+            if (!Array.isArray(wordMap[key].hideIds)) {
+                wordMap[key].hideIds = w.hideId ? [w.hideId] : [];
+                delete wordMap[key].hideId;
+            }
+            if (typeof wordMap[key].frequency !== 'number') wordMap[key].frequency = wordMap[key].hideIds.length || 1;
+        } else {
+            // Merge duplicate word entries
+            var ids = Array.isArray(w.hideIds) ? w.hideIds : (w.hideId ? [w.hideId] : []);
+            ids.forEach(function(id) { if (existing.hideIds.indexOf(id) < 0) existing.hideIds.push(id); });
+            existing.frequency = existing.hideIds.length;
+            // Keep earlier addedAt, later lastModified
+            if (w.addedAt && (!existing.addedAt || w.addedAt < existing.addedAt)) existing.addedAt = w.addedAt;
+            if (w.lastModified && (!existing.lastModified || w.lastModified > existing.lastModified)) existing.lastModified = w.lastModified;
+        }
+    });
+
+    // Ensure each hiddenItems word has a corresponding hideId in word entries
+    (State.hiddenItems || []).forEach(function(item) {
+        if (item.type !== 'word') return;
+        var key = (item.text || '').toLowerCase();
+        var w = wordMap[key];
+        if (w && w.hideIds.indexOf(item.id) < 0) {
+            w.hideIds.push(item.id);
+            w.frequency = w.hideIds.length;
+        }
+    });
+
+    State.vocabulary.words = Object.keys(wordMap).map(function(k) {
+        var w = wordMap[k];
+        w.frequency = w.hideIds.length;
+        w.lang = w.lang || lang;
+        return w;
+    });
 }
 
 function exportBackup() {
@@ -6874,8 +6950,21 @@ function unhideItem(id) {
         delete el.dataset.hideId; delete el.dataset.originalText;
     });
     State.hiddenItems = State.hiddenItems.filter(function(i) { return i.id !== id; });
-    if (item.type === 'word') State.vocabulary.words = State.vocabulary.words.filter(function(w) { return w.hideId !== id; });
-    else State.vocabulary.phrases = State.vocabulary.phrases.filter(function(p) { return p.hideId !== id; });
+    if (item.type === 'word') {
+        State.vocabulary.words.forEach(function(w) {
+            var idx = w.hideIds ? w.hideIds.indexOf(id) : -1;
+            if (idx >= 0) {
+                w.hideIds.splice(idx, 1);
+                w.frequency = w.hideIds.length;
+                if (w.sources) w.sources = w.sources.filter(function(s) { return s.line !== item.line; });
+                if (w.hideIds.length === 0) w._markDeleted = true;
+                w.lastModified = Date.now();
+            }
+        });
+        State.vocabulary.words = State.vocabulary.words.filter(function(w) { return !w._markDeleted; });
+    } else {
+        State.vocabulary.phrases = State.vocabulary.phrases.filter(function(p) { return p.hideId !== id; });
+    }
     renderAnswerRail(); updateHiddenCount(); renderVocabulary(); saveUserData();
 }
 
@@ -6975,9 +7064,35 @@ function openEditEntryModal(hideId, isPhrase) {
                 pEntry.lastModified = Date.now(); // Mark for cross-device sync
             }
         } else {
-            // Update vocabulary word entry
-            var wEntry = State.vocabulary.words.find(function(w) { return w.hideId === hideId; });
-            if (wEntry) { wEntry.word = newText; wEntry.lastModified = Date.now(); }
+            // Update vocabulary word entry: detach from old word, attach to new word
+            var oldEntry = State.vocabulary.words.find(function(w) { return w.hideIds && w.hideIds.indexOf(hideId) >= 0; });
+            if (oldEntry) {
+                var idx = oldEntry.hideIds.indexOf(hideId);
+                if (idx >= 0) {
+                    oldEntry.hideIds.splice(idx, 1);
+                    oldEntry.frequency = oldEntry.hideIds.length;
+                    if (oldEntry.sources) oldEntry.sources = oldEntry.sources.filter(function(s) { return s.line !== item.line; });
+                    oldEntry.lastModified = Date.now();
+                }
+                // Clean up empty old entry
+                if (oldEntry.hideIds.length === 0) State.vocabulary.words = State.vocabulary.words.filter(function(w) { return w.id !== oldEntry.id; });
+            }
+            // Attach to existing or new word entry
+            var newEntry = State.vocabulary.words.find(function(w) { return w.word.toLowerCase() === newText.toLowerCase() && (w.lang || 'en') === (State.lang || 'en'); });
+            if (newEntry) {
+                if (newEntry.hideIds.indexOf(hideId) < 0) {
+                    newEntry.hideIds.push(hideId);
+                    newEntry.frequency = newEntry.hideIds.length;
+                    if (!newEntry.sources) newEntry.sources = [{ source: newEntry.source, line: newEntry.line }];
+                    newEntry.sources.push({ source: State.corpus ? State.corpus.title : '未知语料', line: item.line });
+                    newEntry.lastModified = Date.now();
+                }
+            } else {
+                State.vocabulary.words.push({
+                    id: genId(), word: newText, phonetic: '', meaning: '', source: State.corpus ? State.corpus.title : '未知语料', line: item.line,
+                    status: '未开始', hideIds: [hideId], frequency: 1, addedAt: Date.now(), reviewCount: 0, nextReview: null, lastReview: null, example: '', lang: State.lang || 'en'
+                });
+            }
         }
         // Update DOM: change the displayed text in the corpus blank
         var blankEl = document.querySelector('[data-hide-id="' + hideId + '"]');
@@ -7009,8 +7124,22 @@ function getLangVocab() {
 }
 
 function addToVocabulary(word, line, hideId) {
-    if (State.vocabulary.words.some(function(w) { return w.hideId === hideId; })) return;
-    var entry = { id: genId(), word: word, phonetic: '', meaning: '', source: State.corpus ? State.corpus.title : '未知语料', line: line, status: '未开始', hideId: hideId, addedAt: Date.now(), reviewCount: 0, nextReview: null, lastReview: null, example: '', lang: State.lang || 'en' };
+    var source = State.corpus ? State.corpus.title : '未知语料';
+    var lang = State.lang || 'en';
+    var existing = State.vocabulary.words.find(function(w) { return w.word.toLowerCase() === word.toLowerCase() && (w.lang || 'en') === lang; });
+    if (existing) {
+        if (existing.hideIds.indexOf(hideId) < 0) {
+            existing.hideIds.push(hideId);
+            existing.frequency = existing.hideIds.length;
+            // Track additional source/line as metadata
+            if (!existing.sources) existing.sources = [{ source: existing.source, line: existing.line }];
+            existing.sources.push({ source: source, line: line });
+            existing.lastModified = Date.now();
+        }
+        renderVocabulary();
+        return;
+    }
+    var entry = { id: genId(), word: word, phonetic: '', meaning: '', source: source, line: line, status: '未开始', hideIds: [hideId], frequency: 1, addedAt: Date.now(), reviewCount: 0, nextReview: null, lastReview: null, example: '', lang: lang };
     State.vocabulary.words.push(entry);
     renderVocabulary();
 }
@@ -9575,7 +9704,8 @@ function renderVocabulary() {
             var rowClickAttr = wordSelectMode ? ' onclick="toggleWordSelect(\'' + w.id + '\')"' : '';
             var rowClass = wordSelectMode && isSelected ? ' class="lc-row-selected"' : '';
             var actionCell = wordSelectMode ? '' : '<td>' + lookupBtn + '<button class="lc-action-btn" onclick="cycleWordStatus(\'' + w.id + '\')" title="切换状态"><i data-lucide="refresh-cw"></i></button><button class="lc-action-btn" onclick="deleteWord(\'' + w.id + '\')" title="删除"><i data-lucide="trash-2"></i></button></td>';
-            return '<tr' + rowClass + rowClickAttr + '>' + checkboxCell + '<td><span class="lc-word-cell">' + escapeHtml(w.word) + '</span><span class="lc-phonetic">' + escapeHtml(w.phonetic || '') + '</span></td><td style="font-size:13px;color:var(--lc-color-text-secondary);">' + escapeHtml(w.meaning || '—') + '</td><td style="font-size:12px;color:var(--lc-color-text-tertiary);">' + escapeHtml(w.source) + '</td><td><span class="lc-mono">第' + w.line + '行</span></td><td><span class="lc-badge ' + bc + '">' + w.status + '</span></td>' + actionCell + '</tr>';
+            var freqBadge = (w.frequency > 1) ? '<span class="lc-word-freq" title="词频：在语料中被挖空 ' + w.frequency + ' 次">×' + w.frequency + '</span>' : '';
+            return '<tr' + rowClass + rowClickAttr + '>' + checkboxCell + '<td><span class="lc-word-cell">' + escapeHtml(w.word) + '</span>' + freqBadge + '<span class="lc-phonetic">' + escapeHtml(w.phonetic || '') + '</span></td><td style="font-size:13px;color:var(--lc-color-text-secondary);">' + escapeHtml(w.meaning || '—') + '</td><td style="font-size:12px;color:var(--lc-color-text-tertiary);">' + escapeHtml(w.source) + '</td><td><span class="lc-mono">第' + w.line + '行</span></td><td><span class="lc-badge ' + bc + '">' + w.status + '</span></td>' + actionCell + '</tr>';
         }).join('');
     }
     // Sync header "select all" checkbox state
@@ -9667,7 +9797,23 @@ window.cycleWordStatus = function(id) {
     renderVocabulary(); saveUserData();
 };
 
-window.deleteWord = function(id) { State.vocabulary.words = State.vocabulary.words.filter(function(w) { return w.id !== id; }); renderVocabulary(); saveUserData(); showToast('已删除', 'info'); };
+function unhideWordByEntry(w) {
+    if (!w || !w.hideIds) return;
+    w.hideIds.slice().forEach(function(hid) {
+        document.querySelectorAll('[data-hide-id="' + hid + '"]').forEach(function(el) {
+            el.classList.remove('lc-blank', 'lc-phrase-blank'); el.style.display = ''; el.textContent = el.dataset.originalText || '';
+            delete el.dataset.hideId; delete el.dataset.originalText;
+        });
+        State.hiddenItems = State.hiddenItems.filter(function(i) { return i.id !== hid; });
+    });
+}
+
+window.deleteWord = function(id) {
+    var w = State.vocabulary.words.find(function(w) { return w.id === id; });
+    if (w) unhideWordByEntry(w);
+    State.vocabulary.words = State.vocabulary.words.filter(function(w) { return w.id !== id; });
+    renderAnswerRail(); updateHiddenCount(); renderVocabulary(); saveUserData(); showToast('已删除', 'info');
+};
 
 // ===== MY LEARNING (Check-in & Reminders) =====
 function getTodayKey() {
@@ -10000,10 +10146,14 @@ window.selectAllWords = function() {
 window.batchDeleteWords = function() {
     if (!State._wordSelected || State._wordSelected.length === 0) { showToast('请先选择单词', 'info'); return; }
     var count = State._wordSelected.length;
+    State.vocabulary.words.forEach(function(w) {
+        if (State._wordSelected.indexOf(w.id) >= 0) unhideWordByEntry(w);
+    });
     State.vocabulary.words = State.vocabulary.words.filter(function(w) { return State._wordSelected.indexOf(w.id) < 0; });
     saveUserData();
     showToast(count + ' 条单词已删除', 'info');
     exitWordSelectMode();
+    renderAnswerRail(); updateHiddenCount();
 };
 
 window.batchExportWords = function() {
