@@ -7088,18 +7088,21 @@ function openEditEntryModal(hideId, isPhrase) {
                 if (oldEntry.hideIds.length === 0) State.vocabulary.words = State.vocabulary.words.filter(function(w) { return w.id !== oldEntry.id; });
             }
             // Attach to existing or new word entry
+            var batchTopicId = State.corpus ? State.corpus.topic : null;
+            var batchTopicObj = batchTopicId ? findTopicById(batchTopicId) : null;
+            var batchTopicName = batchTopicObj ? batchTopicObj.name : '未分类';
             var newEntry = State.vocabulary.words.find(function(w) { return w.word.toLowerCase() === newText.toLowerCase() && (w.lang || 'en') === (State.lang || 'en'); });
             if (newEntry) {
                 if (newEntry.hideIds.indexOf(hideId) < 0) {
                     newEntry.hideIds.push(hideId);
                     newEntry.frequency = newEntry.hideIds.length;
-                    if (!newEntry.sources) newEntry.sources = [{ source: newEntry.source, line: newEntry.line }];
-                    newEntry.sources.push({ source: State.corpus ? State.corpus.title : '未知语料', line: item.line });
+                    if (!newEntry.sources) newEntry.sources = [{ source: newEntry.source, line: newEntry.line, topicId: newEntry.topicId, topicName: newEntry.topicName }];
+                    newEntry.sources.push({ source: State.corpus ? State.corpus.title : '未知语料', line: item.line, topicId: batchTopicId, topicName: batchTopicName });
                     newEntry.lastModified = Date.now();
                 }
             } else {
                 State.vocabulary.words.push({
-                    id: genId(), word: newText, phonetic: '', meaning: '', source: State.corpus ? State.corpus.title : '未知语料', line: item.line,
+                    id: genId(), word: newText, phonetic: '', meaning: '', source: State.corpus ? State.corpus.title : '未知语料', topicId: batchTopicId, topicName: batchTopicName, line: item.line,
                     status: '未开始', hideIds: [hideId], frequency: 1, addedAt: Date.now(), reviewCount: 0, nextReview: null, lastReview: null, example: '', lang: State.lang || 'en'
                 });
             }
@@ -7135,6 +7138,9 @@ function getLangVocab() {
 
 function addToVocabulary(word, line, hideId) {
     var source = State.corpus ? State.corpus.title : '未知语料';
+    var topicId = State.corpus ? State.corpus.topic : null;
+    var topicObj = topicId ? findTopicById(topicId) : null;
+    var topicName = topicObj ? topicObj.name : '未分类';
     var lang = State.lang || 'en';
     var existing = State.vocabulary.words.find(function(w) { return w.word.toLowerCase() === word.toLowerCase() && (w.lang || 'en') === lang; });
     if (existing) {
@@ -7142,14 +7148,14 @@ function addToVocabulary(word, line, hideId) {
             existing.hideIds.push(hideId);
             existing.frequency = existing.hideIds.length;
             // Track additional source/line as metadata
-            if (!existing.sources) existing.sources = [{ source: existing.source, line: existing.line }];
-            existing.sources.push({ source: source, line: line });
+            if (!existing.sources) existing.sources = [{ source: existing.source, line: existing.line, topicId: existing.topicId, topicName: existing.topicName }];
+            existing.sources.push({ source: source, line: line, topicId: topicId, topicName: topicName });
             existing.lastModified = Date.now();
         }
         renderVocabulary();
         return;
     }
-    var entry = { id: genId(), word: word, phonetic: '', meaning: '', source: source, line: line, status: '未开始', hideIds: [hideId], frequency: 1, addedAt: Date.now(), reviewCount: 0, nextReview: null, lastReview: null, example: '', lang: lang };
+    var entry = { id: genId(), word: word, phonetic: '', meaning: '', source: source, topicId: topicId, topicName: topicName, line: line, status: '未开始', hideIds: [hideId], frequency: 1, addedAt: Date.now(), reviewCount: 0, nextReview: null, lastReview: null, example: '', lang: lang };
     State.vocabulary.words.push(entry);
     renderVocabulary();
 }
@@ -9727,16 +9733,37 @@ function renderVocabulary() {
     document.getElementById('tab-review-count').textContent = dueCount;
     var search = (document.getElementById('vocab-search') ? document.getElementById('vocab-search').value : '').toLowerCase();
     var filter = document.getElementById('vocab-filter') ? document.getElementById('vocab-filter').value : 'all';
-    // Dynamically populate source filter options
+    // Dynamically populate source filter options, grouped by topic folder (主题分区文件夹类别名-详细语料名)
     var sourceFilterEl = document.getElementById('vocab-source-filter');
     var currentSourceVal = sourceFilterEl ? sourceFilterEl.value : 'all';
     if (sourceFilterEl) {
-        var uniqueSources = [];
-        words.forEach(function(w) { if (w.source && uniqueSources.indexOf(w.source) === -1) uniqueSources.push(w.source); });
-        // Preserve selection if still valid, otherwise reset to 'all'
+        // Build a map: topicName -> [sources], with fallback lookup for legacy words without topicName
+        var topicSourceMap = {};
+        words.forEach(function(w) {
+            if (!w.source) return;
+            // Determine topic name: prefer stored topicName, else look up from documents
+            var tn = w.topicName;
+            if (!tn) {
+                var doc = (State.documents || []).find(function(d) { return d.title === w.source; });
+                if (doc && doc.topic) {
+                    var topic = findTopicById(doc.topic);
+                    tn = topic ? topic.name : '未分类';
+                } else {
+                    tn = '未分类';
+                }
+            }
+            if (!topicSourceMap[tn]) topicSourceMap[tn] = [];
+            if (topicSourceMap[tn].indexOf(w.source) === -1) topicSourceMap[tn].push(w.source);
+        });
+        // Build options with optgroup for hierarchical display (主题分区文件夹类别名 - 详细语料名)
         var sourceOptions = '<option value="all">全部来源</option>';
-        uniqueSources.forEach(function(s) {
-            sourceOptions += '<option value="' + escapeHtml(s) + '"' + (s === currentSourceVal ? ' selected' : '') + '>' + escapeHtml(s) + '</option>';
+        Object.keys(topicSourceMap).sort().forEach(function(topicName) {
+            var sources = topicSourceMap[topicName].sort();
+            sourceOptions += '<optgroup label="' + escapeHtml(topicName) + '">';
+            sources.forEach(function(s) {
+                sourceOptions += '<option value="' + escapeHtml(s) + '"' + (s === currentSourceVal ? ' selected' : '') + '>' + escapeHtml(topicName + ' - ' + s) + '</option>';
+            });
+            sourceOptions += '</optgroup>';
         });
         // Only rebuild if options changed (avoid losing focus on the select)
         if (sourceFilterEl.innerHTML !== sourceOptions) {
