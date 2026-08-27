@@ -113,6 +113,8 @@ if (typeof window.lucide === 'undefined') {
         setTimeout(flushQueue, 500);
     })();
     </script>
+    <!-- Auth0 SDK -->
+    <script src="https://cdn.auth0.com/js/auth0/9.26.0/auth0.min.js"></script>
 </head>
 <body>
 <style>
@@ -1041,6 +1043,13 @@ body { font-family: var(--lc-font-sans); background: var(--lc-color-bg); color: 
         <button type="button" id="btn-toggle-pwd2" class="lc-pwd-toggle" tabindex="-1" title="显示/隐藏密码"><i data-lucide="eye" style="width:18px;height:18px;"></i></button>
       </div>
       <button class="lc-btn lc-btn-primary" id="btn-auth-submit" style="width:100%;justify-content:center;">登录</button>
+      <div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--lc-color-border);">
+        <button class="lc-btn lc-btn-outline" id="btn-auth0-login" style="width:100%;justify-content:center;display:flex;align-items:center;gap:8px;border:1px solid var(--lc-color-border);background:var(--lc-color-surface);">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+          Auth0 登录 / 注册
+        </button>
+        <p style="font-size:12px;color:var(--lc-color-text-tertiary);text-align:center;margin-top:6px;">支持 Google、GitHub 等社交账号，跨设备同步</p>
+      </div>
       <p class="lc-auth-hint">本地优先存储，云端同步支持跨设备登录 · <a href="javascript:void(0)" id="btn-view-auth-log" style="color:var(--lc-color-primary);text-decoration:underline;font-size:12px;">查看认证日志</a></p>
       <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px;padding-top:8px;border-top:1px solid var(--lc-color-border);">
         <a href="javascript:void(0)" id="btn-forgot-password" style="color:var(--lc-color-primary);text-decoration:underline;font-size:13px;">找回密码</a>
@@ -1193,6 +1202,26 @@ body { font-family: var(--lc-font-sans); background: var(--lc-color-bg); color: 
 
       <button class="lc-btn" id="btn-clear-apikey" style="width:100%;justify-content:center;font-size:13px;color:var(--lc-color-error,#ef4444);">清除所有云端设置（禁用同步）</button>
       <div id="cloud-sync-status" style="margin-top:12px;font-size:13px;text-align:center;color:var(--lc-color-text-tertiary);"></div>
+
+      <!-- GitHub Sync Section -->
+      <div style="margin-top:20px;padding-top:16px;border-top:2px dashed var(--lc-color-border);">
+        <div style="margin-bottom:12px;padding:12px;border-radius:8px;background:var(--lc-color-surface);font-size:13px;line-height:1.6;">
+          <strong style="color:var(--lc-color-primary);">GitHub 数据同步（推荐 Auth0 用户使用）</strong><br>
+          1. 在 GitHub Settings → Developer settings → Personal access tokens 生成 Token（需 repo 权限）<br>
+          2. 粘贴到下方并保存，用户数据将自动同步到 GitHub 仓库<br>
+          3. 换设备登录后数据自动恢复
+        </div>
+        <label style="font-size:13px;color:var(--lc-color-text-secondary);margin-bottom:6px;display:block;">GitHub Personal Access Token</label>
+        <div style="position:relative;margin-bottom:12px;">
+          <input type="password" id="github-token-input" placeholder="ghp_xxxxx..." class="lc-input" style="width:100%;padding-right:40px;">
+          <button type="button" id="btn-toggle-ghtoken" class="lc-pwd-toggle" tabindex="-1" title="显示/隐藏"><i data-lucide="eye" style="width:18px;height:18px;"></i></button>
+        </div>
+        <div style="display:flex;gap:8px;margin-bottom:8px;">
+          <button class="lc-btn lc-btn-primary" id="btn-save-ghtoken" style="flex:1;justify-content:center;">保存 Token</button>
+          <button class="lc-btn" id="btn-test-ghtoken" style="flex:1;justify-content:center;">测试连接</button>
+        </div>
+        <div id="github-sync-status" style="font-size:13px;text-align:center;color:var(--lc-color-text-tertiary);"></div>
+      </div>
     </div>
   </div>
 </div>
@@ -2946,6 +2975,139 @@ async function hashPassword(password) {
     return ((h1 >>> 0).toString(16).padStart(8, '0')) + ((h2 >>> 0).toString(16).padStart(8, '0'));
 }
 
+// ===== Auth0 Integration =====
+var AUTH0_CONFIG = {
+    domain: 'dev-hc22kmnjp4xubc2h.us.auth0.com',
+    clientId: '3YW5I2FvgDiSKrteeVkqyQ6H2HrigLm9',
+};
+var _auth0Client = null;
+
+function initAuth0() {
+    if (typeof auth0 === 'undefined' || _auth0Client) return;
+    _auth0Client = new auth0.WebAuth({
+        domain: AUTH0_CONFIG.domain,
+        clientID: AUTH0_CONFIG.clientId,
+        redirectUri: window.location.origin + window.location.pathname,
+        responseType: 'token id_token',
+        scope: 'openid profile email',
+    });
+}
+
+function auth0Login() {
+    if (!_auth0Client) { showToast('Auth0 未加载，请稍后重试', 'error'); return; }
+    _auth0Client.authorize();
+}
+
+function handleAuth0Callback() {
+    if (!_auth0Client) return;
+    _auth0Client.parseHash(function(err, authResult) {
+        if (err) { console.error('Auth0 error:', err); showToast('Auth0 登录失败: ' + (err.errorDescription || err.error), 'error'); return; }
+        if (authResult && authResult.idTokenPayload) {
+            var profile = authResult.idTokenPayload;
+            var auth0UserId = profile.sub;
+            var username = profile.nickname || profile.name || (profile.email ? profile.email.split('@')[0] : auth0UserId);
+            // Sanitize username for localStorage key
+            var safeUsername = username.replace(/[^a-zA-Z0-9_\u4e00-\u9fa5]/g, '_').slice(0, 20);
+            logAuthEvent('auth0_login', { sub: auth0UserId, username: safeUsername });
+            // Create or link local user account
+            var localUsers = getUsers();
+            if (!localUsers[safeUsername]) {
+                localUsers[safeUsername] = { passwordHash: 'auth0_' + auth0UserId, cloudBlobId: '', createdAt: Date.now(), auth0Id: auth0UserId };
+                saveUsers(localUsers);
+            } else {
+                localUsers[safeUsername].auth0Id = auth0UserId;
+                saveUsers(localUsers);
+            }
+            State.user = { username: safeUsername, cloudBlobId: localUsers[safeUsername].cloudBlobId || '', auth0Id: auth0UserId };
+            localStorage.setItem('lc-current-user', safeUsername);
+            localStorage.setItem('lc-auth0-id', auth0UserId);
+            localStorage.setItem('lc-auth0-token', authResult.idToken);
+            generateSessionToken(safeUsername);
+            closeAuthModal();
+            updateUserUI();
+            loadUserData();
+            showToast('Auth0 登录成功，欢迎 ' + safeUsername, 'success');
+            // Clean URL hash
+            if (window.history && window.history.replaceState) {
+                window.history.replaceState({}, document.title, window.location.pathname + window.location.search);
+            }
+        }
+    });
+}
+
+function auth0Logout() {
+    if (!_auth0Client) { logout(); return; }
+    _auth0Client.logout({
+        returnTo: window.location.origin + window.location.pathname,
+        clientID: AUTH0_CONFIG.clientId,
+    });
+}
+
+// ===== GitHub Data Sync (Contents API) =====
+var GITHUB_SYNC_CONFIG = {
+    owner: 'antongyan0-ui',
+    repo: 'Puzzel-Lab',
+    branch: 'main',
+    dataPath: 'user-data',
+};
+
+function getGithubToken() { try { return localStorage.getItem('lc-github-token') || ''; } catch(e) { return ''; } }
+function hasGithubSync() { return !!getGithubToken(); }
+
+function getGithubDataPath() {
+    if (!State.user) return null;
+    var userId = State.user.auth0Id || State.user.username;
+    return GITHUB_SYNC_CONFIG.dataPath + '/' + userId.replace(/[^a-zA-Z0-9_-]/g, '_') + '.json';
+}
+
+async function githubSaveData(data) {
+    var token = getGithubToken();
+    if (!token || !State.user) return false;
+    var path = getGithubDataPath();
+    if (!path) return false;
+    var url = 'https://api.github.com/repos/' + GITHUB_SYNC_CONFIG.owner + '/' + GITHUB_SYNC_CONFIG.repo + '/contents/' + path;
+    // Get current file SHA (needed for update, not for create)
+    var sha = null;
+    try {
+        var resp = await fetchWithTimeout(url, {
+            headers: { 'Authorization': 'token ' + token, 'Accept': 'application/vnd.github.v3+json' }
+        }, CLOUD_TIMEOUT);
+        if (resp.ok) {
+            var fileData = await resp.json();
+            sha = fileData.sha;
+        }
+    } catch(e) { /* File may not exist yet, that's OK */ }
+    // Create or update file
+    var content = btoa(unescape(encodeURIComponent(JSON.stringify(data))));
+    var body = { message: 'sync: update data for ' + (State.user.auth0Id || State.user.username), content: content, branch: GITHUB_SYNC_CONFIG.branch };
+    if (sha) body.sha = sha;
+    try {
+        var updateResp = await fetchWithTimeout(url, {
+            method: 'PUT',
+            headers: { 'Authorization': 'token ' + token, 'Accept': 'application/vnd.github.v3+json', 'Content-Type': 'application/json' },
+            body: JSON.stringify(body)
+        }, CLOUD_TIMEOUT);
+        return updateResp.ok;
+    } catch(e) { console.error('GitHub save failed:', e); return false; }
+}
+
+async function githubLoadData() {
+    var token = getGithubToken();
+    if (!token || !State.user) return null;
+    var path = getGithubDataPath();
+    if (!path) return null;
+    var url = 'https://api.github.com/repos/' + GITHUB_SYNC_CONFIG.owner + '/' + GITHUB_SYNC_CONFIG.repo + '/contents/' + path;
+    try {
+        var resp = await fetchWithTimeout(url, {
+            headers: { 'Authorization': 'token ' + token, 'Accept': 'application/vnd.github.v3+json' }
+        }, CLOUD_TIMEOUT);
+        if (!resp.ok) return null;
+        var fileData = await resp.json();
+        var content = decodeURIComponent(escape(atob(fileData.content.replace(/\n/g, ''))));
+        return JSON.parse(content);
+    } catch(e) { console.error('GitHub load failed:', e); return null; }
+}
+
 // ===== Cloud Storage (JSONBin.io — supports CORS) =====
 var JSONBIN_BASE = 'https://api.jsonbin.io/v3/b';
 var CLOUD_TIMEOUT = 12000;
@@ -3474,6 +3636,7 @@ function collectCurrentData() {
         translationCollapsed: State.translationCollapsed,
         learning: State.learning,
         _updatedAt: Date.now(),
+        _savedAt: Date.now(),
     };
 }
 
@@ -3803,13 +3966,18 @@ function updateSyncStatus(status, error) {
 // Manual sync trigger
 window.manualSync = function() {
     if (!State.user || State.user.username === '__guest__') { showToast('请先登录', 'error'); return; }
-    if (!hasCloudSync()) { showToast('请先在设置中配置云端同步', 'info'); openCloudSyncModal(); return; }
-    if (!State.user.cloudBlobId) { showToast('当前账号无云端存储，请稍后重试', 'error'); return; }
+    if (!hasCloudSync() && !hasGithubSync()) { showToast('请先在设置中配置云端同步', 'info'); openCloudSyncModal(); return; }
     showToast('正在同步...', 'info');
-    // Save current state first
+    // Save current state first (triggers both GitHub and JSONBin sync)
     saveUserData();
-    // Then pull cloud
-    setTimeout(function() { fullCloudSync(); }, 600);
+    // Then pull cloud for JSONBin
+    if (hasCloudSync() && State.user.cloudBlobId) {
+        setTimeout(function() { fullCloudSync(); }, 600);
+    }
+    // For GitHub sync, also reload from cloud
+    if (hasGithubSync()) {
+        setTimeout(function() { loadUserData(); }, 600);
+    }
 };
 
 function logout() {
@@ -3829,7 +3997,11 @@ function saveUserData() {
             var data = collectCurrentData();
             // Local save with timestamp
             localStorage.setItem('lc-data-' + State.user.username, JSON.stringify(data));
-            // Cloud push (versioned, fire-and-forget)
+            // GitHub sync (fire-and-forget, for Auth0 users)
+            if (hasGithubSync()) {
+                githubSaveData(data).catch(function(e) { console.error('GitHub sync save failed:', e); });
+            }
+            // Cloud push via JSONBin (versioned, fire-and-forget)
             if (State.user.cloudBlobId && hasCloudSync()) {
                 pushLocalData(State.user.cloudBlobId);
             }
@@ -3845,7 +4017,19 @@ async function loadUserData() {
         var raw = localStorage.getItem('lc-data-' + State.user.username);
         if (raw) data = JSON.parse(raw);
         if (data) applyUserData(data);
-        // CLOUD PULL: fetch cloud data and merge if newer
+        // GITHUB PULL: fetch from GitHub repo (for Auth0 users)
+        if (hasGithubSync() && State.user.auth0Id) {
+            var ghData = await githubLoadData();
+            if (ghData) {
+                // Merge: GitHub data takes priority if newer
+                if (!data || (ghData._savedAt && (!data._savedAt || ghData._savedAt > data._savedAt))) {
+                    applyUserData(ghData);
+                    localStorage.setItem('lc-data-' + State.user.username, JSON.stringify(ghData));
+                    showToast('已从 GitHub 同步数据', 'info');
+                }
+            }
+        }
+        // CLOUD PULL: fetch cloud data and merge if newer (JSONBin)
         if (hasCloudSync() && State.user.cloudBlobId) {
             pullCloudData(State.user.cloudBlobId);
         } else if (hasCloudSync() && State.user.username !== '__guest__') {
@@ -4027,8 +4211,8 @@ function updateUserUI() {
         if (btn) swapLucideIcon(btn, 'user-check', 18);
         if (logoutBtn) logoutBtn.style.display = '';
         if (loginBtn) loginBtn.style.display = 'none';
-        // Show sync indicator for logged-in users with cloud sync enabled
-        var showSync = hasCloudSync() && State.user.cloudBlobId;
+        // Show sync indicator for logged-in users with cloud sync enabled (JSONBin or GitHub)
+        var showSync = (hasCloudSync() && State.user.cloudBlobId) || hasGithubSync();
         if (syncIndicator) syncIndicator.style.display = showSync ? '' : 'none';
         if (syncBtn) syncBtn.style.display = showSync ? '' : 'none';
         updateSyncStatus(_syncState.status);
@@ -11100,6 +11284,10 @@ function exportDocument() {
 
 // ===== INIT =====
 function init() {
+    // Initialize Auth0 and handle callback
+    initAuth0();
+    handleAuth0Callback();
+
     document.querySelectorAll('.lc-nav-item').forEach(function(btn) { btn.addEventListener('click', function() { switchView(btn.dataset.view); }); });
     document.getElementById('toggle-theme').addEventListener('click', toggleTheme);
     try { var saved = localStorage.getItem('lc-theme'); if (saved === 'dark') { document.documentElement.classList.add('dark'); document.documentElement.classList.remove('light'); } } catch(e) {}
@@ -11329,10 +11517,73 @@ function init() {
     document.getElementById('btn-export-backup').addEventListener('click', function() { exportBackup(); document.getElementById('user-dropdown').classList.remove('show'); });
     document.getElementById('btn-import-backup').addEventListener('click', function() { document.getElementById('backup-import-input').click(); document.getElementById('user-dropdown').classList.remove('show'); });
     document.getElementById('backup-import-input').addEventListener('change', function(e) { if (e.target.files[0]) importBackup(e.target.files[0]); e.target.value = ''; });
-    document.getElementById('btn-logout').addEventListener('click', logout);
+    document.getElementById('btn-logout').addEventListener('click', function() {
+        // If Auth0 user, use Auth0 logout; otherwise standard logout
+        if (localStorage.getItem('lc-auth0-id')) {
+            auth0Logout();
+        } else {
+            logout();
+        }
+    });
     document.getElementById('btn-login').addEventListener('click', function() { document.getElementById('user-dropdown').classList.remove('show'); openAuthModal(); });
+    // Auth0 login button
+    var auth0LoginBtn = document.getElementById('btn-auth0-login');
+    if (auth0LoginBtn) auth0LoginBtn.addEventListener('click', function() { auth0Login(); });
+    // GitHub sync settings handlers
+    var ghToggleBtn = document.getElementById('btn-toggle-ghtoken');
+    if (ghToggleBtn) ghToggleBtn.addEventListener('click', function() {
+        var inp = document.getElementById('github-token-input');
+        if (!inp) return;
+        inp.type = inp.type === 'password' ? 'text' : 'password';
+        swapLucideIcon(ghToggleBtn, inp.type === 'password' ? 'eye' : 'eye-off', 18);
+    });
+    var ghSaveBtn = document.getElementById('btn-save-ghtoken');
+    if (ghSaveBtn) ghSaveBtn.addEventListener('click', function() {
+        var inp = document.getElementById('github-token-input');
+        var status = document.getElementById('github-sync-status');
+        var token = inp ? inp.value.trim() : '';
+        if (!token) { if (status) status.textContent = '请输入 Token'; return; }
+        if (!token.startsWith('ghp_') && !token.startsWith('github_pat_')) { if (status) status.textContent = 'Token 格式不正确（应以 ghp_ 或 github_pat_ 开头）'; return; }
+        try { localStorage.setItem('lc-github-token', token); } catch(e) {}
+        if (status) { status.textContent = 'GitHub Token 已保存'; status.style.color = 'var(--lc-color-success, #22c55e)'; }
+        showToast('GitHub Token 已保存，数据将自动同步', 'success');
+        // If user is logged in, trigger a sync
+        if (State.user) { saveUserData(); }
+    });
+    var ghTestBtn = document.getElementById('btn-test-ghtoken');
+    if (ghTestBtn) ghTestBtn.addEventListener('click', async function() {
+        var inp = document.getElementById('github-token-input');
+        var status = document.getElementById('github-sync-status');
+        var token = inp ? inp.value.trim() : getGithubToken();
+        if (!token) { if (status) status.textContent = '请先输入 Token'; return; }
+        if (status) { status.textContent = '测试中...'; status.style.color = ''; }
+        try {
+            var url = 'https://api.github.com/repos/' + GITHUB_SYNC_CONFIG.owner + '/' + GITHUB_SYNC_CONFIG.repo;
+            var resp = await fetchWithTimeout(url, {
+                headers: { 'Authorization': 'token ' + token, 'Accept': 'application/vnd.github.v3+json' }
+            }, CLOUD_TIMEOUT);
+            if (resp.ok) {
+                if (status) { status.textContent = '连接成功！仓库可访问'; status.style.color = 'var(--lc-color-success, #22c55e)'; }
+                showToast('GitHub 连接成功', 'success');
+            } else if (resp.status === 401) {
+                if (status) { status.textContent = 'Token 无效或已过期'; status.style.color = 'var(--lc-color-error, #ef4444)'; }
+            } else if (resp.status === 404) {
+                if (status) { status.textContent = '仓库不存在或 Token 无 repo 权限'; status.style.color = 'var(--lc-color-error, #ef4444)'; }
+            } else {
+                if (status) { status.textContent = '连接失败：HTTP ' + resp.status; status.style.color = 'var(--lc-color-error, #ef4444)'; }
+            }
+        } catch(e) {
+            if (status) { status.textContent = '网络错误：' + e.message; status.style.color = 'var(--lc-color-error, #ef4444)'; }
+        }
+    });
+    // Load saved GitHub token into input on modal open
     var cloudSyncBtn = document.getElementById('btn-cloud-sync-settings');
-    if (cloudSyncBtn) cloudSyncBtn.addEventListener('click', function() { document.getElementById('user-dropdown').classList.remove('show'); openCloudSyncModal(); });
+    if (cloudSyncBtn) cloudSyncBtn.addEventListener('click', function() {
+        var ghInp = document.getElementById('github-token-input');
+        if (ghInp) ghInp.value = getGithubToken();
+        document.getElementById('user-dropdown').classList.remove('show');
+        openCloudSyncModal();
+    });
 
     // Sync controls
     var syncIndicator = document.getElementById('sync-indicator');
