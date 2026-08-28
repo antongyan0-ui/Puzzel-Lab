@@ -4150,19 +4150,34 @@ function migrateDocumentLangs() {
             changed = true;
         }
     });
-    // Also normalize all page text to NFC
+    // Also normalize ALL page text to NFC (fixes NFD from old PDF extractions)
+    var nfcChanged = false;
     State.documents.forEach(function(doc) {
         if (doc.pages) {
             doc.pages.forEach(function(p) {
                 if (p.lines) p.lines.forEach(function(l) {
                     if (l.text && typeof l.text.normalize === 'function') {
-                        l.text = l.text.normalize('NFC');
+                        var normalized = l.text.normalize('NFC');
+                        if (normalized !== l.text) { l.text = normalized; nfcChanged = true; }
                     }
                 });
             });
         }
     });
-    if (changed) saveUserData();
+    // Also normalize hiddenItems text
+    if (State.hiddenItems) {
+        State.hiddenItems.forEach(function(item) {
+            if (item.text && typeof item.text.normalize === 'function') {
+                var norm = item.text.normalize('NFC');
+                if (norm !== item.text) { item.text = norm; nfcChanged = true; }
+            }
+            if (item.combinedText && typeof item.combinedText.normalize === 'function') {
+                var normC = item.combinedText.normalize('NFC');
+                if (normC !== item.combinedText) { item.combinedText = normC; nfcChanged = true; }
+            }
+        });
+    }
+    if (changed || nfcChanged) saveUserData();
 }
 
 // Auto-detect and assign lang to old custom topics that lack the field
@@ -5907,6 +5922,8 @@ function preSplitMergedFunctionWords(line, dict) {
 
 function spellCheckGermanText(text) {
     if (!text) return text;
+    // Normalize to NFC — ensures ä ö ü ß are precomposed for reliable regex matching
+    if (typeof text.normalize === 'function') text = text.normalize('NFC');
     var dict = getDeDict();
 
     var lines = text.split('\n');
@@ -6133,6 +6150,8 @@ if (typeof module !== 'undefined' && module.exports) {
 function spellCheckText(text) {
     var lang = State.lang || 'en';
     if (lang === 'ja') return text; // Japanese doesn't use spaces between words
+    // Normalize to NFC for reliable regex matching in all languages
+    if (text && typeof text.normalize === 'function') text = text.normalize('NFC');
     
     if (lang === 'de') {
         // German: use German spell check with function-word-aware splitting
@@ -6402,6 +6421,14 @@ window.loadDocument = function(docId) {
     exitEditModeAndSave();
     var doc = (State.documents || []).find(function(d) { return d.id === docId; });
     if (!doc) return;
+    // Normalize all page text to NFC when loading — fixes NFD text from old PDF extractions
+    if (doc.pages) {
+        doc.pages.forEach(function(p) {
+            if (p.lines) p.lines.forEach(function(l) {
+                if (l.text && typeof l.text.normalize === 'function') l.text = l.text.normalize('NFC');
+            });
+        });
+    }
     State.corpus = { docId: doc.id, title: doc.title, topic: doc.topic, pages: doc.pages, readPages: doc.readPages || 0 };
     State.hiddenItems = doc.hiddenItems || [];
     _lastReadPage = doc.readPages || 0;
@@ -6888,6 +6915,10 @@ function updateDocProgressInImportPanel(docId) {
 }
 
 function renderCorpusLine(line, lineNum, pageNum, showNum, pageIdx, lineIdx) {
+    // Normalize text to NFC — ensures umlauts (ä ö ü ß) are single precomposed characters
+    if (line && line.text && typeof line.text.normalize === 'function') {
+        line.text = line.text.normalize('NFC');
+    }
     if (line.isTranslation) {
         var block = document.createElement('div');
         block.className = 'lc-translation-block';
@@ -7078,18 +7109,18 @@ function exitEditModeAndSave() {
 
 function tokenizeLine(line) {
     var tokens = [];
-    // Safety: normalize to NFC in case text was loaded from old data without preprocessing
+    // Normalize to NFC first — converts decomposed (NFD) characters like u+◌̈ to composed ü
     if (line && typeof line.normalize === 'function') line = line.normalize('NFC');
     var regex;
     if (State.lang === 'ja') {
         // Japanese: tokenize kanji (individual), katakana words, and latin words
         regex = /([a-zA-Z]+|[\u30A0-\u30FF]+|[\u4e00-\u9fff])/g;
-    } else if (State.lang === 'de') {
-        // German: include umlauts (äöüÄÖÜß)
-        regex = /([a-zA-Z\u00C4\u00E4\u00D6\u00F6\u00DC\u00FC\u00DF][a-zA-Z\u00C4\u00E4\u00D6\u00F6\u00DC\u00FC\u00DF'\-]*)/g;
     } else {
-        // English (default)
-        regex = /([a-zA-Z][a-zA-Z'-]*)/g;
+        // For ALL Latin-based languages (en, de, etc.):
+        // Use \p{Script=Latin} to match any Latin letter (ä ö ü ß é è etc.)
+        // Also include combining diacritical marks (\u0300-\u036F) as fallback for NFD text
+        // The 'u' flag enables Unicode property escapes
+        regex = /([\p{Script=Latin}\u0300-\u036F][\p{Script=Latin}\u0300-\u036F'\-]*)/gu;
     }
     var lastIdx = 0, m;
     while ((m = regex.exec(line)) !== null) {
