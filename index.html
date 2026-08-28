@@ -277,6 +277,12 @@ body { font-family: var(--lc-font-sans); background: var(--lc-color-bg); color: 
 .lc-blank:hover { border-color: var(--lc-color-primary-hover); background: var(--lc-color-primary-tint-2, rgba(176,106,54,0.12)); }
 .lc-phrase-blank { display: inline-block; min-width: 8em; height: 1.5em; border-bottom: 2.5px solid var(--lc-color-primary); background: var(--lc-color-primary-tint-2, rgba(176,106,54,0.06)); border-radius: 2px 2px 0 0; cursor: pointer; transition: border-color 0.15s, background 0.15s; vertical-align: baseline; }
 .lc-phrase-blank:hover { border-color: var(--lc-color-primary-hover); background: var(--lc-color-primary-tint-2, rgba(176,106,54,0.12)); }
+/* Separable verb blanks (dashed border, paired indicators) */
+.lc-separable-blank { display: inline-block; min-width: 3.5em; height: 1.5em; border-bottom: 2.5px dashed var(--lc-color-primary); background: var(--lc-color-primary-tint-2, rgba(176,106,54,0.06)); border-radius: 2px 2px 0 0; cursor: pointer; transition: border-color 0.15s, background 0.15s; vertical-align: baseline; position: relative; }
+.lc-separable-blank:hover { border-color: var(--lc-color-primary-hover); background: var(--lc-color-primary-tint-2, rgba(176,106,54,0.12)); }
+.lc-separable-blank::after { content: attr(data-sep-marker); position: absolute; top: -0.6em; right: -2px; font-size: 9px; color: var(--lc-color-primary); font-weight: 700; font-family: var(--lc-font-mono); line-height: 1; }
+.lc-separable-pending { display: inline-block; min-width: 3.5em; height: 1.5em; border-bottom: 2.5px dashed var(--lc-state-warning, #f59e0b); background: var(--lc-state-warning-bg, rgba(245,158,11,0.08)); border-radius: 2px 2px 0 0; cursor: pointer; transition: border-color 0.15s, background 0.15s; vertical-align: baseline; position: relative; }
+.lc-separable-pending::after { content: '?'; position: absolute; top: -0.6em; right: -2px; font-size: 9px; color: var(--lc-state-warning, #f59e0b); font-weight: 700; line-height: 1; }
 .lc-corpus-line.editing .lc-corpus-text { outline: 1px dashed var(--lc-color-border); outline-offset: 2px; border-radius: 2px; background: var(--lc-color-surface-2); transition: outline 0.15s, background 0.15s; cursor: text; }
 .lc-corpus-line.editing .lc-corpus-text:focus { outline: 2px solid var(--lc-color-primary); background: var(--lc-color-primary-tint-2); }
 .lc-corpus-line.editing .lc-gutter { color: var(--lc-color-primary); font-weight: 600; }
@@ -713,6 +719,10 @@ body { font-family: var(--lc-font-sans); background: var(--lc-color-bg); color: 
             <i data-lucide="info"></i>
             <span id="wb-hint-text">单击单词即可隐藏 · 长按拖动选择短语可整段隐藏 · 答案自动归纳至右侧并标注行号 · 点击空白处可恢复 · 双击右侧词条可删除 · 译文行自动折叠</span>
         </div>
+        <div class="lc-hint-banner" id="de-separable-hint" style="display:none;background:var(--lc-state-warning-bg);border-color:var(--lc-state-warning);">
+            <i data-lucide="git-merge"></i>
+            <span>可分动词挖空：Ctrl+点击动词 → Ctrl+点击前缀 → 两个空以虚线相连 · 右侧生词汇总显示"前缀/动词"整体形式（如 auf/stehe）</span>
+        </div>
         <div class="lc-workbench-grid" id="workbench-grid">
             <div class="lc-corpus-panel" id="corpus-panel">
                 <div class="lc-empty-hint" id="wb-empty">
@@ -742,7 +752,10 @@ body { font-family: var(--lc-font-sans); background: var(--lc-color-bg); color: 
     <!-- ========== ORAL TRAINING VIEW ========== -->
     <section id="view-oral" class="lc-view">
         <div class="lc-eyebrow">口语表达训练</div>
-        <h1 class="lc-h1">口语训练</h1>
+        <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+            <h1 class="lc-h1" style="margin:0;" id="oral-title">口语训练</h1>
+            <span class="lc-badge lc-badge-primary" id="oral-lang-badge">英语</span>
+        </div>
         <p class="lc-subtitle">语料按主题分类，每篇语料可生成雅思口语题目，模拟考官与用户交谈。支持文字输入与语音输入，考官回复自动朗读。</p>
         <div class="lc-oral-grid">
             <aside class="lc-topic-sidebar">
@@ -1432,6 +1445,8 @@ function switchLanguage(lang) {
     populateTopicSelect();
     renderOralParts();
     renderVocabulary();
+    // Show/hide language-specific features
+    updateLanguageFeatures(lang);
     // Update sample button and placeholder
     var titleInput = document.getElementById('corpus-title');
     if (titleInput) titleInput.placeholder = config.corpusTitlePlaceholder;
@@ -1440,6 +1455,24 @@ function switchLanguage(lang) {
     if (oralSub) oralSub.textContent = config.oralSubtitle;
     refreshIcons();
     showToast('已切换至' + config.name + '（' + config.exam + '）', 'info');
+}
+
+function updateLanguageFeatures(lang) {
+    // Separable verb hint: only for German
+    var sepHint = document.getElementById('de-separable-hint');
+    if (sepHint) sepHint.style.display = (lang === 'de') ? '' : 'none';
+    // Update workbench hint text based on language
+    var wbHint = document.getElementById('wb-hint-text');
+    if (wbHint) {
+        if (lang === 'de') {
+            wbHint.textContent = '单击单词即可隐藏 · 长按拖动选择短语可整段隐藏 · Ctrl+点击可创建可分动词挖空 · 答案自动归纳至右侧 · 译文行自动折叠';
+        } else if (lang === 'ja') {
+            wbHint.textContent = '単語をクリックして隠す · 長押しドラッグでフレーズを隠す · 答えは右側に自動表示 · 訳文は自動的に折りたたみ';
+        } else {
+            wbHint.textContent = '单击单词即可隐藏 · 长按拖动选择短语可整段隐藏 · 答案自动归纳至右侧并标注行号 · 点击空白处可恢复 · 双击右侧词条可删除 · 译文行自动折叠';
+        }
+    }
+    // TestDaF bar visibility is handled by renderOralParts()
 }
 
 function updateLangSwitcherUI() {
@@ -1512,6 +1545,9 @@ function renderOralParts() {
         div.innerHTML = '<i data-lucide="' + icon + '"></i><h4>' + p.title + '</h4><p>' + p.desc + '</p>';
         container.appendChild(div);
     });
+    // Update oral language badge
+    var oralLangBadge = document.getElementById('oral-lang-badge');
+    if (oralLangBadge) oralLangBadge.textContent = config.name;
     refreshIcons();
 }
 
@@ -6637,7 +6673,9 @@ function loadSample() {
 function renderWorkbench() {
     var panel = document.getElementById('corpus-panel');
     var titleEl = document.getElementById('wb-title');
-    titleEl.textContent = State.corpus ? State.corpus.title : '挖空训练台';
+    var langConfig = getCurrentLangConfig();
+    var langBadge = '<span class="lc-lang-badge" style="display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:var(--lc-radius-full);background:var(--lc-color-primary-soft);color:var(--lc-color-primary);font-size:12px;font-weight:600;margin-left:8px;vertical-align:middle;">' + langConfig.flag + ' ' + langConfig.name + '</span>';
+    titleEl.innerHTML = (State.corpus ? escapeHtml(State.corpus.title) : '挖空训练台') + langBadge;
     panel.innerHTML = '';
     if (!State.corpus) {
         panel.innerHTML = '<div class="lc-empty-hint"><i data-lucide="file-text"></i><p>请先在「导入」页面上传文档或粘贴文本</p></div>';
@@ -7040,12 +7078,27 @@ function reapplyHiddenItems() {
                     else { el.style.display = 'none'; }
                 });
             }
+        } else if (item.type === 'separable') {
+            // Find word by matching text + line number
+            var sepWordEl = allWords.find(function(w) {
+                return w.dataset.word === item.text && parseInt(w.dataset.line) === item.line && parseInt(w.dataset.page) === item.page;
+            });
+            if (sepWordEl) {
+                sepWordEl.dataset.hideId = item.id;
+                sepWordEl.dataset.originalText = sepWordEl.dataset.word;
+                sepWordEl.classList.add('lc-separable-blank');
+                sepWordEl.dataset.sepMarker = item.marker || '';
+                sepWordEl.dataset.sepPair = item.pairId || '';
+                sepWordEl.textContent = '';
+            }
         }
     });
 }
 
 var isSelecting = false; var selStart = null; var selEnd = null;
 var _wordInteractionBound = false; // prevent duplicate document-level listeners
+var _separablePending = null; // Stores the first word element when creating a separable verb link (Ctrl+click flow)
+var _separablePairCounter = 0; // Incrementing counter for separable verb pair markers
 
 function setupWordInteractions() {
     var panel = document.getElementById('corpus-panel');
@@ -7068,7 +7121,17 @@ function setupWordInteractions() {
     // Mouse: delegate mousedown and mouseover on the panel
     panel.onmousedown = function(e) {
         var w = e.target.closest('.lc-word');
-        if (w) { e.preventDefault(); startSelection(w); }
+        if (w) {
+            // Ctrl+click: separable verb linking (German only)
+            if (e.ctrlKey || e.metaKey) {
+                e.preventDefault();
+                e.stopPropagation();
+                handleSeparableClick(w);
+                return;
+            }
+            e.preventDefault();
+            startSelection(w);
+        }
     };
     panel.onmouseover = function(e) {
         var w = e.target.closest('.lc-word');
@@ -7108,8 +7171,15 @@ function extendSelection(wordEl) {
 
 function onSelectionEnd() {
     if (!isSelecting) return;
+    // Cancel any pending separable verb selection on normal click
+    if (_separablePending && selStart === selEnd && selStart === _separablePending) {
+        clearSeparablePending();
+        isSelecting = false; selStart = null; selEnd = null; clearSelectionHighlight();
+        return;
+    }
+    clearSeparablePending();
     if (selStart === selEnd) {
-        if (selStart.classList.contains('lc-blank') || selStart.classList.contains('lc-phrase-blank')) { var hideId = selStart.dataset.hideId; if (hideId) unhideItem(hideId); }
+        if (selStart.classList.contains('lc-blank') || selStart.classList.contains('lc-phrase-blank') || selStart.classList.contains('lc-separable-blank')) { var hideId = selStart.dataset.hideId; if (hideId) unhideItem(hideId); }
         else if (!selStart.dataset.hideId) hideWord(selStart);
     } else { hidePhrase(selStart, selEnd); }
     isSelecting = false; selStart = null; selEnd = null; clearSelectionHighlight();
@@ -7131,6 +7201,105 @@ function updateSelectionHighlight() {
 }
 
 function clearSelectionHighlight() { document.querySelectorAll('.lc-word.lc-selecting').forEach(function(w) { w.classList.remove('lc-selecting'); }); }
+
+function handleSeparableClick(wordEl) {
+    // If the clicked word is already a separable blank, unhide it
+    if (wordEl.classList.contains('lc-separable-blank')) {
+        var hideId = wordEl.dataset.hideId;
+        if (hideId) { unhideItem(hideId); showToast('已取消可分动词挖空', 'info'); }
+        clearSeparablePending();
+        return;
+    }
+    // If there's no pending word, mark this one as the verb (first part)
+    if (!_separablePending) {
+        if (wordEl.dataset.hideId) { showToast('该词已挖空，请选择未挖空的词', 'info'); return; }
+        _separablePending = wordEl;
+        wordEl.classList.add('lc-separable-pending');
+        wordEl.textContent = '';
+        showToast('已选中动词，请 Ctrl+点击前缀完成连接', 'info');
+        return;
+    }
+    // Second click: complete the separable verb link
+    if (_separablePending === wordEl) {
+        // Clicking the same word cancels pending
+        clearSeparablePending();
+        showToast('已取消可分动词选择', 'info');
+        return;
+    }
+    if (wordEl.dataset.hideId) { showToast('该词已挖空，请选择未挖空的词', 'info'); return; }
+    // Determine which is verb and which is prefix: the first clicked is the verb, second is the prefix
+    var verbEl = _separablePending;
+    var prefixEl = wordEl;
+    hideSeparableVerb(verbEl, prefixEl);
+    clearSeparablePending();
+}
+
+function clearSeparablePending() {
+    if (_separablePending) {
+        _separablePending.classList.remove('lc-separable-pending');
+        _separablePending.textContent = _separablePending.dataset.word;
+        _separablePending = null;
+    }
+}
+
+function hideSeparableVerb(verbEl, prefixEl) {
+    var verbText = verbEl.dataset.word;
+    var prefixText = prefixEl.dataset.word;
+    var verbLine = parseInt(verbEl.dataset.line);
+    var verbPage = parseInt(verbEl.dataset.page);
+    var prefixLine = parseInt(prefixEl.dataset.line);
+    var prefixPage = parseInt(prefixEl.dataset.page);
+    var pairNum = ++_separablePairCounter;
+    var markerChars = ['①','②','③','④','⑤','⑥','⑦','⑧','⑨','⑩'];
+    var marker = markerChars[(pairNum - 1) % markerChars.length];
+    var verbId = genId();
+    var prefixId = genId();
+    // Create blank for verb
+    verbEl.classList.remove('lc-separable-pending');
+    verbEl.classList.add('lc-separable-blank');
+    verbEl.dataset.hideId = verbId;
+    verbEl.dataset.originalText = verbText;
+    verbEl.dataset.sepMarker = marker;
+    verbEl.dataset.sepPair = prefixId;
+    verbEl.textContent = '';
+    // Create blank for prefix
+    prefixEl.classList.add('lc-separable-blank');
+    prefixEl.dataset.hideId = prefixId;
+    prefixEl.dataset.originalText = prefixText;
+    prefixEl.dataset.sepMarker = marker;
+    prefixEl.dataset.sepPair = verbId;
+    prefixEl.textContent = '';
+    // Add to hidden items as a separable pair
+    var combinedText = prefixText + '/' + verbText;
+    State.hiddenItems.push({ id: verbId, text: verbText, line: verbLine, page: verbPage, type: 'separable', role: 'verb', pairId: prefixId, pairText: prefixText, combinedText: combinedText, marker: marker });
+    State.hiddenItems.push({ id: prefixId, text: prefixText, line: prefixLine, page: prefixPage, type: 'separable', role: 'prefix', pairId: verbId, pairText: verbText, combinedText: combinedText, marker: marker });
+    // Add to vocabulary in combined format
+    addToVocabularySeparable(combinedText, verbLine, verbId, prefixLine, prefixId);
+    renderAnswerRail();
+    updateHiddenCount();
+    saveUserData();
+    showToast('可分动词挖空：' + combinedText, 'success');
+}
+
+function addToVocabularySeparable(combinedText, verbLine, verbHideId, prefixLine, prefixHideId) {
+    var source = State.corpus ? State.corpus.title : '未知语料';
+    var topicId = State.corpus ? State.corpus.topic : null;
+    var topicObj = topicId ? findTopicById(topicId) : null;
+    var topicName = topicObj ? topicObj.name : '未分类';
+    var lang = State.lang || 'en';
+    // Check if combined word already exists
+    var existing = State.vocabulary.words.find(function(w) { return w.word === combinedText && (w.lang || 'en') === lang; });
+    if (existing) {
+        if (existing.hideIds.indexOf(verbHideId) < 0) existing.hideIds.push(verbHideId);
+        if (existing.hideIds.indexOf(prefixHideId) < 0) existing.hideIds.push(prefixHideId);
+        existing.frequency = existing.hideIds.length;
+        existing.lastModified = Date.now();
+    } else {
+        var entry = { id: genId(), word: combinedText, phonetic: '', meaning: '', source: source, topicId: topicId, topicName: topicName, line: verbLine, status: '未开始', hideIds: [verbHideId, prefixHideId], frequency: 1, addedAt: Date.now(), reviewCount: 0, nextReview: null, lastReview: null, example: '', lang: lang, isSeparable: true };
+        State.vocabulary.words.push(entry);
+    }
+    renderVocabulary();
+}
 
 function hideWord(wordEl) {
     var word = wordEl.dataset.word; var line = parseInt(wordEl.dataset.line); var page = parseInt(wordEl.dataset.page);
@@ -7161,8 +7330,34 @@ function hidePhrase(startEl, endEl) {
 function unhideItem(id) {
     var item = State.hiddenItems.find(function(i) { return i.id === id; });
     if (!item) return;
+    // For separable verbs: also unhide the paired item
+    if (item.type === 'separable' && item.pairId) {
+        var pairItem = State.hiddenItems.find(function(i) { return i.id === item.pairId; });
+        // Remove both blanks
+        [id, item.pairId].forEach(function(hid) {
+            document.querySelectorAll('[data-hide-id="' + hid + '"]').forEach(function(el) {
+                el.classList.remove('lc-blank', 'lc-phrase-blank', 'lc-separable-blank', 'lc-separable-pending');
+                el.style.display = ''; el.textContent = el.dataset.originalText || '';
+                delete el.dataset.hideId; delete el.dataset.originalText;
+                delete el.dataset.sepMarker; delete el.dataset.sepPair;
+            });
+        });
+        // Remove both hidden items
+        var combinedText = item.combinedText;
+        State.hiddenItems = State.hiddenItems.filter(function(i) { return i.id !== id && i.id !== item.pairId; });
+        // Remove vocabulary entry for the combined separable verb
+        State.vocabulary.words = State.vocabulary.words.filter(function(w) {
+            if (w.word === combinedText && w.isSeparable) {
+                w.hideIds = w.hideIds.filter(function(hid) { return hid !== id && hid !== item.pairId; });
+                if (w.hideIds.length === 0) return false;
+            }
+            return true;
+        });
+        renderAnswerRail(); updateHiddenCount(); renderVocabulary(); saveUserData();
+        return;
+    }
     document.querySelectorAll('[data-hide-id="' + id + '"]').forEach(function(el) {
-        el.classList.remove('lc-blank', 'lc-phrase-blank'); el.style.display = ''; el.textContent = el.dataset.originalText || '';
+        el.classList.remove('lc-blank', 'lc-phrase-blank', 'lc-separable-blank', 'lc-separable-pending'); el.style.display = ''; el.textContent = el.dataset.originalText || '';
         delete el.dataset.hideId; delete el.dataset.originalText;
     });
     State.hiddenItems = State.hiddenItems.filter(function(i) { return i.id !== id; });
@@ -7199,9 +7394,19 @@ function renderAnswerRail() {
     var wordsDiv = document.getElementById('rail-words');
     var phrasesDiv = document.getElementById('rail-phrases');
     var wordItems = State.hiddenItems.filter(function(i) { return i.type === 'word'; });
+    var separableItems = State.hiddenItems.filter(function(i) { return i.type === 'separable' && i.role === 'verb'; });
     var phraseItems = State.hiddenItems.filter(function(i) { return i.type === 'phrase'; });
-    if (wordItems.length === 0) wordsDiv.innerHTML = '<div class="lc-empty-hint" style="padding:16px 8px;"><p style="font-size:12px;">点击语料中的单词开始</p></div>';
-    else wordsDiv.innerHTML = wordItems.map(function(item) { return '<div class="lc-answer-item" data-hide-id="' + item.id + '" title="单击定位 · 双击删除 · 右键编辑"><span class="lc-answer-word">' + escapeHtml(item.text) + '</span><span class="lc-answer-locator">第' + item.line + '行</span></div>'; }).join('');
+    var wordsHtml = '';
+    if (wordItems.length === 0 && separableItems.length === 0) wordsDiv.innerHTML = '<div class="lc-empty-hint" style="padding:16px 8px;"><p style="font-size:12px;">点击语料中的单词开始</p></div>';
+    else {
+        wordsHtml = wordItems.map(function(item) { return '<div class="lc-answer-item" data-hide-id="' + item.id + '" title="单击定位 · 双击删除 · 右键编辑"><span class="lc-answer-word">' + escapeHtml(item.text) + '</span><span class="lc-answer-locator">第' + item.line + '行</span></div>'; }).join('');
+        // Add separable verb entries (show combined "prefix/verb" format)
+        wordsHtml += separableItems.map(function(item) {
+            var marker = item.marker ? '<span style="color:var(--lc-color-primary);font-weight:700;margin-right:4px;">' + item.marker + '</span>' : '';
+            return '<div class="lc-answer-item" data-hide-id="' + item.id + '" title="单击定位 · 双击删除 · 右键编辑"><span class="lc-answer-word" style="border-bottom:2px dashed var(--lc-color-primary);">' + marker + escapeHtml(item.combinedText) + '</span><span class="lc-answer-locator">第' + item.line + '行</span></div>';
+        }).join('');
+        wordsDiv.innerHTML = wordsHtml;
+    }
     if (phraseItems.length === 0) phrasesDiv.innerHTML = '<div class="lc-empty-hint" style="padding:16px 8px;"><p style="font-size:12px;">长按拖动选择短语</p></div>';
     else phrasesDiv.innerHTML = phraseItems.map(function(item) {
         var pEntry = State.vocabulary.phrases.find(function(p) { return p.hideId === item.id; });
@@ -11156,7 +11361,16 @@ function renderExportPreview() {
     });
     if (includeAnswers && State.hiddenItems.length > 0) {
         html += '<div style="margin-top:32px;padding-top:16px;border-top:2px solid #333;"><h3 style="font-size:16px;font-weight:600;margin-bottom:10px;">答案归纳</h3>';
-        State.hiddenItems.forEach(function(item, i) { html += '<div style="margin:6px 0;">' + (i + 1) + '. ' + escapeHtml(item.text) + ' <span style="color:#999;font-family:monospace;font-size:12px;">— 第' + item.line + '行</span></div>'; });
+        var _sepSeen = {};
+        State.hiddenItems.forEach(function(item, i) {
+            if (item.type === 'separable') {
+                if (_sepSeen[item.id] || _sepSeen[item.pairId]) return;
+                _sepSeen[item.id] = true;
+                html += '<div style="margin:6px 0;">' + (i + 1) + '. ' + escapeHtml(item.combinedText) + ' <span style="color:#999;font-family:monospace;font-size:12px;">— 第' + item.line + '行 (可分动词)</span></div>';
+            } else {
+                html += '<div style="margin:6px 0;">' + (i + 1) + '. ' + escapeHtml(item.text) + ' <span style="color:#999;font-family:monospace;font-size:12px;">— 第' + item.line + '行</span></div>';
+            }
+        });
         html += '</div>';
     }
     // Add phrases organized by topic
@@ -11239,7 +11453,16 @@ function exportDocument() {
     });
     if (includeAnswers && State.hiddenItems.length > 0) {
         html += '<div class="answers"><h3>答案归纳</h3>';
-        State.hiddenItems.forEach(function(item, i) { html += '<div class="answer-item">' + (i + 1) + '. ' + escapeHtml(item.text) + ' <span class="loc">— 第' + item.line + '行</span></div>'; });
+        var _sepSeen2 = {};
+        State.hiddenItems.forEach(function(item, i) {
+            if (item.type === 'separable') {
+                if (_sepSeen2[item.id] || _sepSeen2[item.pairId]) return;
+                _sepSeen2[item.id] = true;
+                html += '<div class="answer-item">' + (i + 1) + '. ' + escapeHtml(item.combinedText) + ' <span class="loc">— 第' + item.line + '行 (可分动词)</span></div>';
+            } else {
+                html += '<div class="answer-item">' + (i + 1) + '. ' + escapeHtml(item.text) + ' <span class="loc">— 第' + item.line + '行</span></div>';
+            }
+        });
         html += '</div>';
     }
     // Add phrases organized by topic
@@ -11287,6 +11510,8 @@ function init() {
     // Initialize Auth0 and handle callback
     initAuth0();
     handleAuth0Callback();
+    // Show/hide language-specific features on load
+    updateLanguageFeatures(State.lang);
 
     document.querySelectorAll('.lc-nav-item').forEach(function(btn) { btn.addEventListener('click', function() { switchView(btn.dataset.view); }); });
     document.getElementById('toggle-theme').addEventListener('click', toggleTheme);
