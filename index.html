@@ -1572,7 +1572,10 @@ function getAllTopics() {
         var override = State.topicNameOverrides ? State.topicNameOverrides[t.id] : null;
         return { id: t.id, name: override || t.name, icon: t.icon, color: t.color, bg: t.bg, isDefault: true };
     });
-    var customs = (State.customTopics || []).map(function(t) {
+    var customs = (State.customTopics || []).filter(function(t) {
+        // Only show custom topics for the current language; legacy topics without lang default to 'en'
+        return (t.lang || 'en') === (State.lang || 'en');
+    }).map(function(t) {
         return { id: t.id, name: t.name, icon: t.icon || 'folder', color: t.color || '#837868', bg: t.bg || '#EFE7D6', isDefault: false };
     });
     _topicCache.lang = State.lang;
@@ -4356,7 +4359,7 @@ async function handleFile(file) {
         State.corpus = { docId: docId, title: title, topic: topic, pages: pages };
         State.hiddenItems = [];
         if (!State.documents) State.documents = [];
-        State.documents.push({ id: docId, title: title, topic: topic, pages: pages, hiddenItems: [], pageCount: pages.length, createdAt: Date.now() });
+        State.documents.push({ id: docId, title: title, topic: topic, pages: pages, hiddenItems: [], pageCount: pages.length, createdAt: Date.now(), lang: State.lang || 'en' });
         saveUserData();
         status.className = 'lc-parse-status show success';
         status.innerHTML = '<i data-lucide="check-circle" style="width:16px;height:16px;"></i> 解析成功！共 ' + pages.length + ' 页，' + pages.reduce(function(s, p) { return s + p.lines.length; }, 0) + ' 行';
@@ -6260,7 +6263,9 @@ function mergeBrokenLines(lines) {
 function renderTopicFolders() {
     var container = document.getElementById('topic-folder-list');
     if (!container) return;
-    var docs = State.documents || [];
+    var currentLang = State.lang || 'en';
+    // Filter documents by current language — legacy docs without lang field default to 'en'
+    var docs = (State.documents || []).filter(function(d) { return (d.lang || 'en') === currentLang; });
     var allTopics = getAllTopics();
     var groups = {};
     allTopics.forEach(function(t) { groups[t.id] = []; });
@@ -6537,7 +6542,8 @@ function openCreateFolderModal() {
             name: name,
             icon: 'folder',
             color: CUSTOM_TOPIC_COLORS[colorIdx],
-            bg: hexToRgba(CUSTOM_TOPIC_COLORS[colorIdx], 0.12)
+            bg: hexToRgba(CUSTOM_TOPIC_COLORS[colorIdx], 0.12),
+            lang: State.lang || 'en'
         };
         if (!State.customTopics) State.customTopics = [];
         State.customTopics.push(newTopic);
@@ -6653,7 +6659,7 @@ function handleTextParse() {
     State.corpus = { docId: docId, title: title, topic: topic, pages: pages };
     State.hiddenItems = [];
     if (!State.documents) State.documents = [];
-    State.documents.push({ id: docId, title: title, topic: topic, pages: pages, hiddenItems: [], pageCount: pages.length, createdAt: Date.now() });
+    State.documents.push({ id: docId, title: title, topic: topic, pages: pages, hiddenItems: [], pageCount: pages.length, createdAt: Date.now(), lang: State.lang || 'en' });
     saveUserData();
     showToast('文本解析成功，已归入主题文件夹', 'success');
     renderWorkbench();
@@ -10155,7 +10161,7 @@ function renderVocabulary() {
             if (!w.source) return;
             var tn = w.topicName;
             if (!tn) {
-                var doc = (State.documents || []).find(function(d) { return d.title === w.source; });
+                var doc = (State.documents || []).find(function(d) { return d.title === w.source && (d.lang || 'en') === (State.lang || 'en'); });
                 if (doc && doc.topic) {
                     var topic = findTopicById(doc.topic);
                     tn = topic ? topic.name : '未分类';
