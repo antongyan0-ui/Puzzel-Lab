@@ -4115,6 +4115,69 @@ function applyUserDataSilent(data) {
     if (typeof data.translationCollapsed === 'boolean') State.translationCollapsed = data.translationCollapsed;
     if (data.learning) { State.learning = Object.assign({ checkinDates: [], streak: 0, lastCheckin: null, dailyReminder: false, reminderTime: '20:00', reviewReminder: false, totalDays: 0 }, data.learning); }
     migrateVocabularyWords();
+    migrateDocumentLangs();
+    migrateCustomTopicLangs();
+}
+
+// Auto-detect and assign lang to old documents that lack the field
+// German docs without lang were incorrectly defaulting to 'en'
+function migrateDocumentLangs() {
+    if (!State.documents) return;
+    var changed = false;
+    State.documents.forEach(function(doc) {
+        if (doc.lang) return; // Already has lang, skip
+        // Detect language by scanning page content for German-specific characters
+        var sampleText = '';
+        if (doc.pages) {
+            doc.pages.forEach(function(p) {
+                if (p.lines) p.lines.forEach(function(l) {
+                    if (l.text && !l.isTranslation) sampleText += ' ' + l.text;
+                });
+            });
+        }
+        // Normalize to NFC for reliable detection
+        if (typeof sampleText.normalize === 'function') sampleText = sampleText.normalize('NFC');
+        // Count German-specific characters (ä, ö, ü, ß in precomposed form)
+        var germanChars = (sampleText.match(/[äöüÄÖÜß]/g) || []).length;
+        // Count common German function words
+        var germanWords = (sampleText.match(/\b(der|die|das|und|ist|nicht|ein|eine|mit|von|zu|den|dem|im|in|an|auf|für|als|bei|sich|auch|noch|aber|oder|so|dass|wenn|wird|werden|hat|hatte|sind|war|waren|kann|kannst|möchte|muss|soll|schon|mehr|immer|wieder|diese|dieser|dieses|welche|kein|keine|mein|dein|sein|unser|haben|werden|können|müssen|sollen|dürfen|wollen)\b/gi) || []).length;
+        // If significant German content detected, assign 'de'
+        if (germanChars > 0 || germanWords >= 3) {
+            doc.lang = 'de';
+            changed = true;
+        } else {
+            doc.lang = 'en';
+            changed = true;
+        }
+    });
+    // Also normalize all page text to NFC
+    State.documents.forEach(function(doc) {
+        if (doc.pages) {
+            doc.pages.forEach(function(p) {
+                if (p.lines) p.lines.forEach(function(l) {
+                    if (l.text && typeof l.text.normalize === 'function') {
+                        l.text = l.text.normalize('NFC');
+                    }
+                });
+            });
+        }
+    });
+    if (changed) saveUserData();
+}
+
+// Auto-detect and assign lang to old custom topics that lack the field
+function migrateCustomTopicLangs() {
+    if (!State.customTopics) return;
+    var changed = false;
+    State.customTopics.forEach(function(t) {
+        if (t.lang) return;
+        // Check if any documents in this topic are German
+        var docsInTopic = (State.documents || []).filter(function(d) { return d.topic === t.id; });
+        var isGerman = docsInTopic.some(function(d) { return d.lang === 'de'; });
+        t.lang = isGerman ? 'de' : 'en';
+        changed = true;
+    });
+    if (changed) saveUserData();
 }
 
 // Migrate legacy word entries to frequency-aware structure
@@ -6155,6 +6218,14 @@ function findBestSplit(word, dict) {
 function preprocessCorpusText(text) {
     var lang = State.lang || 'en';
     
+    // 0. Normalize Unicode to NFC (precomposed form)
+    //    PDF/Word extraction often produces NFD (decomposed) text where
+    //    ü = u + combining diaeresis (U+0075 + U+0308) instead of ü (U+00FC).
+    //    This breaks regex matching for German umlauts. NFC fixes this.
+    if (text && typeof text.normalize === 'function') {
+        text = text.normalize('NFC');
+    }
+    
     // 1. Normalize line endings
     text = text.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
     
@@ -7007,6 +7078,8 @@ function exitEditModeAndSave() {
 
 function tokenizeLine(line) {
     var tokens = [];
+    // Safety: normalize to NFC in case text was loaded from old data without preprocessing
+    if (line && typeof line.normalize === 'function') line = line.normalize('NFC');
     var regex;
     if (State.lang === 'ja') {
         // Japanese: tokenize kanji (individual), katakana words, and latin words
@@ -7051,10 +7124,15 @@ function reapplyHiddenItems() {
     var allWords = Array.from(panel.querySelectorAll('.lc-word'));
     
     State.hiddenItems.forEach(function(item) {
+        // Normalize item text to NFC for reliable matching with rendered words
+        var itemText = item.text;
+        if (itemText && typeof itemText.normalize === 'function') itemText = itemText.normalize('NFC');
         if (item.type === 'word') {
             // Find word by matching text + line number
             var wordEl = allWords.find(function(w) {
-                return w.dataset.word === item.text && parseInt(w.dataset.line) === item.line && parseInt(w.dataset.page) === item.page;
+                var wText = w.dataset.word;
+                if (wText && typeof wText.normalize === 'function') wText = wText.normalize('NFC');
+                return wText === itemText && parseInt(w.dataset.line) === item.line && parseInt(w.dataset.page) === item.page;
             });
             if (wordEl) {
                 wordEl.dataset.hideId = item.id;
@@ -7064,12 +7142,14 @@ function reapplyHiddenItems() {
             }
         } else if (item.type === 'phrase') {
             // Find phrase: locate the first word, then take consecutive words matching the phrase
-            var phraseWords = item.text.split(/\s+/);
+            var phraseWords = itemText.split(/\s+/);
             var startIdx = -1;
             for (var i = 0; i <= allWords.length - phraseWords.length; i++) {
                 var match = true;
                 for (var j = 0; j < phraseWords.length; j++) {
-                    if (allWords[i + j].dataset.word !== phraseWords[j] || parseInt(allWords[i + j].dataset.line) !== item.line) {
+                    var pwText = allWords[i + j].dataset.word;
+                    if (pwText && typeof pwText.normalize === 'function') pwText = pwText.normalize('NFC');
+                    if (pwText !== phraseWords[j] || parseInt(allWords[i + j].dataset.line) !== item.line) {
                         match = false; break;
                     }
                 }
@@ -7087,7 +7167,9 @@ function reapplyHiddenItems() {
         } else if (item.type === 'separable') {
             // Find word by matching text + line number
             var sepWordEl = allWords.find(function(w) {
-                return w.dataset.word === item.text && parseInt(w.dataset.line) === item.line && parseInt(w.dataset.page) === item.page;
+                var swText = w.dataset.word;
+                if (swText && typeof swText.normalize === 'function') swText = swText.normalize('NFC');
+                return swText === itemText && parseInt(w.dataset.line) === item.line && parseInt(w.dataset.page) === item.page;
             });
             if (sepWordEl) {
                 sepWordEl.dataset.hideId = item.id;
