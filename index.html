@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>听空 ListenCloze · 多语种版</title>
+    <title>Puzzle Lab · 多语种版</title>
+    <link rel="icon" type="image/png" href="assets/logo.png">
     <style>
 .lc-testdaf-bar { background: var(--lc-color-surface-2); border: 1px solid var(--lc-color-border); border-radius: var(--lc-radius-lg); padding: 12px 16px; margin-bottom: 12px; }
 .lc-testdaf-selector { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
@@ -585,8 +586,8 @@ body { font-family: var(--lc-font-sans); background: var(--lc-color-bg); color: 
             </div>
         </div>
         <div class="lc-brand">
-            <i data-lucide="headphones"></i>
-            <span>听空 ListenCloze</span>
+            <img src="assets/logo.png" alt="Puzzle Lab" style="width:24px;height:24px;object-fit:contain;">
+            <span>Puzzle Lab</span>
         </div>
         <nav class="lc-nav">
             <button class="lc-nav-item active" data-view="import">导入</button>
@@ -10679,7 +10680,7 @@ function checkReminders() {
     if (State.learning.dailyReminder && State.learning.reminderTime === currentTime && !isCheckedToday() && !State._remindedToday) {
         State._remindedToday = true;
         if ('Notification' in window && Notification.permission === 'granted') {
-            new Notification('听空 ListenCloze', { body: '该学习啦！今天还没打卡呢 🔥' });
+            new Notification('Puzzle Lab', { body: '该学习啦！今天还没打卡呢' });
         }
     }
     if (State.learning.reviewReminder) {
@@ -10687,7 +10688,7 @@ function checkReminders() {
         if (dueCount > 0 && !State._remindedReview) {
             State._remindedReview = true;
             if ('Notification' in window && Notification.permission === 'granted') {
-                new Notification('听空 ListenCloze', { body: '有 ' + dueCount + ' 个生词待复习哦！' });
+                new Notification('Puzzle Lab', { body: '有 ' + dueCount + ' 个生词待复习哦！' });
             }
         }
     }
@@ -10892,7 +10893,7 @@ window.batchExportWords = function() {
     if (selectedWords.length === 0) { showToast('没有可导出的单词', 'info'); return; }
     var lines = selectedWords.map(function(w) { return w.word; });
     var html = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40">';
-    html += '<head><meta charset="utf-8"><title>ListenCloze Vocabulary</title>';
+    html += '<head><meta charset="utf-8"><title>Puzzle Lab Vocabulary</title>';
     html += '<style>body{font-family:"Times New Roman",serif;font-size:12pt;line-height:2.0;}p{margin:6pt 0;}</style></head><body>';
     lines.forEach(function(line) { html += '<p>' + escapeHtml(line) + '</p>'; });
     html += '</body></html>';
@@ -10900,7 +10901,7 @@ window.batchExportWords = function() {
     var url = URL.createObjectURL(blob);
     var a = document.createElement('a');
     a.href = url;
-    a.download = 'ListenCloze_生词本_选中_' + new Date().toISOString().slice(0, 10) + '.doc';
+    a.download = 'PuzzleLab_生词本_选中_' + new Date().toISOString().slice(0, 10) + '.doc';
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -11099,7 +11100,7 @@ function exportVocabToWord(type) {
     
     // Create as .doc (Word HTML format)
     var html = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40">';
-    html += '<head><meta charset="utf-8"><title>ListenCloze Vocabulary</title>';
+    html += '<head><meta charset="utf-8"><title>Puzzle Lab Vocabulary</title>';
     html += '<style>body{font-family:"Times New Roman",serif;font-size:12pt;line-height:2.0;}p{margin:6pt 0;}</style></head><body>';
     lines.forEach(function(line) {
         html += '<p>' + escapeHtml(line) + '</p>';
@@ -11110,7 +11111,7 @@ function exportVocabToWord(type) {
     var url = URL.createObjectURL(blob);
     var a = document.createElement('a');
     a.href = url;
-    a.download = 'ListenCloze_' + (type === 'words' ? '生词本' : '短语本') + (label ? '_' + label : '') + '_' + new Date().toISOString().slice(0, 10) + '.doc';
+    a.download = 'PuzzleLab_' + (type === 'words' ? '生词本' : '短语本') + (label ? '_' + label : '') + '_' + new Date().toISOString().slice(0, 10) + '.doc';
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
