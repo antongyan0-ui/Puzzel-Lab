@@ -3132,6 +3132,84 @@ async function hashPassword(password) {
     return ((h1 >>> 0).toString(16).padStart(8, '0')) + ((h2 >>> 0).toString(16).padStart(8, '0'));
 }
 
+// ===== Worker Sync API (Cloudflare Worker + KV) =====
+// 部署 Worker 后替换为你的 Worker URL, 格式: https://lc-sync-api.你的子域.workers.dev
+var WORKER_SYNC_URL = 'https://lc-sync-api.YOUR_SUBDOMAIN.workers.dev';
+var CLOUD_TIMEOUT = 12000; // 全局云端请求超时
+
+function isWorkerConfigured() {
+    return WORKER_SYNC_URL && WORKER_SYNC_URL.indexOf('YOUR_SUBDOMAIN') === -1;
+}
+function getWorkerToken() { try { return localStorage.getItem('lc-worker-token') || ''; } catch(e) { return ''; } }
+function setWorkerToken(token) { try { localStorage.setItem('lc-worker-token', token); } catch(e) {} }
+function clearWorkerToken() { try { localStorage.removeItem('lc-worker-token'); } catch(e) {} }
+
+async function workerRegister(username, password) {
+    var resp = await fetchWithTimeout(WORKER_SYNC_URL + '/api/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username: username, password: password })
+    }, CLOUD_TIMEOUT);
+    return resp.json();
+}
+
+async function workerLogin(username, password) {
+    var resp = await fetchWithTimeout(WORKER_SYNC_URL + '/api/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username: username, password: password })
+    }, CLOUD_TIMEOUT);
+    return resp.json();
+}
+
+async function workerValidateToken() {
+    var token = getWorkerToken();
+    if (!token) return { valid: false };
+    try {
+        var resp = await fetchWithTimeout(WORKER_SYNC_URL + '/api/validate', {
+            headers: { 'Authorization': 'Bearer ' + token }
+        }, CLOUD_TIMEOUT);
+        return resp.json();
+    } catch(e) { return { valid: false, error: e.message }; }
+}
+
+async function workerSaveData(data) {
+    var token = getWorkerToken();
+    if (!token) return false;
+    try {
+        var resp = await fetchWithTimeout(WORKER_SYNC_URL + '/api/data', {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+            body: JSON.stringify(data)
+        }, CLOUD_TIMEOUT);
+        return resp.ok;
+    } catch(e) { console.error('Worker save failed:', e); return false; }
+}
+
+async function workerLoadData() {
+    var token = getWorkerToken();
+    if (!token) return null;
+    try {
+        var resp = await fetchWithTimeout(WORKER_SYNC_URL + '/api/data', {
+            headers: { 'Authorization': 'Bearer ' + token }
+        }, CLOUD_TIMEOUT);
+        if (!resp.ok) return null;
+        return resp.json();
+    } catch(e) { console.error('Worker load failed:', e); return null; }
+}
+
+async function workerLogout() {
+    var token = getWorkerToken();
+    if (!token) return;
+    try {
+        await fetchWithTimeout(WORKER_SYNC_URL + '/api/logout', {
+            method: 'POST',
+            headers: { 'Authorization': 'Bearer ' + token }
+        }, 5000);
+    } catch(e) {}
+    clearWorkerToken();
+}
+
 // ===== Auth0 Integration =====
 var AUTH0_CONFIG = {
     domain: 'dev-hc22kmnjp4xubc2h.us.auth0.com',
@@ -3267,7 +3345,6 @@ async function githubLoadData() {
 
 // ===== Cloud Storage (JSONBin.io — supports CORS) =====
 var JSONBIN_BASE = 'https://api.jsonbin.io/v3/b';
-var CLOUD_TIMEOUT = 12000;
 var CLOUD_RETRIES = 2;
 var _cloudRegistryId = null;
 
@@ -3459,21 +3536,27 @@ async function doAuth() {
     try {
         var hash = await hashPassword(password);
         var localUsers = getUsers();
+        var useWorker = isWorkerConfigured();
 
         if (_authMode === 'register') {
             btn.textContent = '注册中...';
-            // Password confirmation
             var confirmPwd = document.getElementById('auth-password-confirm');
-            if (confirmPwd && confirmPwd.value !== password) {
-                showToast('两次输入的密码不一致', 'error'); return;
-            }
-            // LOCAL FIRST: check local users
+            if (confirmPwd && confirmPwd.value !== password) { showToast('两次输入的密码不一致', 'error'); return; }
             if (localUsers[username]) { showToast('该用户名已被注册', 'error'); return; }
             logAuthEvent('register_start', { username: username });
-            // Save locally first (primary storage)
+
+            // Worker 注册 (跨设备)
+            if (useWorker) {
+                btn.textContent = '创建云端账号...';
+                var regResult = await workerRegister(username, password);
+                if (regResult.error === 'exists') { showToast('该用户名已被注册', 'error'); return; }
+                if (regResult.error) { showToast('注册失败: ' + regResult.error, 'error'); return; }
+                if (regResult.token) setWorkerToken(regResult.token);
+            }
+
+            // 本地也存一份 (离线可用)
             localUsers[username] = { passwordHash: hash, cloudBlobId: '', createdAt: Date.now() };
             saveUsers(localUsers);
-            // Save empty user data locally
             var initData = {
                 corpus: null, documents: [], hiddenItems: [], customTopics: [],
                 topicNameOverrides: {}, vocabulary: { words: [], phrases: [] },
@@ -3484,15 +3567,14 @@ async function doAuth() {
             State.user = { username: username, cloudBlobId: '' };
             localStorage.setItem('lc-current-user', username);
             generateSessionToken(username);
-            logAuthEvent('register_success', { username: username });
-            showToast('注册成功', 'success');
+            logAuthEvent('register_success', { username: username, worker: useWorker });
+            showToast(useWorker ? '注册成功（已开启跨设备同步）' : '注册成功', 'success');
             closeAuthModal();
             updateUserUI();
             loadUserData();
-            // Cloud sync in background (optional, don't block)
-            syncUserToCloud(username, hash, initData);
+            if (useWorker) workerSaveData(initData).catch(function(){});
         } else {
-            // Login throttling
+            // 登录限流
             var lockedUntil = isLoginLocked(username);
             if (lockedUntil) {
                 var waitSec = Math.ceil((lockedUntil - Date.now()) / 1000);
@@ -3501,16 +3583,45 @@ async function doAuth() {
             }
             btn.textContent = '登录中...';
             logAuthEvent('login_start', { username: username });
-            // LOCAL FIRST: check local users
+
+            // Worker 登录 (跨设备)
+            if (useWorker) {
+                btn.textContent = '验证账号...';
+                var loginResult = await workerLogin(username, password);
+                if (loginResult.success && loginResult.token) {
+                    setWorkerToken(loginResult.token);
+                    // 同时更新本地记录
+                    localUsers[username] = { passwordHash: hash, cloudBlobId: '', createdAt: Date.now() };
+                    saveUsers(localUsers);
+                    State.user = { username: username, cloudBlobId: '' };
+                    localStorage.setItem('lc-current-user', username);
+                    generateSessionToken(username);
+                    recordLoginAttempt(username, true);
+                    logAuthEvent('login_success', { username: username, source: 'worker' });
+                    showToast('登录成功', 'success');
+                    closeAuthModal();
+                    updateUserUI();
+                    await loadUserData(); // 从 Worker 拉取云端数据
+                    return;
+                }
+                // Worker 登录失败
+                if (loginResult.error === 'wrong_password') {
+                    recordLoginAttempt(username, false);
+                    logAuthEvent('login_fail', { username: username, reason: 'wrong_password', source: 'worker' });
+                    showToast('账号或密码错误', 'error'); return;
+                }
+                // not_found → 尝试本地登录 (可能是在 Worker 部署前注册的老用户)
+            }
+
+            // 本地登录 (fallback)
+            btn.textContent = '登录中...';
             var localInfo = localUsers[username];
             if (localInfo) {
-                // Verify password locally
                 if (localInfo.passwordHash !== hash) {
                     recordLoginAttempt(username, false);
                     logAuthEvent('login_fail', { username: username, reason: 'wrong_password', source: 'local' });
                     showToast('账号或密码错误', 'error'); return;
                 }
-                // Login success from local
                 State.user = { username: username, cloudBlobId: localInfo.cloudBlobId || '' };
                 localStorage.setItem('lc-current-user', username);
                 generateSessionToken(username);
@@ -3521,46 +3632,38 @@ async function doAuth() {
                 closeAuthModal();
                 updateUserUI();
                 loadUserData();
-                // Try cloud sync in background (optional)
                 syncCloudInBackground(username, hash);
                 return;
             }
-            // No local user - try cloud as fallback (only if cloud sync is enabled)
-            if (!hasCloudSync()) {
-                recordLoginAttempt(username, false);
-                logAuthEvent('login_fail', { username: username, reason: 'not_found', source: 'local_no_cloud' });
-                showToast('账号或密码错误', 'error'); return;
-            }
-            btn.textContent = '连接云端...';
-            try {
-                var registry = await getCloudRegistry();
-                var cloudUserInfo = registry.users[username];
-                if (cloudUserInfo) {
-                    var userBlob = await cloudGet(cloudUserInfo.blobId);
-                    if (userBlob.passwordHash !== hash) {
-                        recordLoginAttempt(username, false);
-                        logAuthEvent('login_fail', { username: username, reason: 'wrong_password', source: 'cloud' });
-                        showToast('账号或密码错误', 'error'); return;
+
+            // JSONBin fallback (legacy)
+            if (hasCloudSync()) {
+                btn.textContent = '连接云端...';
+                try {
+                    var registry = await getCloudRegistry();
+                    var cloudUserInfo = registry.users[username];
+                    if (cloudUserInfo) {
+                        var userBlob = await cloudGet(cloudUserInfo.blobId);
+                        if (userBlob.passwordHash !== hash) {
+                            recordLoginAttempt(username, false);
+                            showToast('账号或密码错误', 'error'); return;
+                        }
+                        localUsers[username] = { passwordHash: hash, cloudBlobId: cloudUserInfo.blobId, createdAt: Date.now() };
+                        saveUsers(localUsers);
+                        State.user = { username: username, cloudBlobId: cloudUserInfo.blobId };
+                        localStorage.setItem('lc-current-user', username);
+                        localStorage.setItem('lc-cloud-blob-' + username, cloudUserInfo.blobId);
+                        generateSessionToken(username);
+                        recordLoginAttempt(username, true);
+                        logAuthEvent('login_success', { username: username, source: 'cloud' });
+                        showToast('登录成功（已从云端同步）', 'success');
+                        closeAuthModal();
+                        updateUserUI();
+                        loadUserData();
+                        return;
                     }
-                    // Save to local for future logins
-                    localUsers[username] = { passwordHash: hash, cloudBlobId: cloudUserInfo.blobId, createdAt: Date.now() };
-                    saveUsers(localUsers);
-                    State.user = { username: username, cloudBlobId: cloudUserInfo.blobId };
-                    localStorage.setItem('lc-current-user', username);
-                    localStorage.setItem('lc-cloud-blob-' + username, cloudUserInfo.blobId);
-                    generateSessionToken(username);
-                    recordLoginAttempt(username, true);
-                    logAuthEvent('login_success', { username: username, source: 'cloud' });
-                    showToast('登录成功（已从云端同步）', 'success');
-                    closeAuthModal();
-                    updateUserUI();
-                    loadUserData();
-                    return;
-                }
-            } catch(cloudErr) {
-                logAuthEvent('login_error', { username: username, error: cloudErr.message });
+                } catch(cloudErr) { logAuthEvent('login_error', { username: username, error: cloudErr.message }); }
             }
-            // Security: don't reveal whether user exists — use generic message
             recordLoginAttempt(username, false);
             logAuthEvent('login_fail', { username: username, reason: 'not_found' });
             showToast('账号或密码错误', 'error');
@@ -4123,15 +4226,18 @@ function updateSyncStatus(status, error) {
 // Manual sync trigger
 window.manualSync = function() {
     if (!State.user || State.user.username === '__guest__') { showToast('请先登录', 'error'); return; }
+    if (isWorkerConfigured() && getWorkerToken()) {
+        showToast('正在同步...', 'info');
+        saveUserData();
+        setTimeout(function() { loadUserData(); }, 600);
+        return;
+    }
     if (!hasCloudSync() && !hasGithubSync()) { showToast('请先在设置中配置云端同步', 'info'); openCloudSyncModal(); return; }
     showToast('正在同步...', 'info');
-    // Save current state first (triggers both GitHub and JSONBin sync)
     saveUserData();
-    // Then pull cloud for JSONBin
     if (hasCloudSync() && State.user.cloudBlobId) {
         setTimeout(function() { fullCloudSync(); }, 600);
     }
-    // For GitHub sync, also reload from cloud
     if (hasGithubSync()) {
         setTimeout(function() { loadUserData(); }, 600);
     }
@@ -4139,6 +4245,10 @@ window.manualSync = function() {
 
 function logout() {
     if (State.user) logAuthEvent('logout', { username: State.user.username });
+    // Worker 登出 (清除云端 session)
+    if (isWorkerConfigured() && getWorkerToken()) {
+        workerLogout().catch(function(){});
+    }
     try { localStorage.removeItem('lc-current-user'); } catch(e) {}
     clearSession();
     State.user = null;
@@ -4152,13 +4262,17 @@ function saveUserData() {
     _saveTimer = setTimeout(function() {
         try {
             var data = collectCurrentData();
-            // Local save with timestamp
+            // 本地保存
             localStorage.setItem('lc-data-' + State.user.username, JSON.stringify(data));
+            // Worker 同步 (fire-and-forget, 跨设备)
+            if (isWorkerConfigured() && getWorkerToken()) {
+                workerSaveData(data).catch(function(e) { console.error('Worker sync save failed:', e); });
+            }
             // GitHub sync (fire-and-forget, for Auth0 users)
             if (hasGithubSync()) {
                 githubSaveData(data).catch(function(e) { console.error('GitHub sync save failed:', e); });
             }
-            // Cloud push via JSONBin (versioned, fire-and-forget)
+            // JSONBin (legacy)
             if (State.user.cloudBlobId && hasCloudSync()) {
                 pushLocalData(State.user.cloudBlobId);
             }
@@ -4170,15 +4284,28 @@ async function loadUserData() {
     if (!State.user) return;
     try {
         var data = null;
-        // LOCAL FIRST: load from localStorage
+        // 本地先加载 (离线可用)
         var raw = localStorage.getItem('lc-data-' + State.user.username);
         if (raw) data = JSON.parse(raw);
         if (data) applyUserData(data);
-        // GITHUB PULL: fetch from GitHub repo (for Auth0 users)
+
+        // Worker 拉取 (跨设备同步, 最高优先级)
+        if (isWorkerConfigured() && getWorkerToken()) {
+            var wData = await workerLoadData();
+            if (wData && wData.documents !== undefined) {
+                if (!data || (wData._savedAt && (!data._savedAt || wData._savedAt > data._savedAt))) {
+                    applyUserData(wData);
+                    localStorage.setItem('lc-data-' + State.user.username, JSON.stringify(wData));
+                    showToast('已从云端同步数据', 'info');
+                }
+            }
+            return; // Worker 是主同步通道, 不再走 GitHub/JSONBin
+        }
+
+        // GitHub PULL (Auth0 用户)
         if (hasGithubSync() && State.user.auth0Id) {
             var ghData = await githubLoadData();
             if (ghData) {
-                // Merge: GitHub data takes priority if newer
                 if (!data || (ghData._savedAt && (!data._savedAt || ghData._savedAt > data._savedAt))) {
                     applyUserData(ghData);
                     localStorage.setItem('lc-data-' + State.user.username, JSON.stringify(ghData));
@@ -4186,11 +4313,10 @@ async function loadUserData() {
                 }
             }
         }
-        // CLOUD PULL: fetch cloud data and merge if newer (JSONBin)
+        // JSONBin (legacy)
         if (hasCloudSync() && State.user.cloudBlobId) {
             pullCloudData(State.user.cloudBlobId);
         } else if (hasCloudSync() && State.user.username !== '__guest__') {
-            // Try to discover cloud blob from registry
             getCloudRegistry().then(function(registry) {
                 if (registry.users[State.user.username] && registry.users[State.user.username].blobId) {
                     var blobId = registry.users[State.user.username].blobId;
@@ -12296,30 +12422,43 @@ function init() {
     }
 
     // Auto-login or guest (with session verification)
+    var _skipLocalSession = false;
     try {
         var savedUser = localStorage.getItem('lc-current-user');
         var session = getSession();
         var localUsers = getUsers();
-        if (savedUser && session && session.username === savedUser && session.expiresAt > Date.now() && localUsers[savedUser]) {
-            // Valid session — restore user
-            var blobId = localStorage.getItem('lc-cloud-blob-' + savedUser) || localUsers[savedUser].cloudBlobId || '';
-            State.user = { username: savedUser, cloudBlobId: blobId };
-            logAuthEvent('session_restore', { username: savedUser });
-            updateUserUI();
-            loadUserData();
-        } else if (savedUser) {
-            // Stale session — clean up
-            logAuthEvent('session_expired', { username: savedUser, hasSession: !!session, userExists: !!localUsers[savedUser] });
-            localStorage.removeItem('lc-current-user');
-            clearSession();
-            State.user = { username: '__guest__', cloudBlobId: '' };
-            updateUserUI();
-            loadUserData();
-        } else {
-            // Guest user for local persistence
-            State.user = { username: '__guest__', cloudBlobId: '' };
-            updateUserUI();
-            loadUserData();
+        // Worker token 自动恢复 (跨设备保持登录)
+        if (savedUser && isWorkerConfigured() && getWorkerToken()) {
+            var wValid = await workerValidateToken();
+            if (wValid.valid && wValid.username === savedUser) {
+                State.user = { username: savedUser, cloudBlobId: '' };
+                logAuthEvent('session_restore', { username: savedUser, source: 'worker' });
+                updateUserUI();
+                await loadUserData();
+                // 跳过本地 session 检查
+                _skipLocalSession = true;
+            }
+        }
+        if (!_skipLocalSession) {
+            if (savedUser && session && session.username === savedUser && session.expiresAt > Date.now() && localUsers[savedUser]) {
+                var blobId = localStorage.getItem('lc-cloud-blob-' + savedUser) || localUsers[savedUser].cloudBlobId || '';
+                State.user = { username: savedUser, cloudBlobId: blobId };
+                logAuthEvent('session_restore', { username: savedUser });
+                updateUserUI();
+                loadUserData();
+            } else if (savedUser) {
+                logAuthEvent('session_expired', { username: savedUser, hasSession: !!session, userExists: !!localUsers[savedUser] });
+                localStorage.removeItem('lc-current-user');
+                clearSession();
+                clearWorkerToken();
+                State.user = { username: '__guest__', cloudBlobId: '' };
+                updateUserUI();
+                loadUserData();
+            } else {
+                State.user = { username: '__guest__', cloudBlobId: '' };
+                updateUserUI();
+                loadUserData();
+            }
         }
     } catch(e) {
         console.error('Auto-login error:', e);

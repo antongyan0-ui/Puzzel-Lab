@@ -1,3 +1,10 @@
 name = "lc-sync-api"
 main = "src/index.js"
 compatibility_date = "2024-01-01"
+
+# KV Namespace — 部署前先运行:
+# npx wrangler kv:namespace create PUZZEL_LAB_KV
+# 然后把下面的 id 替换为输出的 id
+[[kv_namespaces]]
+binding = "PUZZEL_LAB_KV"
+id = "YOUR_KV_NAMESPACE_ID"
