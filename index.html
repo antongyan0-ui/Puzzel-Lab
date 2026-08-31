@@ -715,6 +715,9 @@ body { font-family: var(--lc-font-sans); background: var(--lc-color-bg); color: 
                     <div class="lc-user-dropdown-item" id="btn-sync-now" style="display:none;">
                         <i data-lucide="refresh-cw"></i> 立即同步
                     </div>
+                    <div class="lc-user-dropdown-item" id="btn-force-cloud-sync" style="display:none;">
+                        <i data-lucide="cloud-download"></i> 从云端恢复数据
+                    </div>
                     <div class="lc-user-dropdown-item" id="btn-cloud-sync-settings">
                         <i data-lucide="cloud"></i> 云端同步设置
                     </div>
@@ -3175,6 +3178,7 @@ async function workerValidateToken() {
 }
 
 var _workerSyncStatus = 'idle'; // idle, syncing, success, error
+var _cloudDataLoaded = false; // 是否已成功从 Worker 加载过云端数据（防止空本地数据覆盖云端）
 function updateSyncIndicator() {
     var el = document.getElementById('sync-indicator');
     if (!el) return;
@@ -3211,14 +3215,30 @@ async function workerSaveData(data) {
 
 async function workerLoadData() {
     var token = getWorkerToken();
-    if (!token) return null;
-    try {
-        var resp = await fetchWithTimeout(WORKER_SYNC_URL + '/api/data', {
-            headers: { 'Authorization': 'Bearer ' + token }
-        }, CLOUD_TIMEOUT);
-        if (!resp.ok) return null;
-        return resp.json();
-    } catch(e) { console.error('Worker load failed:', e); return null; }
+    if (!token) { console.warn('[Worker] No token for load'); return null; }
+    for (var attempt = 1; attempt <= 3; attempt++) {
+        try {
+            var resp = await fetchWithTimeout(WORKER_SYNC_URL + '/api/data', {
+                headers: { 'Authorization': 'Bearer ' + token }
+            }, CLOUD_TIMEOUT);
+            if (!resp.ok) {
+                var errBody = '';
+                try { errBody = await resp.text(); } catch(e2) {}
+                console.error('[Worker] Load HTTP error:', resp.status, errBody);
+                if (resp.status === 401 && attempt < 3) { await new Promise(function(r){setTimeout(r, 500);}); continue; }
+                return null;
+            }
+            var data = await resp.json();
+            _cloudDataLoaded = true;
+            console.log('[Worker] Load OK (attempt ' + attempt + ') - docs:', (data.documents||[]).length, 'savedAt:', data._savedAt);
+            return data;
+        } catch(e) {
+            console.error('[Worker] Load attempt', attempt, 'failed:', e.message);
+            if (attempt < 3) { await new Promise(function(r){setTimeout(r, 1000 * attempt);}); }
+            else return null;
+        }
+    }
+    return null;
 }
 
 async function workerLogout() {
@@ -3594,6 +3614,7 @@ async function doAuth() {
             showToast(useWorker ? '注册成功（已开启跨设备同步）' : '注册成功', 'success');
             closeAuthModal();
             updateUserUI();
+            _cloudDataLoaded = true; // 新注册, 本地数据即为初始数据
             loadUserData();
             if (useWorker) workerSaveData(initData).catch(function(){});
         } else {
@@ -3624,7 +3645,10 @@ async function doAuth() {
                     showToast('登录成功', 'success');
                     closeAuthModal();
                     updateUserUI();
-                    await loadUserData(); // 从 Worker 拉取云端数据
+                    _cloudDataLoaded = false; // 重置标记, 等待云端数据加载
+                    await loadUserData(true); // ★ 强制从 Worker 拉取云端数据
+                    // 如果云端有数据, 立即保存一次确保同步
+                    if (_cloudDataLoaded) saveUserData();
                     return;
                 }
                 // Worker 登录失败
@@ -3662,12 +3686,14 @@ async function doAuth() {
                         var migrateResult = await workerRegister(username, password);
                         if (migrateResult.success && migrateResult.token) {
                             setWorkerToken(migrateResult.token);
+                            _cloudDataLoaded = true; // 迁移后本地数据即为云端数据
                             console.log('[Worker] Local user migrated to Worker:', username);
                             // 上传本地数据到 Worker
                             var localData = JSON.parse(localStorage.getItem('lc-data-' + username) || '{}');
                             if (localData.documents) {
                                 await workerSaveData(localData);
                                 console.log('[Worker] Local data uploaded:', localData.documents.length, 'docs');
+                                showToast('本地数据已同步到云端，跨设备同步已启用', 'success');
                             }
                         }
                     } catch(migrateErr) { console.warn('[Worker] Migration failed:', migrateErr); }
@@ -4266,9 +4292,18 @@ function updateSyncStatus(status, error) {
 window.manualSync = function() {
     if (!State.user || State.user.username === '__guest__') { showToast('请先登录', 'error'); return; }
     if (isWorkerConfigured() && getWorkerToken()) {
-        showToast('正在同步...', 'info');
-        saveUserData();
-        setTimeout(function() { loadUserData(); }, 600);
+        showToast('正在从云端同步...', 'info');
+        // ★ 先拉取云端数据, 再推送本地数据 (防止空本地数据覆盖云端)
+        _cloudDataLoaded = false;
+        loadUserData(true).then(function() {
+            if (_cloudDataLoaded) {
+                saveUserData();
+                showToast('同步完成', 'success');
+            }
+        }).catch(function(e) {
+            console.error('[Worker] Manual sync failed:', e);
+            showToast('同步失败: ' + e.message, 'error');
+        });
         return;
     }
     if (!hasCloudSync() && !hasGithubSync()) { showToast('请先在设置中配置云端同步', 'info'); openCloudSyncModal(); return; }
@@ -4279,6 +4314,22 @@ window.manualSync = function() {
     }
     if (hasGithubSync()) {
         setTimeout(function() { loadUserData(); }, 600);
+    }
+};
+
+// 强制从云端拉取数据 (不推送本地数据, 用于跨设备同步修复)
+window.forceSyncFromCloud = async function() {
+    if (!State.user || State.user.username === '__guest__') { showToast('请先登录', 'error'); return; }
+    if (!isWorkerConfigured() || !getWorkerToken()) { showToast('请先登录账号', 'error'); return; }
+    showToast('正在从云端拉取数据...', 'info');
+    _cloudDataLoaded = false;
+    await loadUserData(true);
+    if (_cloudDataLoaded) {
+        var docCount = (State.documents || []).length;
+        showToast('已从云端同步 ' + docCount + ' 篇文档', 'success');
+        saveUserData(); // 保存到本地
+    } else {
+        showToast('云端数据加载失败，请检查网络', 'error');
     }
 };
 
@@ -4306,10 +4357,17 @@ function saveUserData() {
 function _doSaveUserData() {
     try {
         var data = collectCurrentData();
-        // 本地保存
+        // 本地保存 (始终执行)
         localStorage.setItem('lc-data-' + State.user.username, JSON.stringify(data));
-        // Worker 同步 (fire-and-forget, 跨设备)
+        // Worker 同步 (跨设备)
         if (isWorkerConfigured() && getWorkerToken()) {
+            // ★ 关键防护: 如果云端数据尚未加载, 且本地数据为空, 不上传以防覆盖云端
+            var docCount = (data.documents || []).length;
+            var vocabCount = (data.vocabulary && data.vocabulary.words) ? data.vocabulary.words.length : 0;
+            if (!_cloudDataLoaded && docCount === 0 && vocabCount === 0) {
+                console.warn('[Worker] Skipping save: cloud data not loaded yet and local data is empty (prevent overwrite)');
+                return;
+            }
             workerSaveData(data).catch(function(e) { console.error('[Worker] Sync save error:', e); });
         }
         // GitHub sync (fire-and-forget, for Auth0 users)
@@ -4339,7 +4397,7 @@ setInterval(function() {
     }
 }, 30000);
 
-async function loadUserData() {
+async function loadUserData(forceCloud) {
     if (!State.user) return;
     try {
         var data = null;
@@ -4352,11 +4410,37 @@ async function loadUserData() {
         if (isWorkerConfigured() && getWorkerToken()) {
             var wData = await workerLoadData();
             if (wData && wData.documents !== undefined) {
-                if (!data || (wData._savedAt && (!data._savedAt || wData._savedAt > data._savedAt))) {
-                    applyUserData(wData);
-                    localStorage.setItem('lc-data-' + State.user.username, JSON.stringify(wData));
-                    showToast('已从云端同步数据', 'info');
+                // forceCloud: 登录后强制使用云端数据
+                // 无本地数据: 使用云端数据
+                // 云端数据有内容或更新: 使用云端数据
+                var cloudDocCount = (wData.documents || []).length;
+                var localDocCount = data ? (data.documents || []).length : 0;
+                var useCloud = forceCloud || !data ||
+                    cloudDocCount > 0 ||
+                    (wData._savedAt && (!data._savedAt || wData._savedAt > data._savedAt));
+                if (useCloud) {
+                    // 合并策略: 如果本地有云端没有的数据(如本地新增), 保留本地新增
+                    var mergedData = wData;
+                    if (data && localDocCount > 0 && cloudDocCount > 0 && !forceCloud) {
+                        // 双方都有数据时, 以云端为主但保留本地独有的文档
+                        var cloudDocIds = {};
+                        (wData.documents || []).forEach(function(d) { if (d.id) cloudDocIds[d.id] = true; });
+                        var localOnlyDocs = (data.documents || []).filter(function(d) { return d.id && !cloudDocIds[d.id]; });
+                        if (localOnlyDocs.length > 0) {
+                            mergedData = JSON.parse(JSON.stringify(wData));
+                            mergedData.documents = (mergedData.documents || []).concat(localOnlyDocs);
+                            console.log('[Worker] Merged', localOnlyDocs.length, 'local-only docs into cloud data');
+                        }
+                    }
+                    applyUserData(mergedData);
+                    localStorage.setItem('lc-data-' + State.user.username, JSON.stringify(mergedData));
+                    if (forceCloud || (data && wData._savedAt && (!data._savedAt || wData._savedAt > data._savedAt))) {
+                        showToast('已从云端同步数据 (' + cloudDocCount + ' 篇文档)', 'info');
+                    }
                 }
+            } else {
+                console.warn('[Worker] Load returned null, using local data only');
+                if (forceCloud) showToast('云端数据加载失败，请检查网络后重试', 'error');
             }
             return; // Worker 是主同步通道, 不再走 GitHub/JSONBin
         }
@@ -4625,6 +4709,7 @@ function updateUserUI() {
     var loginBtn = document.getElementById('btn-login');
     var syncIndicator = document.getElementById('sync-indicator');
     var syncBtn = document.getElementById('btn-sync-now');
+    var forceSyncBtn = document.getElementById('btn-force-cloud-sync');
     var isGuest = !State.user || State.user.username === '__guest__';
     if (State.user && !isGuest) {
         label.textContent = State.user.username;
@@ -4635,6 +4720,7 @@ function updateUserUI() {
         var showSync = (isWorkerConfigured() && getWorkerToken()) || (hasCloudSync() && State.user.cloudBlobId) || hasGithubSync();
         if (syncIndicator) syncIndicator.style.display = showSync ? '' : 'none';
         if (syncBtn) syncBtn.style.display = showSync ? '' : 'none';
+        if (forceSyncBtn) forceSyncBtn.style.display = (isWorkerConfigured() && getWorkerToken()) ? '' : 'none';
         if (isWorkerConfigured() && getWorkerToken()) { updateSyncIndicator(); }
         else { updateSyncStatus(_syncState.status); }
     } else {
@@ -4645,6 +4731,7 @@ function updateUserUI() {
         if (loginBtn) loginBtn.style.display = '';
         if (syncIndicator) syncIndicator.style.display = 'none';
         if (syncBtn) syncBtn.style.display = 'none';
+        if (forceSyncBtn) forceSyncBtn.style.display = 'none';
     }
 }
 
@@ -12274,6 +12361,8 @@ async function init() {
     if (syncIndicator) syncIndicator.addEventListener('click', function() { manualSync(); });
     var syncNowBtn = document.getElementById('btn-sync-now');
     if (syncNowBtn) syncNowBtn.addEventListener('click', function() { document.getElementById('user-dropdown').classList.remove('show'); manualSync(); });
+    var forceCloudSyncBtn = document.getElementById('btn-force-cloud-sync');
+    if (forceCloudSyncBtn) forceCloudSyncBtn.addEventListener('click', function() { document.getElementById('user-dropdown').classList.remove('show'); forceSyncFromCloud(); });
 
     // Cloud sync settings handlers
     var toggleApikeyBtn = document.getElementById('btn-toggle-apikey');
@@ -12483,6 +12572,7 @@ async function init() {
 
     // Auto-login or guest (with session verification)
     var _skipLocalSession = false;
+    _cloudDataLoaded = false;
     try {
         var savedUser = localStorage.getItem('lc-current-user');
         var session = getSession();
@@ -12494,9 +12584,12 @@ async function init() {
                 State.user = { username: savedUser, cloudBlobId: '' };
                 logAuthEvent('session_restore', { username: savedUser, source: 'worker' });
                 updateUserUI();
-                await loadUserData();
-                // 跳过本地 session 检查
+                await loadUserData(true); // ★ 强制从云端拉取最新数据
                 _skipLocalSession = true;
+            } else {
+                // Worker token 过期或无效, 清除并尝试本地恢复
+                clearWorkerToken();
+                console.log('[Worker] Token invalid or expired during auto-login');
             }
         }
         if (!_skipLocalSession) {
@@ -12506,6 +12599,12 @@ async function init() {
                 logAuthEvent('session_restore', { username: savedUser });
                 updateUserUI();
                 loadUserData();
+                // ★ 迁移提示: 本地账号但未连接 Worker, 提醒用户重新登录启用跨设备同步
+                if (isWorkerConfigured() && !getWorkerToken()) {
+                    setTimeout(function() {
+                        showToast('检测到本地账号未同步到云端，请退出并重新登录以启用跨设备同步', 'info');
+                    }, 1500);
+                }
             } else if (savedUser) {
                 logAuthEvent('session_expired', { username: savedUser, hasSession: !!session, userExists: !!localUsers[savedUser] });
                 localStorage.removeItem('lc-current-user');
