@@ -281,15 +281,15 @@ body { font-family: var(--lc-font-sans); background: var(--lc-color-bg); color: 
 .lc-word { cursor: pointer; border-radius: 2px; transition: background 0.1s; padding: 0 1px; }
 .lc-word:hover { background: var(--lc-color-primary-tint-2); }
 .lc-word.lc-selecting { background: var(--lc-color-primary-soft) !important; box-shadow: 0 0 0 1px var(--lc-color-primary); border-radius: 2px; }
-.lc-blank { display: inline-block; min-width: 3.5em; height: 1.5em; border-bottom: 2.5px solid var(--lc-color-primary); background: var(--lc-color-primary-tint-2, rgba(176,106,54,0.06)); border-radius: 2px 2px 0 0; cursor: pointer; transition: border-color 0.15s, background 0.15s; vertical-align: baseline; }
+.lc-blank { display: inline-block; min-width: 4ch; height: 1.5em; border-bottom: 2.5px solid var(--lc-color-primary); background: var(--lc-color-primary-tint-2, rgba(176,106,54,0.06)); border-radius: 2px 2px 0 0; cursor: pointer; transition: border-color 0.15s, background 0.15s; vertical-align: baseline; }
 .lc-blank:hover { border-color: var(--lc-color-primary-hover); background: var(--lc-color-primary-tint-2, rgba(176,106,54,0.12)); }
-.lc-phrase-blank { display: inline-block; min-width: 8em; height: 1.5em; border-bottom: 2.5px solid var(--lc-color-primary); background: var(--lc-color-primary-tint-2, rgba(176,106,54,0.06)); border-radius: 2px 2px 0 0; cursor: pointer; transition: border-color 0.15s, background 0.15s; vertical-align: baseline; }
+.lc-phrase-blank { display: inline-block; min-width: 4ch; height: 1.5em; border-bottom: 2.5px solid var(--lc-color-primary); background: var(--lc-color-primary-tint-2, rgba(176,106,54,0.06)); border-radius: 2px 2px 0 0; cursor: pointer; transition: border-color 0.15s, background 0.15s; vertical-align: baseline; }
 .lc-phrase-blank:hover { border-color: var(--lc-color-primary-hover); background: var(--lc-color-primary-tint-2, rgba(176,106,54,0.12)); }
 /* Separable verb blanks (dashed border, paired indicators) */
-.lc-separable-blank { display: inline-block; min-width: 3.5em; height: 1.5em; border-bottom: 2.5px dashed var(--lc-color-primary); background: var(--lc-color-primary-tint-2, rgba(176,106,54,0.06)); border-radius: 2px 2px 0 0; cursor: pointer; transition: border-color 0.15s, background 0.15s; vertical-align: baseline; position: relative; }
+.lc-separable-blank { display: inline-block; min-width: 4ch; height: 1.5em; border-bottom: 2.5px dashed var(--lc-color-primary); background: var(--lc-color-primary-tint-2, rgba(176,106,54,0.06)); border-radius: 2px 2px 0 0; cursor: pointer; transition: border-color 0.15s, background 0.15s; vertical-align: baseline; position: relative; }
 .lc-separable-blank:hover { border-color: var(--lc-color-primary-hover); background: var(--lc-color-primary-tint-2, rgba(176,106,54,0.12)); }
 .lc-separable-blank::after { content: attr(data-sep-marker); position: absolute; top: -0.6em; right: -2px; font-size: 9px; color: var(--lc-color-primary); font-weight: 700; font-family: var(--lc-font-mono); line-height: 1; }
-.lc-separable-pending { display: inline-block; min-width: 3.5em; height: 1.5em; border-bottom: 2.5px dashed var(--lc-state-warning, #f59e0b); background: var(--lc-state-warning-bg, rgba(245,158,11,0.08)); border-radius: 2px 2px 0 0; cursor: pointer; transition: border-color 0.15s, background 0.15s; vertical-align: baseline; position: relative; }
+.lc-separable-pending { display: inline-block; min-width: 4ch; height: 1.5em; border-bottom: 2.5px dashed var(--lc-state-warning, #f59e0b); background: var(--lc-state-warning-bg, rgba(245,158,11,0.08)); border-radius: 2px 2px 0 0; cursor: pointer; transition: border-color 0.15s, background 0.15s; vertical-align: baseline; position: relative; }
 .lc-separable-pending::after { content: '?'; position: absolute; top: -0.6em; right: -2px; font-size: 9px; color: var(--lc-state-warning, #f59e0b); font-weight: 700; line-height: 1; }
 .lc-corpus-line.editing .lc-corpus-text { outline: 1px dashed var(--lc-color-border); outline-offset: 2px; border-radius: 2px; background: var(--lc-color-surface-2); transition: outline 0.15s, background 0.15s; cursor: text; }
 .lc-corpus-line.editing .lc-corpus-text:focus { outline: 2px solid var(--lc-color-primary); background: var(--lc-color-primary-tint-2); }
@@ -519,7 +519,7 @@ body { font-family: var(--lc-font-sans); background: var(--lc-color-bg); color: 
 .lc-switch input:checked + .lc-switch-slider { background: var(--lc-color-primary); }
 .lc-switch input:checked + .lc-switch-slider::before { transform: translateX(18px); }
 .lc-preview-paper { background: white; border: 1px solid var(--lc-color-border); border-radius: 4px; padding: 40px; min-height: 500px; font-family: var(--lc-font-serif); font-size: 14px; line-height: 2.0; color: #333; box-shadow: 0 4px 14px rgba(74,65,53,0.05); }
-.lc-preview-paper .preview-blank { display: inline-block; min-width: 50px; border-bottom: 2px solid #B06A36; }
+.lc-preview-paper .preview-blank { display: inline-block; min-width: 5ch; border-bottom: 2px solid #B06A36; }
 .lc-preview-paper .preview-page-sep { text-align: center; color: #999; padding: 16px 0; border-top: 1px dashed #ccc; border-bottom: 1px dashed #ccc; margin: 16px 0; font-family: monospace; font-size: 12px; }
 .lc-preview-paper .preview-gutter { display: inline-block; width: 30px; text-align: right; padding-right: 10px; color: #999; font-family: monospace; font-size: 11px; }
 .lc-preview-paper .preview-translation { font-family: 'Noto Serif SC', Georgia, serif; font-size: 13px; color: #666; padding: 4px 0 4px 30px; }
@@ -561,12 +561,114 @@ body { font-family: var(--lc-font-sans); background: var(--lc-color-bg); color: 
 .lc-toast-success { background: var(--lc-state-success); }
 .lc-toast-error { background: var(--lc-state-error); }
 .lc-toast-info { background: var(--lc-state-info); }
-@media (max-width: 640px) {
-    .lc-appbar-inner { padding: 0 12px; gap: 8px; }
-    .lc-nav { gap: 2px; }
-    .lc-nav-item { padding: 4px 10px; font-size: 12px; }
-    .lc-main { padding: 12px; }
-    .lc-part-cards { grid-template-columns: 1fr; }
+/* ===== Tablet responsive (<=1023px) ===== */
+@media (max-width: 1023px) {
+    .lc-appbar-inner { padding: 0 16px; gap: 10px; }
+    .lc-main { padding: 16px; }
+    .lc-corpus-panel { padding: 16px; }
+    .lc-answer-rail { padding: 16px; }
+    .lc-corpus-text { font-size: 15px; line-height: 2.0; }
+    .lc-gutter { width: 32px; padding-right: 10px; font-size: 11px; }
+    .lc-preview-paper { padding: 24px; }
+}
+
+/* ===== Mobile responsive (<=768px) ===== */
+@media (max-width: 768px) {
+    .lc-appbar-inner { padding: 0 10px; gap: 6px; height: 50px; flex-wrap: nowrap; overflow: hidden; }
+    .lc-brand img { height: 30px !important; }
+    .lc-brand span { font-size: 14px; }
+    .lc-lang-btn { padding: 4px 8px; font-size: 12px; }
+    .lc-lang-name { display: none; }
+    .lc-nav { gap: 0; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+    .lc-nav::-webkit-scrollbar { display: none; }
+    .lc-nav-item { padding: 4px 10px; font-size: 12px; white-space: nowrap; flex-shrink: 0; }
+    .lc-appbar-actions { gap: 2px; }
+    .lc-icon-btn { width: 32px; height: 32px; }
+    .lc-user-btn { padding: 4px 8px; font-size: 12px; }
+    .lc-user-btn #user-account-label { display: none; }
+
+    .lc-main { padding: 10px; min-height: calc(100vh - 50px); }
+    .lc-part-cards { grid-template-columns: 1fr; gap: 8px; }
+    .lc-stats-bar { grid-template-columns: repeat(2, 1fr) !important; gap: 8px; }
+    .lc-stat-card { padding: 10px 12px; }
+
+    /* Workbench */
+    .lc-workbench-grid { flex-direction: column; gap: 12px; }
+    .lc-corpus-panel { width: 100% !important; max-width: none; max-height: 50vh; padding: 12px; }
+    .lc-answer-rail { width: 100%; max-width: none; max-height: none; padding: 12px; }
+    .lc-workbench-resizer { display: none; }
+    .lc-corpus-text { font-size: 14px; line-height: 1.9; }
+    .lc-gutter { width: 26px; padding-right: 8px; font-size: 10px; }
+    .lc-word { padding: 1px 2px; }
+
+    /* Toolbar */
+    .lc-toolbar { gap: 8px; }
+    .lc-toolbar button { padding: 6px 10px; font-size: 12px; }
+    .lc-hint-banner { font-size: 12px; padding: 8px 10px; }
+
+    /* Import */
+    .lc-upload-zone { padding: 24px 12px; }
+    .lc-upload-zone i { width: 28px; height: 28px; }
+    .lc-upload-zone h3 { font-size: 14px; }
+    .lc-upload-zone p { font-size: 12px; }
+    .lc-paste-area { min-height: 120px; font-size: 13px; padding: 10px; }
+
+    /* Vocabulary */
+    .lc-phrase-grid { grid-template-columns: 1fr !important; }
+    .lc-vocab-hint-panel { margin-bottom: 10px; }
+    .lc-vocab-hint-words { gap: 4px; }
+
+    /* Export */
+    .lc-export-grid { grid-template-columns: 1fr !important; }
+    .lc-preview-paper { padding: 16px; font-size: 13px; line-height: 1.8; }
+
+    /* Oral training */
+    .lc-oral-grid { grid-template-columns: 1fr !important; }
+
+    /* Modals */
+    .lc-modal { width: 94%; max-width: none; border-radius: 12px; }
+    .lc-modal-header { padding: 14px 16px; }
+    .lc-modal-header h3 { font-size: 16px; }
+    .lc-modal-body { padding: 16px; }
+    .lc-auth-tab { padding: 8px 14px; font-size: 14px; }
+
+    /* Topic folders */
+    .lc-topic-folder { padding: 8px 10px; }
+    .lc-topic-doc-item { padding: 6px 8px; }
+
+    /* Answer rail items */
+    .lc-answer-item { padding: 5px 8px; font-size: 13px; }
+    .lc-answer-word { font-size: 14px; }
+
+    /* Toast */
+    .lc-toast { max-width: 90vw; font-size: 13px; }
+
+    /* Context menu */
+    .lc-ctx-menu { min-width: 160px; }
+
+    /* Blank sizes — slightly smaller on mobile */
+    .lc-blank, .lc-separable-blank, .lc-separable-pending { height: 1.4em; }
+}
+
+/* ===== Small mobile (<=480px) ===== */
+@media (max-width: 480px) {
+    .lc-appbar-inner { padding: 0 6px; }
+    .lc-brand span { font-size: 12px; }
+    .lc-nav-item { padding: 3px 8px; font-size: 11px; }
+    .lc-main { padding: 8px; }
+    .lc-corpus-text { font-size: 13px; line-height: 1.85; }
+    .lc-gutter { width: 22px; padding-right: 6px; font-size: 9px; }
+    .lc-corpus-panel { padding: 10px; }
+    .lc-answer-rail { padding: 10px; }
+    .lc-stats-bar { grid-template-columns: 1fr 1fr !important; }
+    .lc-stat-card { padding: 8px 10px; }
+    .lc-stat-card .lc-stat-val { font-size: 18px; }
+    .lc-upload-zone { padding: 16px 8px; }
+    .lc-preview-paper { padding: 12px; font-size: 12px; }
+    .lc-modal { width: 96%; border-radius: 10px; }
+    .lc-modal-body { padding: 12px; }
+    .lc-answer-word { font-size: 13px; }
+    .lc-answer-locator { font-size: 11px; }
 }
 </style>
 
@@ -7209,6 +7311,7 @@ function reapplyHiddenItems() {
                 wordEl.dataset.originalText = wordEl.dataset.word;
                 wordEl.classList.add('lc-blank');
                 wordEl.textContent = '';
+                setBlankWidth(wordEl, wordEl.dataset.word);
             }
         } else if (item.type === 'phrase') {
             // Find phrase: locate the first word, then take consecutive words matching the phrase
@@ -7230,7 +7333,7 @@ function reapplyHiddenItems() {
                     var el = allWords[startIdx + idx];
                     el.dataset.hideId = item.id;
                     el.dataset.originalText = el.dataset.word;
-                    if (idx === 0) { el.classList.add('lc-phrase-blank'); el.textContent = ''; }
+                    if (idx === 0) { el.classList.add('lc-phrase-blank'); el.textContent = ''; setBlankWidth(el, itemText); }
                     else { el.style.display = 'none'; }
                 });
             }
@@ -7248,6 +7351,7 @@ function reapplyHiddenItems() {
                 sepWordEl.dataset.sepMarker = item.marker || '';
                 sepWordEl.dataset.sepPair = item.pairId || '';
                 sepWordEl.textContent = '';
+                setBlankWidth(sepWordEl, sepWordEl.dataset.word);
             }
         }
     });
@@ -7420,6 +7524,7 @@ function hideSeparableVerb(verbEl, prefixEl) {
     verbEl.dataset.sepMarker = marker;
     verbEl.dataset.sepPair = prefixId;
     verbEl.textContent = '';
+    setBlankWidth(verbEl, verbText);
     // Create blank for prefix
     prefixEl.classList.add('lc-separable-blank');
     prefixEl.dataset.hideId = prefixId;
@@ -7427,6 +7532,7 @@ function hideSeparableVerb(verbEl, prefixEl) {
     prefixEl.dataset.sepMarker = marker;
     prefixEl.dataset.sepPair = verbId;
     prefixEl.textContent = '';
+    setBlankWidth(prefixEl, prefixText);
     // Add to hidden items as a separable pair
     var combinedText = prefixText + '/' + verbText;
     State.hiddenItems.push({ id: verbId, text: verbText, line: verbLine, page: verbPage, type: 'separable', role: 'verb', pairId: prefixId, pairText: prefixText, combinedText: combinedText, marker: marker });
@@ -7459,10 +7565,19 @@ function addToVocabularySeparable(combinedText, verbLine, verbHideId, prefixLine
     renderVocabulary();
 }
 
+// Set blank width based on original word/phrase length for proper dictation space
+function setBlankWidth(el, text) {
+    if (!text) return;
+    var charCount = text.length;
+    // word length + 2ch breathing room, minimum 5ch
+    el.style.minWidth = Math.max(charCount + 2, 5) + 'ch';
+}
+
 function hideWord(wordEl) {
     var word = wordEl.dataset.word; var line = parseInt(wordEl.dataset.line); var page = parseInt(wordEl.dataset.page);
     var id = genId();
     wordEl.classList.add('lc-blank'); wordEl.dataset.hideId = id; wordEl.dataset.originalText = word; wordEl.textContent = '';
+    setBlankWidth(wordEl, word);
     State.hiddenItems.push({ id: id, text: word, line: line, page: page, type: 'word' });
     addToVocabulary(word, line, id);
     renderAnswerRail(); updateHiddenCount(); saveUserData();
@@ -7476,7 +7591,7 @@ function hidePhrase(startEl, endEl) {
     var id = genId();
     words.forEach(function(w, i) {
         w.dataset.hideId = id; w.dataset.originalText = w.dataset.word;
-        if (i === 0) { w.classList.add('lc-phrase-blank'); w.textContent = ''; } else { w.style.display = 'none'; }
+        if (i === 0) { w.classList.add('lc-phrase-blank'); w.textContent = ''; setBlankWidth(w, phraseText); } else { w.style.display = 'none'; }
     });
     State.hiddenItems.push({ id: id, text: phraseText, line: line, page: page, type: 'phrase' });
     // Auto-add to phrase book with corpus topic (no popup — user can batch-categorize in export)
@@ -7495,7 +7610,7 @@ function unhideItem(id) {
         [id, item.pairId].forEach(function(hid) {
             document.querySelectorAll('[data-hide-id="' + hid + '"]').forEach(function(el) {
                 el.classList.remove('lc-blank', 'lc-phrase-blank', 'lc-separable-blank', 'lc-separable-pending');
-                el.style.display = ''; el.textContent = el.dataset.originalText || '';
+                el.style.display = ''; el.style.minWidth = ''; el.textContent = el.dataset.originalText || '';
                 delete el.dataset.hideId; delete el.dataset.originalText;
                 delete el.dataset.sepMarker; delete el.dataset.sepPair;
             });
@@ -7515,7 +7630,7 @@ function unhideItem(id) {
         return;
     }
     document.querySelectorAll('[data-hide-id="' + id + '"]').forEach(function(el) {
-        el.classList.remove('lc-blank', 'lc-phrase-blank', 'lc-separable-blank', 'lc-separable-pending'); el.style.display = ''; el.textContent = el.dataset.originalText || '';
+        el.classList.remove('lc-blank', 'lc-phrase-blank', 'lc-separable-blank', 'lc-separable-pending'); el.style.display = ''; el.style.minWidth = ''; el.textContent = el.dataset.originalText || '';
         delete el.dataset.hideId; delete el.dataset.originalText;
     });
     State.hiddenItems = State.hiddenItems.filter(function(i) { return i.id !== id; });
@@ -11567,7 +11682,7 @@ function renderLineForExport(line, lineNum, pageNum, blankClass) {
         if (tok.type === 'text') result += escapeHtml(tok.value);
         else {
             var el = wordEls[wordIdx];
-            if (el && el.dataset.hideId) { if (el.style.display !== 'none') result += '<span class="' + blankClass + '"></span>'; }
+            if (el && el.dataset.hideId) { if (el.style.display !== 'none') { var origText = el.dataset.originalText || ''; var bw = Math.max(origText.length + 2, 5); result += '<span class="' + blankClass + '" style="min-width:' + bw + 'ch;"></span>'; } }
             else result += escapeHtml(tok.value);
             wordIdx++;
         }
@@ -11584,7 +11699,7 @@ function exportDocument() {
     html += 'body{font-family:"Noto Serif SC",Georgia,serif;font-size:14px;line-height:2.0;color:#333;max-width:800px;margin:40px auto;padding:0 20px;}';
     html += 'h2{font-size:18px;font-weight:700;margin-bottom:16px;}.line{margin-bottom:2px;}';
     html += '.gutter{display:inline-block;width:30px;text-align:right;padding-right:10px;color:#999;font-family:monospace;font-size:11px;}';
-    html += '.blank{display:inline-block;min-width:50px;border-bottom:2px solid #B06A36;}';
+    html += '.blank{display:inline-block;min-width:5ch;border-bottom:2px solid #B06A36;}';
     html += '.page-sep{text-align:center;color:#999;padding:16px 0;border-top:1px dashed #ccc;border-bottom:1px dashed #ccc;margin:16px 0;font-family:monospace;font-size:12px;}';
     html += '.translation{font-family:"Noto Serif SC",Georgia,serif;font-size:13px;color:#666;padding:4px 0 4px 30px;}';
     html += '.answers{margin-top:40px;padding-top:16px;border-top:2px solid #333;page-break-before:always;}';
