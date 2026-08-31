@@ -699,8 +699,9 @@ body { font-family: var(--lc-font-sans); background: var(--lc-color-bg); color: 
             <button class="lc-nav-item" data-view="export">导出</button>
         </nav>
         <div class="lc-appbar-actions">
-            <button class="lc-icon-btn" id="sync-indicator" title="点击同步数据" style="display:none;">
+            <button class="lc-icon-btn" id="sync-indicator" title="点击同步数据" style="display:none;position:relative;">
                 <i data-lucide="refresh-cw" style="width:14px;height:14px;"></i>
+                <span class="sync-dot" style="position:absolute;top:2px;right:2px;width:6px;height:6px;border-radius:50%;background:#999;border:1px solid var(--lc-bg-surface,#fff);"></span>
             </button>
             <button class="lc-icon-btn" id="toggle-theme" title="切换主题">
                 <i data-lucide="moon"></i>
@@ -3173,17 +3174,39 @@ async function workerValidateToken() {
     } catch(e) { return { valid: false, error: e.message }; }
 }
 
+var _workerSyncStatus = 'idle'; // idle, syncing, success, error
+function updateSyncIndicator() {
+    var el = document.getElementById('sync-indicator');
+    if (!el) return;
+    var icon = el.querySelector('i') || el;
+    var dot = el.querySelector('.sync-dot');
+    switch(_workerSyncStatus) {
+        case 'syncing': el.style.opacity = '0.7'; el.title = '同步中...'; if (dot) dot.style.background = '#f59e0b'; break;
+        case 'success': el.style.opacity = '1'; el.title = '已同步'; if (dot) dot.style.background = '#22c55e'; break;
+        case 'error': el.style.opacity = '1'; el.title = '同步失败'; if (dot) dot.style.background = '#ef4444'; break;
+        default: el.style.opacity = '0.5'; el.title = '未同步'; if (dot) dot.style.background = '#999';
+    }
+}
+
 async function workerSaveData(data) {
     var token = getWorkerToken();
-    if (!token) return false;
+    if (!token) { console.warn('[Worker] No token, skip save'); return false; }
+    _workerSyncStatus = 'syncing'; updateSyncIndicator();
     try {
         var resp = await fetchWithTimeout(WORKER_SYNC_URL + '/api/data', {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
             body: JSON.stringify(data)
         }, CLOUD_TIMEOUT);
-        return resp.ok;
-    } catch(e) { console.error('Worker save failed:', e); return false; }
+        if (resp.ok) {
+            _workerSyncStatus = 'success'; updateSyncIndicator();
+            console.log('[Worker] Save OK, docs:', (data.documents||[]).length, 'vocab:', (data.vocabulary?.words||[]).length);
+            return true;
+        }
+        console.error('[Worker] Save HTTP error:', resp.status);
+        _workerSyncStatus = 'error'; updateSyncIndicator();
+        return false;
+    } catch(e) { console.error('[Worker] Save failed:', e); _workerSyncStatus = 'error'; updateSyncIndicator(); return false; }
 }
 
 async function workerLoadData() {
@@ -3633,6 +3656,22 @@ async function doAuth() {
                 updateUserUI();
                 loadUserData();
                 syncCloudInBackground(username, hash);
+                // ★ 本地账号迁移到 Worker: 如果 Worker 可用但用户不在 Worker, 自动注册并上传本地数据
+                if (useWorker) {
+                    try {
+                        var migrateResult = await workerRegister(username, password);
+                        if (migrateResult.success && migrateResult.token) {
+                            setWorkerToken(migrateResult.token);
+                            console.log('[Worker] Local user migrated to Worker:', username);
+                            // 上传本地数据到 Worker
+                            var localData = JSON.parse(localStorage.getItem('lc-data-' + username) || '{}');
+                            if (localData.documents) {
+                                await workerSaveData(localData);
+                                console.log('[Worker] Local data uploaded:', localData.documents.length, 'docs');
+                            }
+                        }
+                    } catch(migrateErr) { console.warn('[Worker] Migration failed:', migrateErr); }
+                }
                 return;
             }
 
@@ -4260,25 +4299,45 @@ function saveUserData() {
     if (!State.user) return;
     if (_saveTimer) clearTimeout(_saveTimer);
     _saveTimer = setTimeout(function() {
-        try {
-            var data = collectCurrentData();
-            // 本地保存
-            localStorage.setItem('lc-data-' + State.user.username, JSON.stringify(data));
-            // Worker 同步 (fire-and-forget, 跨设备)
-            if (isWorkerConfigured() && getWorkerToken()) {
-                workerSaveData(data).catch(function(e) { console.error('Worker sync save failed:', e); });
-            }
-            // GitHub sync (fire-and-forget, for Auth0 users)
-            if (hasGithubSync()) {
-                githubSaveData(data).catch(function(e) { console.error('GitHub sync save failed:', e); });
-            }
-            // JSONBin (legacy)
-            if (State.user.cloudBlobId && hasCloudSync()) {
-                pushLocalData(State.user.cloudBlobId);
-            }
-        } catch(e) { console.error('Save failed:', e); }
+        _doSaveUserData();
     }, 500);
 }
+
+function _doSaveUserData() {
+    try {
+        var data = collectCurrentData();
+        // 本地保存
+        localStorage.setItem('lc-data-' + State.user.username, JSON.stringify(data));
+        // Worker 同步 (fire-and-forget, 跨设备)
+        if (isWorkerConfigured() && getWorkerToken()) {
+            workerSaveData(data).catch(function(e) { console.error('[Worker] Sync save error:', e); });
+        }
+        // GitHub sync (fire-and-forget, for Auth0 users)
+        if (hasGithubSync()) {
+            githubSaveData(data).catch(function(e) { console.error('GitHub sync save failed:', e); });
+        }
+        // JSONBin (legacy)
+        if (State.user.cloudBlobId && hasCloudSync()) {
+            pushLocalData(State.user.cloudBlobId);
+        }
+    } catch(e) { console.error('Save failed:', e); }
+}
+
+// 页面关闭前强制刷新未保存的数据
+window.addEventListener('beforeunload', function() {
+    if (_saveTimer) {
+        clearTimeout(_saveTimer);
+        _saveTimer = null;
+        try { _doSaveUserData(); } catch(e) {}
+    }
+});
+
+// 定期自动同步 (每30秒, 确保数据不丢失)
+setInterval(function() {
+    if (State.user && State.user.username !== '__guest__' && isWorkerConfigured() && getWorkerToken()) {
+        _doSaveUserData();
+    }
+}, 30000);
 
 async function loadUserData() {
     if (!State.user) return;
@@ -4572,11 +4631,12 @@ function updateUserUI() {
         if (btn) swapLucideIcon(btn, 'user-check', 18);
         if (logoutBtn) logoutBtn.style.display = '';
         if (loginBtn) loginBtn.style.display = 'none';
-        // Show sync indicator for logged-in users with cloud sync enabled (JSONBin or GitHub)
-        var showSync = (hasCloudSync() && State.user.cloudBlobId) || hasGithubSync();
+        // Show sync indicator for logged-in users with cloud sync enabled (Worker, JSONBin or GitHub)
+        var showSync = (isWorkerConfigured() && getWorkerToken()) || (hasCloudSync() && State.user.cloudBlobId) || hasGithubSync();
         if (syncIndicator) syncIndicator.style.display = showSync ? '' : 'none';
         if (syncBtn) syncBtn.style.display = showSync ? '' : 'none';
-        updateSyncStatus(_syncState.status);
+        if (isWorkerConfigured() && getWorkerToken()) { updateSyncIndicator(); }
+        else { updateSyncStatus(_syncState.status); }
     } else {
         label.textContent = '我的';
         if (btn) swapLucideIcon(btn, 'user', 18);
