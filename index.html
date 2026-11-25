@@ -7410,10 +7410,10 @@ function renderCorpusLine(line, lineNum, pageNum, showNum, pageIdx, lineIdx) {
 
 function attachEditableHandlers(el, pageIdx, lineIdx) {
     el.addEventListener('blur', function() {
-        saveEditedLine(pageIdx, lineIdx, el.innerText);
+        saveEditedLine(pageIdx, lineIdx, getEditableLineText(el));
     });
     el.addEventListener('input', function() {
-        saveEditedLine(pageIdx, lineIdx, el.innerText);
+        saveEditedLine(pageIdx, lineIdx, getEditableLineText(el));
     });
     el.addEventListener('paste', function(e) {
         e.preventDefault();
@@ -7478,11 +7478,29 @@ function restoreScrollAnchor() {
 }
 
 // --- Edit Mode: inline text editing for corpus lines ---
+function getEditableLineText(el) {
+    // Keep hidden tokens as non-editable placeholders, but restore their original
+    // text when saving the surrounding editable content.
+    function readNode(node) {
+        if (node.nodeType === 3) return node.nodeValue || '';
+        if (node.nodeType !== 1) return '';
+        if (node.classList && node.classList.contains('lc-word')) {
+            return node.dataset.word || node.dataset.originalText || node.textContent || '';
+        }
+        if (node.tagName === 'BR') return '\n';
+        var value = '';
+        Array.from(node.childNodes).forEach(function(child) { value += readNode(child); });
+        if (node !== el && (node.tagName === 'DIV' || node.tagName === 'P')) value += '\n';
+        return value;
+    }
+    return readNode(el).replace(/\n+$/, '');
+}
+
 function saveEditedLine(pageIdx, lineIdx, newText) {
     if (!State.corpus || !State.corpus.pages[pageIdx]) return;
     var lines = State.corpus.pages[pageIdx].lines;
     if (!lines || !lines[lineIdx]) return;
-    // Live save: collapse newlines to space (final newline-splitting happens on exit)
+    // Keep hidden tokens in canonical text while editing visible text around them.
     lines[lineIdx].text = newText.replace(/\n/g, ' ').trim();
 }
 
@@ -7499,7 +7517,7 @@ function collectAndProcessEdits() {
         var textEl = lineEl.querySelector('[contenteditable="true"]');
         if (textEl && !isNaN(pi) && !isNaN(li)) {
             var key = pi + '-' + li;
-            if (edits[key] === undefined) edits[key] = textEl.innerText;
+            if (edits[key] === undefined) edits[key] = getEditableLineText(textEl);
         }
     });
 
@@ -7646,8 +7664,7 @@ function updateTranslationToggleUI() {
 
 function reapplyHiddenItems() {
     if (!State.corpus) return;
-    // 编辑模式下不应用挖空样式 (保持词可见, 布局与挖空模式一致因为 DOM 结构相同)
-    if (State.editMode) return;
+    // Keep blank markers visible in both modes; edit mode makes blank tokens read-only.
     var panel = document.getElementById('corpus-panel');
     if (!panel) return;
     var allWords = Array.from(panel.querySelectorAll('.lc-word'));
@@ -7666,6 +7683,7 @@ function reapplyHiddenItems() {
             if (wordEl) {
                 wordEl.dataset.hideId = item.id;
                 wordEl.dataset.originalText = wordEl.dataset.word;
+                if (State.editMode) wordEl.contentEditable = 'false';
                 wordEl.classList.add('lc-blank');
                 wordEl.textContent = '';
                 setBlankWidth(wordEl, wordEl.dataset.word);
@@ -7690,6 +7708,7 @@ function reapplyHiddenItems() {
                     var el = allWords[startIdx + idx];
                     el.dataset.hideId = item.id;
                     el.dataset.originalText = el.dataset.word;
+                    if (State.editMode) el.contentEditable = 'false';
                     if (idx === 0) { el.classList.add('lc-phrase-blank'); el.textContent = ''; setBlankWidth(el, itemText); }
                     else { el.style.display = 'none'; }
                 });
@@ -7704,6 +7723,7 @@ function reapplyHiddenItems() {
             if (sepWordEl) {
                 sepWordEl.dataset.hideId = item.id;
                 sepWordEl.dataset.originalText = sepWordEl.dataset.word;
+                if (State.editMode) sepWordEl.contentEditable = 'false';
                 sepWordEl.classList.add('lc-separable-blank');
                 sepWordEl.dataset.sepMarker = item.marker || '';
                 sepWordEl.dataset.sepPair = item.pairId || '';
