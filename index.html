@@ -7210,9 +7210,20 @@ function renderWorkbench() {
             panel.appendChild(renderCorpusLine(line, lineNum, page.pageNum, showNum, pageIdx, lineIdx));
         });
     });
-    // 编辑模式下也保留挖空视觉效果 (确保布局一致), 但不绑定点击挖空交互
+    // The two modes are mutually exclusive. Remove delegated cloze handlers while
+    // editing so pointer gestures can never create or remove blanks.
     if (!State.editMode) {
         setupWordInteractions();
+    } else {
+        panel.onmousedown = null;
+        panel.onmouseover = null;
+        panel.ontouchstart = null;
+        panel.ontouchmove = null;
+        isSelecting = false;
+        selStart = null;
+        selEnd = null;
+        clearSelectionHighlight();
+        clearSeparablePending();
     }
     reapplyHiddenItems();
     refreshIcons();
@@ -7415,9 +7426,14 @@ function attachEditableHandlers(el, pageIdx, lineIdx) {
     el.addEventListener('input', function() {
         saveEditedLine(pageIdx, lineIdx, getEditableLineText(el));
     });
+    el.addEventListener('keydown', function(e) {
+        // Each source line is a stable anchor for saved cloze positions.
+        // Prevent line insertion/deletion from shifting those anchors.
+        if (e.key === 'Enter') e.preventDefault();
+    });
     el.addEventListener('paste', function(e) {
         e.preventDefault();
-        var text = (e.clipboardData || window.clipboardData).getData('text/plain');
+        var text = (e.clipboardData || window.clipboardData).getData('text/plain').replace(/[\\r\\n]+/g, ' ');
         document.execCommand('insertText', false, text);
     });
 }
