@@ -7826,21 +7826,37 @@ function reapplyHiddenItems() {
                 });
             }
         } else if (item.type === 'separable') {
-            // Find word by matching text + line number
-            var sepWordEl = allWords.find(function(w) {
-                var swText = w.dataset.word;
-                if (swText && typeof swText.normalize === 'function') swText = swText.normalize('NFC');
-                return swText === itemText && parseInt(w.dataset.line) === item.line && parseInt(w.dataset.page) === item.page;
-            });
-            if (sepWordEl) {
-                sepWordEl.dataset.hideId = item.id;
-                sepWordEl.dataset.originalText = sepWordEl.dataset.word;
-                if (State.editMode) sepWordEl.contentEditable = 'false';
-                sepWordEl.classList.add('lc-separable-blank');
-                sepWordEl.dataset.sepMarker = item.marker || '';
-                sepWordEl.dataset.sepPair = item.pairId || '';
-                sepWordEl.textContent = '';
-                setBlankWidth(sepWordEl, sepWordEl.dataset.word);
+            // Restore a separable blank that may span multiple consecutive words.
+            var phraseTokens = String(itemText || '').split(/\s+/).filter(Boolean);
+            var sepStart = -1;
+            for (var si = 0; si <= allWords.length - phraseTokens.length; si++) {
+                var firstWord = allWords[si];
+                if (parseInt(firstWord.dataset.line) !== item.line || parseInt(firstWord.dataset.page) !== item.page) continue;
+                var matches = phraseTokens.every(function(token, offset) {
+                    var candidate = allWords[si + offset];
+                    var candidateText = candidate && candidate.dataset.word;
+                    if (candidateText && typeof candidateText.normalize === 'function') candidateText = candidateText.normalize('NFC');
+                    return !!candidate && candidateText === token && parseInt(candidate.dataset.line) === item.line && parseInt(candidate.dataset.page) === item.page;
+                });
+                if (matches) { sepStart = si; break; }
+            }
+            if (sepStart >= 0) {
+                phraseTokens.forEach(function(token, offset) {
+                    var sepWordEl = allWords[sepStart + offset];
+                    sepWordEl.dataset.hideId = item.id;
+                    sepWordEl.dataset.originalText = sepWordEl.dataset.word;
+                    if (State.editMode) sepWordEl.contentEditable = 'false';
+                    sepWordEl.classList.add('lc-separable-blank');
+                    sepWordEl.dataset.sepMarker = item.marker || '';
+                    sepWordEl.dataset.sepPair = item.pairId || '';
+                    if (offset === 0) {
+                        sepWordEl.textContent = '';
+                        setBlankWidth(sepWordEl, itemText);
+                    } else {
+                        sepWordEl.textContent = '';
+                        sepWordEl.style.display = 'none';
+                    }
+                });
             }
         }
     });
