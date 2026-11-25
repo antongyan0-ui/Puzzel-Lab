@@ -6848,8 +6848,16 @@ window.loadDocument = function(docId) {
     State.corpus = { docId: doc.id, title: doc.title, topic: doc.topic, pages: doc.pages, readPages: doc.readPages || 0 };
     State.hiddenItems = doc.hiddenItems || [];
     _lastReadPage = doc.readPages || 0;
+    _lastSavedReadPositionKey = '';
     saveUserData();
     renderWorkbench();
+    // Restore this document's last reading/editing location after its lines render.
+    requestAnimationFrame(function() {
+        requestAnimationFrame(function() {
+            restoreDocumentReadPosition();
+            updateReadingProgress();
+        });
+    });
     renderAnswerRail();
     updateHiddenCount();
     updateTranslationToggleUI();
@@ -7241,14 +7249,66 @@ function renderWorkbench() {
     reapplyHiddenItems();
     refreshIcons();
     restoreHintBannerState();
-    // Track scroll position to update reading progress
+    // Track scroll position and restore the active document's saved location.
     setupReadingProgressTracker();
+    if (State.corpus && State.corpus.readPosition) {
+        requestAnimationFrame(function() { restoreDocumentReadPosition(); });
+    }
 }
 
 // Track scroll position in the corpus panel to detect which page the user is reading
 var _scrollTrackerBound = false;
 var _lastReadPage = 0;
 var _scrollTick = false;
+var _readPositionSaveTimer = null;
+var _lastSavedReadPositionKey = '';
+
+function captureDocumentReadPosition() {
+    if (!State.corpus || !State.corpus.docId) return;
+    var panel = document.getElementById('corpus-panel');
+    if (!panel) return;
+    var lines = panel.querySelectorAll('.lc-corpus-line');
+    if (!lines.length) return;
+    var panelTop = panel.getBoundingClientRect().top + 4;
+    var anchor = null;
+    for (var i = 0; i < lines.length; i++) {
+        var rect = lines[i].getBoundingClientRect();
+        if (rect.bottom >= panelTop) {
+            anchor = {
+                pageIdx: parseInt(lines[i].dataset.pageIdx, 10),
+                lineIdx: parseInt(lines[i].dataset.lineIdx, 10),
+                offsetPx: rect.top - panel.getBoundingClientRect().top
+            };
+            break;
+        }
+    }
+    if (!anchor || isNaN(anchor.pageIdx) || isNaN(anchor.lineIdx)) return;
+    var key = State.corpus.docId + ':' + anchor.pageIdx + ':' + anchor.lineIdx + ':' + Math.round(anchor.offsetPx);
+    if (key === _lastSavedReadPositionKey) return;
+    _lastSavedReadPositionKey = key;
+    var doc = (State.documents || []).find(function(d) { return d.id === State.corpus.docId; });
+    if (!doc) return;
+    doc.readPosition = anchor;
+    State.corpus.readPosition = anchor;
+    doc._updatedAt = Date.now();
+    if (_readPositionSaveTimer) clearTimeout(_readPositionSaveTimer);
+    _readPositionSaveTimer = setTimeout(function() {
+        _readPositionSaveTimer = null;
+        saveUserData();
+    }, 1000);
+}
+
+function restoreDocumentReadPosition() {
+    var pos = State.corpus && State.corpus.readPosition;
+    var panel = document.getElementById('corpus-panel');
+    if (!pos || !panel) return;
+    var selector = '.lc-corpus-line[data-page-idx="' + pos.pageIdx + '"][data-line-idx="' + pos.lineIdx + '"]';
+    var line = panel.querySelector(selector);
+    if (line) {
+        panel.scrollTop = Math.max(0, line.offsetTop - (Number(pos.offsetPx) || 0));
+    }
+    _lastSavedReadPositionKey = State.corpus.docId + ':' + pos.pageIdx + ':' + pos.lineIdx + ':' + Math.round(Number(pos.offsetPx) || 0);
+}
 function throttle(fn, delay) {
     return function() {
         if (_scrollTick) return;
@@ -7266,6 +7326,7 @@ function setupReadingProgressTracker() {
         _scrollTrackerBound = true;
         panel.addEventListener('scroll', throttle(function() {
             updateReadingProgress();
+            captureDocumentReadPosition();
         }, 300));
     }
     // Initial update
