@@ -7811,6 +7811,8 @@ function setupWordInteractions() {
 }
 
 function startSelection(wordEl) {
+    // Hard mode boundary: editing must never initiate a cloze gesture.
+    if (State.editMode) return;
     isSelecting = true;
     selStart = wordEl;
     selEnd = wordEl;
@@ -7818,6 +7820,7 @@ function startSelection(wordEl) {
 }
 
 function extendSelection(wordEl) {
+    if (State.editMode) return;
     if (isSelecting) {
         selEnd = wordEl;
         updateSelectionHighlight();
@@ -7825,6 +7828,13 @@ function extendSelection(wordEl) {
 }
 
 function onSelectionEnd() {
+    // A document-level mouseup/touchend may still fire after the mode switch.
+    // Discard it while editing so it cannot create or remove cloze items.
+    if (State.editMode) {
+        isSelecting = false; selStart = null; selEnd = null;
+        clearSelectionHighlight(); clearSeparablePending();
+        return;
+    }
     if (!isSelecting) return;
     // Cancel any pending separable verb selection on normal click
     if (_separablePending && selStart === selEnd && selStart === _separablePending) {
@@ -7858,6 +7868,7 @@ function updateSelectionHighlight() {
 function clearSelectionHighlight() { document.querySelectorAll('.lc-word.lc-selecting').forEach(function(w) { w.classList.remove('lc-selecting'); }); }
 
 function handleSeparableClick(wordEl) {
+    if (State.editMode) return;
     // If the clicked word is already a separable blank, unhide it
     if (wordEl.classList.contains('lc-separable-blank')) {
         var hideId = wordEl.dataset.hideId;
@@ -7967,6 +7978,7 @@ function setBlankWidth(el, text) {
 }
 
 function hideWord(wordEl) {
+    if (State.editMode) return;
     var word = wordEl.dataset.word; var line = parseInt(wordEl.dataset.line); var page = parseInt(wordEl.dataset.page);
     var id = genId();
     wordEl.classList.add('lc-blank'); wordEl.dataset.hideId = id; wordEl.dataset.originalText = word; wordEl.textContent = '';
@@ -7977,6 +7989,7 @@ function hideWord(wordEl) {
 }
 
 function hidePhrase(startEl, endEl) {
+    if (State.editMode) return;
     var words = getWordsBetween(startEl, endEl);
     if (words.length < 2) { hideWord(startEl); return; }
     var phraseText = words.map(function(w) { return w.dataset.word; }).join(' ');
@@ -7994,6 +8007,7 @@ function hidePhrase(startEl, endEl) {
 }
 
 function unhideItem(id) {
+    if (State.editMode) return;
     var item = State.hiddenItems.find(function(i) { return i.id === id; });
     if (!item) return;
     // For separable verbs: also unhide the paired item
