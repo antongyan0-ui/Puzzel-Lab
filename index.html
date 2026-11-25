@@ -281,12 +281,12 @@ body { font-family: var(--lc-font-sans); background: var(--lc-color-bg); color: 
 .lc-word { cursor: pointer; border-radius: 2px; transition: background 0.1s; padding: 0 1px; }
 .lc-word:hover { background: var(--lc-color-primary-tint-2); }
 .lc-word.lc-selecting { background: var(--lc-color-primary-soft) !important; box-shadow: 0 0 0 1px var(--lc-color-primary); border-radius: 2px; }
-.lc-blank { display: inline-block; min-width: 4ch; height: 1.5em; border-bottom: 2.5px solid var(--lc-color-primary); background: var(--lc-color-primary-tint-2, rgba(176,106,54,0.06)); border-radius: 2px 2px 0 0; cursor: pointer; transition: border-color 0.15s, background 0.15s; vertical-align: baseline; }
+.lc-blank { display: inline-block; min-width: 4ch; border-bottom: 2.5px solid var(--lc-color-primary); background: var(--lc-color-primary-tint-2, rgba(176,106,54,0.06)); border-radius: 2px 2px 0 0; cursor: pointer; transition: border-color 0.15s, background 0.15s; vertical-align: baseline; padding: 0 1px; }
 .lc-blank:hover { border-color: var(--lc-color-primary-hover); background: var(--lc-color-primary-tint-2, rgba(176,106,54,0.12)); }
-.lc-phrase-blank { display: inline-block; min-width: 4ch; height: 1.5em; border-bottom: 2.5px solid var(--lc-color-primary); background: var(--lc-color-primary-tint-2, rgba(176,106,54,0.06)); border-radius: 2px 2px 0 0; cursor: pointer; transition: border-color 0.15s, background 0.15s; vertical-align: baseline; }
+.lc-phrase-blank { display: inline-block; min-width: 4ch; border-bottom: 2.5px solid var(--lc-color-primary); background: var(--lc-color-primary-tint-2, rgba(176,106,54,0.06)); border-radius: 2px 2px 0 0; cursor: pointer; transition: border-color 0.15s, background 0.15s; vertical-align: baseline; padding: 0 1px; }
 .lc-phrase-blank:hover { border-color: var(--lc-color-primary-hover); background: var(--lc-color-primary-tint-2, rgba(176,106,54,0.12)); }
 /* Separable verb blanks (dashed border, paired indicators) */
-.lc-separable-blank { display: inline-block; min-width: 4ch; height: 1.5em; border-bottom: 2.5px dashed var(--lc-color-primary); background: var(--lc-color-primary-tint-2, rgba(176,106,54,0.06)); border-radius: 2px 2px 0 0; cursor: pointer; transition: border-color 0.15s, background 0.15s; vertical-align: baseline; position: relative; }
+.lc-separable-blank { display: inline-block; min-width: 4ch; border-bottom: 2.5px dashed var(--lc-color-primary); background: var(--lc-color-primary-tint-2, rgba(176,106,54,0.06)); border-radius: 2px 2px 0 0; cursor: pointer; transition: border-color 0.15s, background 0.15s; vertical-align: baseline; position: relative; padding: 0 1px; }
 .lc-separable-blank:hover { border-color: var(--lc-color-primary-hover); background: var(--lc-color-primary-tint-2, rgba(176,106,54,0.12)); }
 .lc-separable-blank::after { content: attr(data-sep-marker); position: absolute; top: -0.6em; right: -2px; font-size: 9px; color: var(--lc-color-primary); font-weight: 700; font-family: var(--lc-font-mono); line-height: 1; }
 .lc-separable-pending { display: inline-block; min-width: 4ch; height: 1.5em; border-bottom: 2.5px dashed var(--lc-state-warning, #f59e0b); background: var(--lc-state-warning-bg, rgba(245,158,11,0.08)); border-radius: 2px 2px 0 0; cursor: pointer; transition: border-color 0.15s, background 0.15s; vertical-align: baseline; position: relative; }
@@ -659,7 +659,7 @@ body { font-family: var(--lc-font-sans); background: var(--lc-color-bg); color: 
     .lc-ctx-menu { min-width: 160px; }
 
     /* Blank sizes — slightly smaller on mobile */
-    .lc-blank, .lc-separable-blank, .lc-separable-pending { height: 1.4em; }
+    .lc-blank, .lc-separable-blank, .lc-separable-pending { /* height removed for consistent line-height */ }
 }
 
 /* ===== Small mobile (<=480px) ===== */
@@ -7210,10 +7210,11 @@ function renderWorkbench() {
             panel.appendChild(renderCorpusLine(line, lineNum, page.pageNum, showNum, pageIdx, lineIdx));
         });
     });
+    // 编辑模式下也保留挖空视觉效果 (确保布局一致), 但不绑定点击挖空交互
     if (!State.editMode) {
         setupWordInteractions();
-        reapplyHiddenItems();
     }
+    reapplyHiddenItems();
     refreshIcons();
     restoreHintBannerState();
     // Track scroll position to update reading progress
@@ -7382,26 +7383,26 @@ function renderCorpusLine(line, lineNum, pageNum, showNum, pageIdx, lineIdx) {
     div.appendChild(gutter2);
     var textSpan2 = document.createElement('span');
     textSpan2.className = 'lc-corpus-text';
+    // 用 token 拆分渲染, 保持挖空模式与编辑模式完全一致的 DOM 结构和行高
+    var tokens = tokenizeLine(line.text);
+    tokens.forEach(function(tok) {
+        if (tok.type === 'text') {
+            textSpan2.appendChild(document.createTextNode(tok.value));
+        } else {
+            var ws = document.createElement('span');
+            ws.className = 'lc-word';
+            ws.textContent = tok.value;
+            ws.dataset.word = tok.value;
+            ws.dataset.line = lineNum;
+            ws.dataset.page = pageNum;
+            textSpan2.appendChild(ws);
+        }
+    });
+    // 编辑模式下整行可编辑
     if (State.editMode) {
         textSpan2.contentEditable = 'true';
         textSpan2.spellcheck = false;
-        textSpan2.textContent = line.text;
         attachEditableHandlers(textSpan2, pageIdx, lineIdx);
-    } else {
-        var tokens = tokenizeLine(line.text);
-        tokens.forEach(function(tok) {
-            if (tok.type === 'text') {
-                textSpan2.appendChild(document.createTextNode(tok.value));
-            } else {
-                var ws = document.createElement('span');
-                ws.className = 'lc-word';
-                ws.textContent = tok.value;
-                ws.dataset.word = tok.value;
-                ws.dataset.line = lineNum;
-                ws.dataset.page = pageNum;
-                textSpan2.appendChild(ws);
-            }
-        });
     }
     div.appendChild(textSpan2);
     return div;
@@ -7645,6 +7646,8 @@ function updateTranslationToggleUI() {
 
 function reapplyHiddenItems() {
     if (!State.corpus) return;
+    // 编辑模式下不应用挖空样式 (保持词可见, 布局与挖空模式一致因为 DOM 结构相同)
+    if (State.editMode) return;
     var panel = document.getElementById('corpus-panel');
     if (!panel) return;
     var allWords = Array.from(panel.querySelectorAll('.lc-word'));
