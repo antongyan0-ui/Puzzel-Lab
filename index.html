@@ -7979,45 +7979,55 @@ function clearSelectionHighlight() { document.querySelectorAll('.lc-word.lc-sele
 
 function handleSeparableClick(wordEl) {
     if (State.editMode) return;
-    if (wordEl.classList.contains('lc-blank') || wordEl.classList.contains('lc-phrase-blank')) {
-        showToast('该位置已有挖空，请选择未挖空的词', 'info'); return;
+    if (wordEl.classList.contains('lc-blank') || wordEl.classList.contains('lc-phrase-blank') || wordEl.dataset.hideId) {
+        showToast('所选范围包含已挖空内容，请选择未挖空的文本', 'info'); return;
     }
-    // If the clicked word is already a separable blank, unhide it
-    if (wordEl.classList.contains('lc-separable-blank')) {
-        var hideId = wordEl.dataset.hideId;
-        if (hideId) { unhideItem(hideId); showToast('已取消可分动词挖空', 'info'); }
-        clearSeparablePending();
-        return;
-    }
-    // If there's no pending word, mark this one as the verb (first part)
+
+    // Four-point workflow: start/end of blank 1 (verb), then start/end of blank 2 (prefix).
+    // Each blank may contain any number of consecutive words.
     if (!_separablePending) {
-        if (wordEl.dataset.hideId) { showToast('该词已挖空，请选择未挖空的词', 'info'); return; }
-        _separablePending = wordEl;
+        _separablePending = { stage: 1, firstStart: wordEl, firstEnd: null, secondStart: null };
         wordEl.classList.add('lc-separable-pending');
-        wordEl.textContent = '';
         updateSeparableModeUI();
-        showToast('已选中动词部分，请再选择可分前缀', 'info');
+        showToast('第 1/4 步：选择第一个空的起点（动词部分）', 'info');
         return;
     }
-    // Second click: complete the separable verb link
-    if (_separablePending === wordEl) {
-        // Clicking the same word cancels pending
-        clearSeparablePending();
-        showToast('已取消可分动词选择', 'info');
+
+    var p = _separablePending;
+    if (p.stage === 1) {
+        p.firstEnd = wordEl;
+        var firstWords = getWordsBetween(p.firstStart, p.firstEnd);
+        if (!firstWords.length || firstWords.some(function(w){return w.dataset.hideId;})) {
+            showToast('第一个空必须是连续且未挖空的文本', 'info'); return;
+        }
+        firstWords.forEach(function(w){w.classList.add('lc-separable-pending');});
+        p.firstWords = firstWords;
+        p.stage = 2;
+        updateSeparableModeUI();
+        showToast('第 2/4 步：选择第二个空的起点（可分前缀）', 'info');
         return;
     }
-    if (wordEl.dataset.hideId) { showToast('该词已挖空，请选择未挖空的词', 'info'); return; }
-    // Determine which is verb and which is prefix: the first clicked is the verb, second is the prefix
-    var verbEl = _separablePending;
-    var prefixEl = wordEl;
-    hideSeparableVerb(verbEl, prefixEl);
+    if (p.stage === 2) {
+        p.secondStart = wordEl;
+        p.stage = 3;
+        wordEl.classList.add('lc-separable-pending');
+        updateSeparableModeUI();
+        showToast('第 3/4 步：选择第二个空的终点', 'info');
+        return;
+    }
+    var secondWords = getWordsBetween(p.secondStart, wordEl);
+    if (!secondWords.length || secondWords.some(function(w){return w.dataset.hideId;}) ||
+        secondWords.some(function(w){return p.firstWords.indexOf(w)>=0;})) {
+        showToast('第二个空必须是另一个连续且未挖空的文本范围', 'info'); return;
+    }
+    p.secondWords = secondWords;
+    hideSeparableVerb(p.firstWords, p.secondWords);
     clearSeparablePending();
 }
 
 function clearSeparablePending() {
     if (_separablePending) {
-        _separablePending.classList.remove('lc-separable-pending');
-        _separablePending.textContent = _separablePending.dataset.word;
+        document.querySelectorAll('.lc-separable-pending').forEach(function(w){w.classList.remove('lc-separable-pending');});
         _separablePending = null;
     }
     updateSeparableModeUI();
@@ -8028,7 +8038,7 @@ function toggleSeparableMode() {
     _separableMode = !_separableMode;
     if (!_separableMode) clearSeparablePending();
     updateSeparableModeUI();
-    if (_separableMode) showToast('可分动词模式：先点动词部分，再点可分前缀', 'info');
+    if (_separableMode) showToast('可分动词模式：依次选择第一个空的起点和终点，再选择第二个空的起点和终点', 'info');
 }
 
 function updateSeparableModeUI() {
@@ -8041,49 +8051,48 @@ function updateSeparableModeUI() {
     if (label) label.textContent = active ? '退出可分动词' : '可分动词';
     if (status) {
         status.style.display = active ? 'inline' : 'none';
-        status.textContent = _separablePending ? '下一步：选择前缀' : '下一步：选择动词部分';
+        var stages = ['选择第一个空起点','选择第一个空终点','选择第二个空起点','选择第二个空终点'];
+        status.textContent = active ? (_separablePending ? '步骤 ' + _separablePending.stage + '/4：' + stages[_separablePending.stage-1] : '步骤 1/4：选择第一个空起点') : '';
     }
 }
 
-function hideSeparableVerb(verbEl, prefixEl) {
-    var verbText = verbEl.dataset.word;
-    var prefixText = prefixEl.dataset.word;
-    var verbLine = parseInt(verbEl.dataset.line);
-    var verbPage = parseInt(verbEl.dataset.page);
-    var prefixLine = parseInt(prefixEl.dataset.line);
-    var prefixPage = parseInt(prefixEl.dataset.page);
+function hideSeparableVerb(verbWords, prefixWords) {
+    if (!Array.isArray(verbWords)) verbWords = [verbWords];
+    if (!Array.isArray(prefixWords)) prefixWords = [prefixWords];
+    if (!verbWords.length || !prefixWords.length) return;
+    var verbText = verbWords.map(function(w){return w.dataset.word;}).join(' ');
+    var prefixText = prefixWords.map(function(w){return w.dataset.word;}).join(' ');
+    var first = verbWords[0], second = prefixWords[0];
+    var verbLine = parseInt(first.dataset.line), verbPage = parseInt(first.dataset.page);
+    var prefixLine = parseInt(second.dataset.line), prefixPage = parseInt(second.dataset.page);
     var pairNum = ++_separablePairCounter;
     var markerChars = ['①','②','③','④','⑤','⑥','⑦','⑧','⑨','⑩'];
     var marker = markerChars[(pairNum - 1) % markerChars.length];
-    var verbId = genId();
-    var prefixId = genId();
-    // Create blank for verb
-    verbEl.classList.remove('lc-separable-pending');
-    verbEl.classList.add('lc-separable-blank');
-    verbEl.dataset.hideId = verbId;
-    verbEl.dataset.originalText = verbText;
-    verbEl.dataset.sepMarker = marker;
-    verbEl.dataset.sepPair = prefixId;
-    verbEl.textContent = '';
-    setBlankWidth(verbEl, verbText);
-    // Create blank for prefix
-    prefixEl.classList.add('lc-separable-blank');
-    prefixEl.dataset.hideId = prefixId;
-    prefixEl.dataset.originalText = prefixText;
-    prefixEl.dataset.sepMarker = marker;
-    prefixEl.dataset.sepPair = verbId;
-    prefixEl.textContent = '';
-    setBlankWidth(prefixEl, prefixText);
-    // Add to hidden items as a separable pair
+    var verbId = genId(), prefixId = genId();
+    function applyRange(words, id, text, pairId) {
+        words.forEach(function(w, index) {
+            w.classList.remove('lc-separable-pending');
+            w.classList.add('lc-separable-blank');
+            w.dataset.hideId = id;
+            w.dataset.originalText = w.dataset.word;
+            w.dataset.sepMarker = marker;
+            w.dataset.sepPair = pairId;
+            if (index === 0) {
+                w.textContent = '';
+                setBlankWidth(w, text);
+            } else {
+                w.textContent = '';
+                w.style.display = 'none';
+            }
+        });
+    }
+    applyRange(verbWords, verbId, verbText, prefixId);
+    applyRange(prefixWords, prefixId, prefixText, verbId);
     var combinedText = prefixText + '/' + verbText;
-    State.hiddenItems.push({ id: verbId, text: verbText, line: verbLine, page: verbPage, type: 'separable', role: 'verb', pairId: prefixId, pairText: prefixText, combinedText: combinedText, marker: marker });
-    State.hiddenItems.push({ id: prefixId, text: prefixText, line: prefixLine, page: prefixPage, type: 'separable', role: 'prefix', pairId: verbId, pairText: verbText, combinedText: combinedText, marker: marker });
-    // Add to vocabulary in combined format
-    addToVocabularySeparable(combinedText, verbLine, verbId, prefixLine, prefixId);
-    renderAnswerRail();
-    updateHiddenCount();
-    saveUserData();
-    updateSeparableModeUI();
+    State.hiddenItems.push({id:verbId,text:verbText,line:verbLine,page:verbPage,type:'separable',role:'verb',pairId:prefixId,pairText:prefixText,combinedText:combinedText,marker:marker});
+    State.hiddenItems.push({id:prefixId,text:prefixText,line:prefixLine,page:prefixPage,type:'separable',role:'prefix',pairId:verbId,pairText:verbText,combinedText:combinedText,marker:marker});
+    addToVocabularySeparable(combinedText,verbLine,verbId,prefixLine,prefixId);
+    renderAnswerRail(); updateHiddenCount(); saveUserData(); updateSeparableModeUI();
     showToast('可分动词挖空：' + combinedText, 'success');
 }
 
