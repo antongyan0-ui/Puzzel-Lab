@@ -7616,7 +7616,7 @@ function updateEditModeUI() {
         btn.classList.add('active');
         var icon = btn.querySelector('i');
         if (icon) { icon.setAttribute('data-lucide', 'check'); refreshIcons(); }
-        if (hintText) hintText.textContent = '编辑模式：点击文本直接修改内容 · 按 Enter 可换行新增行 · 再次点击「编辑文本」退出并保存 · 退出后挖空自动恢复';
+        if (hintText) hintText.textContent = '编辑模式：点击文本直接修改内容 · 为保持已有挖空位置稳定，暂不支持换行 · 再次点击「编辑文本」退出并保存';
     } else {
         btn.classList.remove('active');
         var icon2 = btn.querySelector('i');
