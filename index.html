@@ -270,6 +270,10 @@ body { font-family: var(--lc-font-sans); background: var(--lc-color-bg); color: 
 .lc-workbench-resizer::before { content: ''; display: block; width: 4px; height: 48px; border-radius: 2px; background: var(--lc-color-border); transition: background 0.15s; }
 .lc-workbench-resizer:hover::before, .lc-workbench-resizer.dragging::before { background: var(--lc-color-primary); }
 @media (max-width: 1023px) {
+    .lc-toolbar { gap: 6px; margin-bottom: 10px; }
+    .lc-toolbar h2 { flex-basis: 100%; margin-bottom: 2px; }
+    .lc-toolbar button { min-height: 38px; }
+    #separable-mode-status { flex-basis: 100%; margin-left: 2px; }
     .lc-workbench-grid { flex-direction: column; }
     .lc-corpus-panel { width: 100% !important; max-width: none; max-height: none; }
     .lc-answer-rail { width: 100%; max-width: none; }
@@ -290,6 +294,7 @@ body { font-family: var(--lc-font-sans); background: var(--lc-color-bg); color: 
 .lc-separable-blank:hover { border-color: var(--lc-color-primary-hover); background: var(--lc-color-primary-tint-2, rgba(176,106,54,0.12)); }
 .lc-separable-blank::after { content: attr(data-sep-marker); position: absolute; top: -0.6em; right: -2px; font-size: 9px; color: var(--lc-color-primary); font-weight: 700; font-family: var(--lc-font-mono); line-height: 1; }
 .lc-separable-pending { display: inline-block; min-width: 4ch; height: 1.5em; border-bottom: 2.5px dashed var(--lc-state-warning, #f59e0b); background: var(--lc-state-warning-bg, rgba(245,158,11,0.08)); border-radius: 2px 2px 0 0; cursor: pointer; transition: border-color 0.15s, background 0.15s; vertical-align: baseline; position: relative; }
+.lc-separable-pending { background: var(--lc-state-warning-bg) !important; box-shadow: 0 0 0 2px var(--lc-state-warning); }
 .lc-separable-pending::after { content: '?'; position: absolute; top: -0.6em; right: -2px; font-size: 9px; color: var(--lc-state-warning, #f59e0b); font-weight: 700; line-height: 1; }
 .lc-corpus-line.editing .lc-corpus-text { outline: 1px dashed var(--lc-color-border); outline-offset: 2px; border-radius: 2px; background: var(--lc-color-surface-2); transition: outline 0.15s, background 0.15s; cursor: text; }
 .lc-corpus-line.editing .lc-corpus-text:focus { outline: 2px solid var(--lc-color-primary); background: var(--lc-color-primary-tint-2); }
@@ -828,6 +833,10 @@ body { font-family: var(--lc-font-sans); background: var(--lc-color-bg); color: 
             <button class="lc-btn lc-btn-ghost lc-btn-sm" id="btn-save-progress">
                 <i data-lucide="save" style="width:14px;height:14px;"></i> 保存进度
             </button>
+            <button class="lc-btn lc-btn-ghost" id="btn-separable-mode" type="button" style="display:none;" title="依次选择动词部分和可分前缀，创建关联挖空">
+                <i data-lucide="git-merge" style="width:14px;height:14px;"></i> <span id="btn-separable-label">可分动词</span>
+            </button>
+            <span id="separable-mode-status" aria-live="polite" style="display:none;font-size:12px;color:var(--lc-state-warning);white-space:nowrap;"></span>
             <button class="lc-btn lc-btn-ghost" id="btn-edit-mode" title="切换文本编辑模式（挖空功能不受影响）">
                 <i data-lucide="pencil" style="width:14px;height:14px;"></i> 编辑文本
             </button>
@@ -853,7 +862,7 @@ body { font-family: var(--lc-font-sans); background: var(--lc-color-bg); color: 
                 </div>
                 <div class="lc-hint-banner" id="de-separable-hint" style="display:none;background:var(--lc-state-warning-bg);border-color:var(--lc-state-warning);">
                     <i data-lucide="git-merge"></i>
-                    <span>可分动词挖空：Ctrl+点击动词 → Ctrl+点击前缀 → 两个空以虚线相连 · 右侧生词汇总显示"前缀/动词"整体形式（如 auf/stehe）</span>
+                    <span>点击工具栏「可分动词」，依次点选动词部分和可分前缀；两个空以虚线和相同编号关联，答案区显示"前缀/动词"（如 auf/stehe）。电脑端仍可使用 Ctrl/⌘+点击。</span>
                 </div>
             </div>
         </div>
@@ -1595,11 +1604,15 @@ function updateLanguageFeatures(lang) {
     // Separable verb hint: only for German
     var sepHint = document.getElementById('de-separable-hint');
     if (sepHint) sepHint.style.display = (lang === 'de') ? '' : 'none';
+    var sepBtn = document.getElementById('btn-separable-mode');
+    if (sepBtn) sepBtn.style.display = (lang === 'de') ? '' : 'none';
+    if (lang !== 'de') { _separableMode = false; clearSeparablePending(); }
+    updateSeparableModeUI();
     // Update workbench hint text based on language
     var wbHint = document.getElementById('wb-hint-text');
     if (wbHint) {
         if (lang === 'de') {
-            wbHint.textContent = '单击单词即可隐藏 · 长按拖动选择短语可整段隐藏 · Ctrl+点击可创建可分动词挖空 · 答案自动归纳至右侧 · 译文行自动折叠';
+            wbHint.textContent = '单击单词即可隐藏 · 长按拖动选择短语 · 点击「可分动词」后依次选择动词部分和前缀 · 答案自动归纳至右侧';
         } else if (lang === 'ja') {
             wbHint.textContent = '単語をクリックして隠す · 長押しドラッグでフレーズを隠す · 答えは右側に自動表示 · 訳文は自動的に折りたたみ';
         } else {
@@ -7629,13 +7642,18 @@ function updateEditModeUI() {
     var btn = document.getElementById('btn-edit-mode');
     var hintText = document.getElementById('wb-hint-text');
     if (!btn) return;
+    var sepBtn = document.getElementById('btn-separable-mode');
+    if (sepBtn) sepBtn.disabled = State.editMode;
     if (State.editMode) {
+        _separableMode = false;
+        clearSeparablePending();
         btn.classList.add('active');
         var icon = btn.querySelector('i');
         if (icon) { icon.setAttribute('data-lucide', 'check'); refreshIcons(); }
         if (hintText) hintText.textContent = '编辑模式：点击文本直接修改内容 · 为保持已有挖空位置稳定，暂不支持换行 · 再次点击「编辑文本」退出并保存';
     } else {
         btn.classList.remove('active');
+        updateSeparableModeUI();
         var icon2 = btn.querySelector('i');
         if (icon2) { icon2.setAttribute('data-lucide', 'pencil'); refreshIcons(); }
         if (hintText) hintText.textContent = '单击单词即可隐藏 · 长按拖动选择短语可整段隐藏 · 答案自动归纳至右侧并标注行号 · 点击空白处可恢复 · 双击右侧词条可删除 · 译文行自动折叠';
@@ -7769,7 +7787,8 @@ function reapplyHiddenItems() {
 
 var isSelecting = false; var selStart = null; var selEnd = null;
 var _wordInteractionBound = false; // prevent duplicate document-level listeners
-var _separablePending = null; // Stores the first word element when creating a separable verb link (Ctrl+click flow)
+var _separablePending = null; // First selected verb part while creating a separable pair
+var _separableMode = false; // Explicit two-tap mode for touch devices and tablets
 var _separablePairCounter = 0; // Incrementing counter for separable verb pair markers
 
 function setupWordInteractions() {
@@ -7794,7 +7813,13 @@ function setupWordInteractions() {
     panel.onmousedown = function(e) {
         var w = e.target.closest('.lc-word');
         if (w) {
-            // Ctrl+click: separable verb linking (German only)
+            // Explicit separable mode takes precedence over ordinary cloze selection.
+            if (_separableMode && !State.editMode) {
+                e.preventDefault(); e.stopPropagation();
+                handleSeparableClick(w);
+                return;
+            }
+            // Ctrl+click: desktop separable verb linking (German only)
             if (e.ctrlKey || e.metaKey) {
                 e.preventDefault();
                 e.stopPropagation();
@@ -7815,6 +7840,13 @@ function setupWordInteractions() {
         var touch = e.touches[0];
         var target = document.elementFromPoint(touch.clientX, touch.clientY);
         var w = target && target.closest('.lc-word');
+        if (w && _separableMode && !State.editMode) {
+            // Consume this touch here: do not let touchend create an ordinary cloze.
+            e.preventDefault();
+            isSelecting = false; selStart = null; selEnd = null; clearSelectionHighlight();
+            handleSeparableClick(w);
+            return;
+        }
         if (w) { e.preventDefault(); startSelection(w); }
     };
     panel.ontouchmove = function(e) {
@@ -7886,6 +7918,9 @@ function clearSelectionHighlight() { document.querySelectorAll('.lc-word.lc-sele
 
 function handleSeparableClick(wordEl) {
     if (State.editMode) return;
+    if (wordEl.classList.contains('lc-blank') || wordEl.classList.contains('lc-phrase-blank')) {
+        showToast('该位置已有挖空，请选择未挖空的词', 'info'); return;
+    }
     // If the clicked word is already a separable blank, unhide it
     if (wordEl.classList.contains('lc-separable-blank')) {
         var hideId = wordEl.dataset.hideId;
@@ -7899,7 +7934,8 @@ function handleSeparableClick(wordEl) {
         _separablePending = wordEl;
         wordEl.classList.add('lc-separable-pending');
         wordEl.textContent = '';
-        showToast('已选中动词，请 Ctrl+点击前缀完成连接', 'info');
+        updateSeparableModeUI();
+        showToast('已选中动词部分，请再选择可分前缀', 'info');
         return;
     }
     // Second click: complete the separable verb link
@@ -7922,6 +7958,29 @@ function clearSeparablePending() {
         _separablePending.classList.remove('lc-separable-pending');
         _separablePending.textContent = _separablePending.dataset.word;
         _separablePending = null;
+    }
+    updateSeparableModeUI();
+}
+
+function toggleSeparableMode() {
+    if (State.editMode || State.lang !== 'de') return;
+    _separableMode = !_separableMode;
+    if (!_separableMode) clearSeparablePending();
+    updateSeparableModeUI();
+    if (_separableMode) showToast('可分动词模式：先点动词部分，再点可分前缀', 'info');
+}
+
+function updateSeparableModeUI() {
+    var btn = document.getElementById('btn-separable-mode');
+    var label = document.getElementById('btn-separable-label');
+    var status = document.getElementById('separable-mode-status');
+    if (!btn) return;
+    var active = _separableMode && !State.editMode && State.lang === 'de';
+    btn.classList.toggle('active', active);
+    if (label) label.textContent = active ? '退出可分动词' : '可分动词';
+    if (status) {
+        status.style.display = active ? 'inline' : 'none';
+        status.textContent = _separablePending ? '下一步：选择前缀' : '下一步：选择动词部分';
     }
 }
 
@@ -7963,6 +8022,7 @@ function hideSeparableVerb(verbEl, prefixEl) {
     renderAnswerRail();
     updateHiddenCount();
     saveUserData();
+    updateSeparableModeUI();
     showToast('可分动词挖空：' + combinedText, 'success');
 }
 
@@ -12230,6 +12290,7 @@ async function init() {
     document.getElementById('btn-toggle-translation').addEventListener('click', toggleTranslationCollapse);
     document.getElementById('btn-save-progress').addEventListener('click', saveProgress);
     document.getElementById('btn-edit-mode').addEventListener('click', toggleEditMode);
+    document.getElementById('btn-separable-mode').addEventListener('click', toggleSeparableMode);
     populateTopicSelect();
 
     document.querySelectorAll('.lc-tab').forEach(function(tab) {
