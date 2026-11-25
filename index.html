@@ -302,7 +302,7 @@ body { font-family: var(--lc-font-sans); background: var(--lc-color-bg); color: 
   font-weight: 500;
 }
 .lc-corpus-line.editing .lc-translation-block.collapsed .lc-translation-header::after {
-  content: '（点击展开编辑）';
+  content: '（编辑模式下已锁定）';
   font-size: 11px;
   color: var(--lc-color-text-tertiary);
   font-weight: 400;
@@ -7330,11 +7330,18 @@ function renderCorpusLine(line, lineNum, pageNum, showNum, pageIdx, lineIdx) {
         var header = document.createElement('div');
         header.className = 'lc-translation-header';
         header.innerHTML = '<i data-lucide="chevron-down"></i> 译文';
-        header.addEventListener('click', function() {
-            block.classList.toggle('collapsed');
-            var icon = header.querySelector('i');
-            if (icon) { icon.setAttribute('data-lucide', block.classList.contains('collapsed') ? 'chevron-right' : 'chevron-down'); refreshIcons(); }
-        });
+        if (!State.editMode) {
+            // 编辑模式下禁止展开/折叠译文，保持布局稳定
+            header.addEventListener('click', function() {
+                block.classList.toggle('collapsed');
+                var icon = header.querySelector('i');
+                if (icon) { icon.setAttribute('data-lucide', block.classList.contains('collapsed') ? 'chevron-right' : 'chevron-down'); refreshIcons(); }
+            });
+        } else {
+            // 编辑模式下显示禁止展开的提示
+            header.style.cursor = 'default';
+            header.title = '编辑模式下译文保持折叠，退出编辑后可展开';
+        }
         var content = document.createElement('div');
         content.className = 'lc-translation-content';
         var textDiv = document.createElement('div');
