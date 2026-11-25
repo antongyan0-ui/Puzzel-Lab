@@ -7516,8 +7516,15 @@ function saveEditedLine(pageIdx, lineIdx, newText) {
     if (!State.corpus || !State.corpus.pages[pageIdx]) return;
     var lines = State.corpus.pages[pageIdx].lines;
     if (!lines || !lines[lineIdx]) return;
-    // Keep hidden tokens in canonical text while editing visible text around them.
-    lines[lineIdx].text = newText.replace(/\n/g, ' ').trim();
+
+    // Update the live corpus immediately. Do not trim while the user is typing:
+    // trailing spaces are meaningful input and may be followed by another word.
+    lines[lineIdx].text = String(newText).replace(/\n/g, ' ');
+
+    // The document list is the persisted source used by collectCurrentData().
+    // Keep it in sync on every edit input, not only when edit mode is exited.
+    syncCurrentDocProgress();
+    saveUserData();
 }
 
 function collectAndProcessEdits() {
