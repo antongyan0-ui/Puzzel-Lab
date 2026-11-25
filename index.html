@@ -7210,9 +7210,20 @@ function renderWorkbench() {
             panel.appendChild(renderCorpusLine(line, lineNum, page.pageNum, showNum, pageIdx, lineIdx));
         });
     });
-    // 编辑模式下也保留挖空视觉效果 (确保布局一致), 但不绑定点击挖空交互
+    // The two modes are mutually exclusive. Remove delegated cloze handlers while
+    // editing so pointer gestures can never create or remove blanks.
     if (!State.editMode) {
         setupWordInteractions();
+    } else {
+        panel.onmousedown = null;
+        panel.onmouseover = null;
+        panel.ontouchstart = null;
+        panel.ontouchmove = null;
+        isSelecting = false;
+        selStart = null;
+        selEnd = null;
+        clearSelectionHighlight();
+        clearSeparablePending();
     }
     reapplyHiddenItems();
     refreshIcons();
@@ -7410,14 +7421,19 @@ function renderCorpusLine(line, lineNum, pageNum, showNum, pageIdx, lineIdx) {
 
 function attachEditableHandlers(el, pageIdx, lineIdx) {
     el.addEventListener('blur', function() {
-        saveEditedLine(pageIdx, lineIdx, el.innerText);
+        saveEditedLine(pageIdx, lineIdx, getEditableLineText(el));
     });
     el.addEventListener('input', function() {
-        saveEditedLine(pageIdx, lineIdx, el.innerText);
+        saveEditedLine(pageIdx, lineIdx, getEditableLineText(el));
+    });
+    el.addEventListener('keydown', function(e) {
+        // Each source line is a stable anchor for saved cloze positions.
+        // Prevent line insertion/deletion from shifting those anchors.
+        if (e.key === 'Enter') e.preventDefault();
     });
     el.addEventListener('paste', function(e) {
         e.preventDefault();
-        var text = (e.clipboardData || window.clipboardData).getData('text/plain');
+        var text = (e.clipboardData || window.clipboardData).getData('text/plain').replace(/[\r\n]+/g, ' ');
         document.execCommand('insertText', false, text);
     });
 }
@@ -7478,11 +7494,29 @@ function restoreScrollAnchor() {
 }
 
 // --- Edit Mode: inline text editing for corpus lines ---
+function getEditableLineText(el) {
+    // Keep hidden tokens as non-editable placeholders, but restore their original
+    // text when saving the surrounding editable content.
+    function readNode(node) {
+        if (node.nodeType === 3) return node.nodeValue || '';
+        if (node.nodeType !== 1) return '';
+        if (node.classList && node.classList.contains('lc-word')) {
+            return node.dataset.word || node.dataset.originalText || node.textContent || '';
+        }
+        if (node.tagName === 'BR') return '\n';
+        var value = '';
+        Array.from(node.childNodes).forEach(function(child) { value += readNode(child); });
+        if (node !== el && (node.tagName === 'DIV' || node.tagName === 'P')) value += '\n';
+        return value;
+    }
+    return readNode(el).replace(/\n+$/, '');
+}
+
 function saveEditedLine(pageIdx, lineIdx, newText) {
     if (!State.corpus || !State.corpus.pages[pageIdx]) return;
     var lines = State.corpus.pages[pageIdx].lines;
     if (!lines || !lines[lineIdx]) return;
-    // Live save: collapse newlines to space (final newline-splitting happens on exit)
+    // Keep hidden tokens in canonical text while editing visible text around them.
     lines[lineIdx].text = newText.replace(/\n/g, ' ').trim();
 }
 
@@ -7499,7 +7533,7 @@ function collectAndProcessEdits() {
         var textEl = lineEl.querySelector('[contenteditable="true"]');
         if (textEl && !isNaN(pi) && !isNaN(li)) {
             var key = pi + '-' + li;
-            if (edits[key] === undefined) edits[key] = textEl.innerText;
+            if (edits[key] === undefined) edits[key] = getEditableLineText(textEl);
         }
     });
 
@@ -7582,7 +7616,7 @@ function updateEditModeUI() {
         btn.classList.add('active');
         var icon = btn.querySelector('i');
         if (icon) { icon.setAttribute('data-lucide', 'check'); refreshIcons(); }
-        if (hintText) hintText.textContent = '编辑模式：点击文本直接修改内容 · 按 Enter 可换行新增行 · 再次点击「编辑文本」退出并保存 · 退出后挖空自动恢复';
+        if (hintText) hintText.textContent = '编辑模式：点击文本直接修改内容 · 为保持已有挖空位置稳定，暂不支持换行 · 再次点击「编辑文本」退出并保存';
     } else {
         btn.classList.remove('active');
         var icon2 = btn.querySelector('i');
@@ -7646,8 +7680,7 @@ function updateTranslationToggleUI() {
 
 function reapplyHiddenItems() {
     if (!State.corpus) return;
-    // 编辑模式下不应用挖空样式 (保持词可见, 布局与挖空模式一致因为 DOM 结构相同)
-    if (State.editMode) return;
+    // Keep blank markers visible in both modes; edit mode makes blank tokens read-only.
     var panel = document.getElementById('corpus-panel');
     if (!panel) return;
     var allWords = Array.from(panel.querySelectorAll('.lc-word'));
@@ -7666,6 +7699,7 @@ function reapplyHiddenItems() {
             if (wordEl) {
                 wordEl.dataset.hideId = item.id;
                 wordEl.dataset.originalText = wordEl.dataset.word;
+                if (State.editMode) wordEl.contentEditable = 'false';
                 wordEl.classList.add('lc-blank');
                 wordEl.textContent = '';
                 setBlankWidth(wordEl, wordEl.dataset.word);
@@ -7690,6 +7724,7 @@ function reapplyHiddenItems() {
                     var el = allWords[startIdx + idx];
                     el.dataset.hideId = item.id;
                     el.dataset.originalText = el.dataset.word;
+                    if (State.editMode) el.contentEditable = 'false';
                     if (idx === 0) { el.classList.add('lc-phrase-blank'); el.textContent = ''; setBlankWidth(el, itemText); }
                     else { el.style.display = 'none'; }
                 });
@@ -7704,6 +7739,7 @@ function reapplyHiddenItems() {
             if (sepWordEl) {
                 sepWordEl.dataset.hideId = item.id;
                 sepWordEl.dataset.originalText = sepWordEl.dataset.word;
+                if (State.editMode) sepWordEl.contentEditable = 'false';
                 sepWordEl.classList.add('lc-separable-blank');
                 sepWordEl.dataset.sepMarker = item.marker || '';
                 sepWordEl.dataset.sepPair = item.pairId || '';
@@ -7775,6 +7811,8 @@ function setupWordInteractions() {
 }
 
 function startSelection(wordEl) {
+    // Hard mode boundary: editing must never initiate a cloze gesture.
+    if (State.editMode) return;
     isSelecting = true;
     selStart = wordEl;
     selEnd = wordEl;
@@ -7782,6 +7820,7 @@ function startSelection(wordEl) {
 }
 
 function extendSelection(wordEl) {
+    if (State.editMode) return;
     if (isSelecting) {
         selEnd = wordEl;
         updateSelectionHighlight();
@@ -7789,6 +7828,13 @@ function extendSelection(wordEl) {
 }
 
 function onSelectionEnd() {
+    // A document-level mouseup/touchend may still fire after the mode switch.
+    // Discard it while editing so it cannot create or remove cloze items.
+    if (State.editMode) {
+        isSelecting = false; selStart = null; selEnd = null;
+        clearSelectionHighlight(); clearSeparablePending();
+        return;
+    }
     if (!isSelecting) return;
     // Cancel any pending separable verb selection on normal click
     if (_separablePending && selStart === selEnd && selStart === _separablePending) {
@@ -7822,6 +7868,7 @@ function updateSelectionHighlight() {
 function clearSelectionHighlight() { document.querySelectorAll('.lc-word.lc-selecting').forEach(function(w) { w.classList.remove('lc-selecting'); }); }
 
 function handleSeparableClick(wordEl) {
+    if (State.editMode) return;
     // If the clicked word is already a separable blank, unhide it
     if (wordEl.classList.contains('lc-separable-blank')) {
         var hideId = wordEl.dataset.hideId;
@@ -7931,6 +7978,7 @@ function setBlankWidth(el, text) {
 }
 
 function hideWord(wordEl) {
+    if (State.editMode) return;
     var word = wordEl.dataset.word; var line = parseInt(wordEl.dataset.line); var page = parseInt(wordEl.dataset.page);
     var id = genId();
     wordEl.classList.add('lc-blank'); wordEl.dataset.hideId = id; wordEl.dataset.originalText = word; wordEl.textContent = '';
@@ -7941,6 +7989,7 @@ function hideWord(wordEl) {
 }
 
 function hidePhrase(startEl, endEl) {
+    if (State.editMode) return;
     var words = getWordsBetween(startEl, endEl);
     if (words.length < 2) { hideWord(startEl); return; }
     var phraseText = words.map(function(w) { return w.dataset.word; }).join(' ');
@@ -7958,6 +8007,7 @@ function hidePhrase(startEl, endEl) {
 }
 
 function unhideItem(id) {
+    if (State.editMode) return;
     var item = State.hiddenItems.find(function(i) { return i.id === id; });
     if (!item) return;
     // For separable verbs: also unhide the paired item
