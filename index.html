@@ -7402,6 +7402,61 @@ function attachEditableHandlers(el, pageIdx, lineIdx) {
     });
 }
 
+// --- Scroll position preservation for re-renders ---
+var _scrollAnchor = null;
+
+function saveScrollAnchor() {
+    var panel = document.getElementById('corpus-panel');
+    if (!panel) return;
+    var lines = panel.querySelectorAll('.lc-corpus-line');
+    if (lines.length === 0) { _scrollAnchor = null; return; }
+    var panelTop = panel.getBoundingClientRect().top + 4;
+    var anchor = null;
+    for (var i = 0; i < lines.length; i++) {
+        var lineRect = lines[i].getBoundingClientRect();
+        if (lineRect.bottom >= panelTop) {
+            var offsetPx = lineRect.top - panel.getBoundingClientRect().top;
+            anchor = {
+                pageIdx: parseInt(lines[i].dataset.pageIdx),
+                lineIdx: parseInt(lines[i].dataset.lineIdx),
+                offsetPx: offsetPx
+            };
+            break;
+        }
+    }
+    if (!anchor && lines.length > 0) {
+        var last = lines[lines.length - 1];
+        anchor = {
+            pageIdx: parseInt(last.dataset.pageIdx),
+            lineIdx: parseInt(last.dataset.lineIdx),
+            offsetPx: last.getBoundingClientRect().top - panel.getBoundingClientRect().top
+        };
+    }
+    _scrollAnchor = anchor;
+}
+
+function restoreScrollAnchor() {
+    if (!_scrollAnchor) return;
+    var panel = document.getElementById('corpus-panel');
+    if (!panel) { _scrollAnchor = null; return; }
+    var selector = '.lc-corpus-line[data-page-idx="' + _scrollAnchor.pageIdx + '"][data-line-idx="' + _scrollAnchor.lineIdx + '"]';
+    var lineEl = panel.querySelector(selector);
+    if (lineEl) {
+        panel.scrollTop = lineEl.offsetTop - _scrollAnchor.offsetPx;
+    } else {
+        var pageLines = panel.querySelectorAll('.lc-corpus-line[data-page-idx="' + _scrollAnchor.pageIdx + '"]');
+        if (pageLines.length > 0) {
+            var targetIdx = Math.min(_scrollAnchor.lineIdx, pageLines.length - 1);
+            if (targetIdx < 0) targetIdx = 0;
+            var targetLine = pageLines[targetIdx];
+            if (targetLine) {
+                panel.scrollTop = targetLine.offsetTop - (_scrollAnchor.offsetPx || 0);
+            }
+        }
+    }
+    _scrollAnchor = null;
+}
+
 // --- Edit Mode: inline text editing for corpus lines ---
 function saveEditedLine(pageIdx, lineIdx, newText) {
     if (!State.corpus || !State.corpus.pages[pageIdx]) return;
@@ -7447,6 +7502,9 @@ function collectAndProcessEdits() {
 function toggleEditMode() {
     if (!State.corpus) { showToast('请先加载语料', 'error'); return; }
 
+    // 保存当前滚动位置 (以第一条可见行为锚点)
+    saveScrollAnchor();
+
     if (!State.editMode) {
         // Entering edit mode
         if (State.hiddenItems.length > 0) {
@@ -7464,6 +7522,10 @@ function toggleEditMode() {
 
     updateEditModeUI();
     renderWorkbench();
+
+    // 恢复滚动位置
+    restoreScrollAnchor();
+
     if (!State.editMode) {
         renderAnswerRail();
         updateHiddenCount();
