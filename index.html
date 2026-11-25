@@ -7501,7 +7501,17 @@ function getEditableLineText(el) {
         if (node.nodeType === 3) return node.nodeValue || '';
         if (node.nodeType !== 1) return '';
         if (node.classList && node.classList.contains('lc-word')) {
-            return node.dataset.word || node.dataset.originalText || node.textContent || '';
+            // In edit mode ordinary words retain the lc-word class for consistent
+            // rendering, but their textContent is the user's current edited value.
+            // Only restore the original token for words that are actually hidden.
+            var isHiddenToken = node.classList.contains('lc-blank') ||
+                node.classList.contains('lc-phrase-blank') ||
+                node.classList.contains('lc-separable-blank') ||
+                !!node.dataset.hideId;
+            if (isHiddenToken) {
+                return node.dataset.word || node.dataset.originalText || node.textContent || '';
+            }
+            return node.textContent || '';
         }
         if (node.tagName === 'BR') return '\n';
         var value = '';
