@@ -296,6 +296,18 @@ body { font-family: var(--lc-font-sans); background: var(--lc-color-bg); color: 
 .lc-corpus-line.editing .lc-gutter { color: var(--lc-color-primary); font-weight: 600; }
 .lc-corpus-line.editing .lc-translation-text { outline: 1px dashed var(--lc-color-border); outline-offset: 2px; border-radius: 2px; cursor: text; }
 .lc-corpus-line.editing .lc-translation-text:focus { outline: 2px solid var(--lc-color-primary); }
+/* 编辑模式下折叠的译文也显示编辑提示 */
+.lc-corpus-line.editing .lc-translation-block.collapsed .lc-translation-header {
+  color: var(--lc-color-primary);
+  font-weight: 500;
+}
+.lc-corpus-line.editing .lc-translation-block.collapsed .lc-translation-header::after {
+  content: '（点击展开编辑）';
+  font-size: 11px;
+  color: var(--lc-color-text-tertiary);
+  font-weight: 400;
+  margin-left: 4px;
+}
 #btn-edit-mode.active { background: var(--lc-color-primary); color: #fff; border-color: var(--lc-color-primary); }
 .lc-page-sep { text-align: center; padding: 16px 0; color: var(--lc-color-text-tertiary); font-size: 13px; font-family: var(--lc-font-mono); border-top: 1px dashed var(--lc-color-border); border-bottom: 1px dashed var(--lc-color-border); margin: 16px 0; }
 .lc-translation-block { background: var(--lc-color-surface-sunken); border-radius: 8px; margin: 4px 0; overflow: hidden; }
@@ -7314,7 +7326,7 @@ function renderCorpusLine(line, lineNum, pageNum, showNum, pageIdx, lineIdx) {
     if (line.isTranslation) {
         var block = document.createElement('div');
         block.className = 'lc-translation-block';
-        if (State.translationCollapsed && !State.editMode) block.classList.add('collapsed');
+        if (State.translationCollapsed) block.classList.add('collapsed');
         var header = document.createElement('div');
         header.className = 'lc-translation-header';
         header.innerHTML = '<i data-lucide="chevron-down"></i> 译文';
