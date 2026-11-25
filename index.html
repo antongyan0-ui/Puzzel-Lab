@@ -7433,7 +7433,7 @@ function attachEditableHandlers(el, pageIdx, lineIdx) {
     });
     el.addEventListener('paste', function(e) {
         e.preventDefault();
-        var text = (e.clipboardData || window.clipboardData).getData('text/plain').replace(/[\\r\\n]+/g, ' ');
+        var text = (e.clipboardData || window.clipboardData).getData('text/plain').replace(/[\r\n]+/g, ' ');
         document.execCommand('insertText', false, text);
     });
 }
