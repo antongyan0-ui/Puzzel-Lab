@@ -7739,14 +7739,14 @@ function tokenizeLine(line) {
     if (line && typeof line.normalize === 'function') line = line.normalize('NFC');
     var regex;
     if (State.lang === 'ja') {
-        // Japanese: tokenize kanji (individual), katakana words, and latin words
-        regex = /([a-zA-Z]+|[\u30A0-\u30FF]+|[\u4e00-\u9fff])/g;
+        // Japanese: tokenize numbers, kanji (individual), katakana words, and latin words.
+        // Numeric sequences such as 2026, 3.14, 1,000 and 20% are selectable cloze tokens.
+        regex = /(\p{N}+(?:[.,:/-]\p{N}+)*(?:[%‰])?|[a-zA-Z]+|[\u30A0-\u30FF]+|[\u4e00-\u9fff])/gu;
     } else {
-        // For ALL Latin-based languages (en, de, etc.):
-        // Use \p{Script=Latin} to match any Latin letter (ä ö ü ß é è etc.)
-        // Also include combining diacritical marks (\u0300-\u036F) as fallback for NFD text
-        // The 'u' flag enables Unicode property escapes
-        regex = /([\p{Script=Latin}\u0300-\u036F][\p{Script=Latin}\u0300-\u036F'\-]*)/gu;
+        // For Latin-based languages (en, de, etc.), tokenize both words and numeric sequences.
+        // Keep grouped/decimal numbers, times, date-like values and percentages as one selectable token.
+        // Use Unicode properties for Latin letters and digits, with combining marks for NFD text.
+        regex = /(\p{N}+(?:[.,:/-]\p{N}+)*(?:[%‰])?|[\p{Script=Latin}\u0300-\u036F][\p{Script=Latin}\u0300-\u036F'\-]*)/gu;
     }
     var lastIdx = 0, m;
     while ((m = regex.exec(line)) !== null) {
